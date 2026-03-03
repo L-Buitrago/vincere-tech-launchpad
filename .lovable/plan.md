@@ -1,103 +1,86 @@
 
 
-# Implementacao — Autenticacao + Profiles + Dashboard
+# Correcao de Seguranca — Restringir Acesso a Usuarios Autenticados
 
-## Resumo
+## Problema
 
-Criar toda a infraestrutura de autenticacao com email/senha, incluindo banco de dados (profiles, quotes, projects), contexto de autenticacao, paginas de login/cadastro, dashboard com abas e rotas protegidas.
+As politicas RLS nas tabelas `profiles`, `quotes` e `projects` nao especificam o role `authenticated`. Isso significa que, por padrao, o role `anon` (usuarios nao logados) tambem pode tentar acessar essas tabelas. Embora a condicao `auth.uid() = user_id` impeca acesso real (pois `auth.uid()` retorna NULL para usuarios anonimos), a pratica recomendada e restringir explicitamente ao role `authenticated`.
 
----
+## Solucao
 
-## 1. Migracao SQL (Supabase)
+Criar uma nova migracao SQL que:
 
-Criar uma unica migracao com:
+1. Remove todas as politicas RLS existentes nas 3 tabelas (`profiles`, `quotes`, `projects`)
+2. Recria as mesmas politicas adicionando `TO authenticated` em cada uma
 
-### Tabelas
-- **profiles** — `id` (uuid PK default gen_random_uuid()), `user_id` (uuid FK auth.users NOT NULL UNIQUE, ON DELETE CASCADE), `full_name` (text), `avatar_url` (text), `phone` (text), `created_at` (timestamptz default now())
-- **quotes** — `id` (uuid PK), `user_id` (uuid FK auth.users NOT NULL), `service_type` (text NOT NULL), `description` (text), `status` (text default 'pending'), `created_at` (timestamptz default now())
-- **projects** — `id` (uuid PK), `user_id` (uuid FK auth.users NOT NULL), `quote_id` (uuid FK quotes, nullable), `title` (text NOT NULL), `description` (text), `status` (text default 'in_progress'), `start_date` (date), `end_date` (date), `created_at` (timestamptz default now())
+### Politicas afetadas
 
-### Trigger
-- Funcao `handle_new_user()` que cria automaticamente um registro em `profiles` quando um usuario se cadastra
-- Trigger `on_auth_user_created` em `auth.users` AFTER INSERT
+**profiles (3 politicas):**
+- SELECT, UPDATE, INSERT — adicionar `TO authenticated`
 
-### RLS
-- Habilitar RLS nas 3 tabelas
-- Politicas: usuarios so veem/editam/deletam seus proprios registros (`auth.uid() = user_id`)
-- INSERT: apenas usuarios autenticados, com `WITH CHECK (auth.uid() = user_id)`
+**quotes (4 politicas):**
+- SELECT, INSERT, UPDATE, DELETE — adicionar `TO authenticated`
 
----
+**projects (4 politicas):**
+- SELECT, INSERT, UPDATE, DELETE — adicionar `TO authenticated`
 
-## 2. Contexto de Autenticacao
+## Migracao SQL
 
-### `src/contexts/AuthContext.tsx`
-- Cria contexto React com `user`, `session`, `loading`, `signOut`
-- Usa `onAuthStateChange` para monitorar sessao (configurado ANTES de `getSession`)
-- Exporta hook `useAuth()`
+Uma unica migracao que:
 
-### `src/components/ProtectedRoute.tsx`
-- Wrapper que redireciona para `/auth` se usuario nao estiver logado
-- Mostra loading spinner enquanto verifica sessao
+```text
+-- Drop all existing policies
+DROP POLICY "Users can view own profile" ON public.profiles;
+DROP POLICY "Users can update own profile" ON public.profiles;
+DROP POLICY "Users can insert own profile" ON public.profiles;
 
----
+DROP POLICY "Users can view own quotes" ON public.quotes;
+DROP POLICY "Users can insert own quotes" ON public.quotes;
+DROP POLICY "Users can update own quotes" ON public.quotes;
+DROP POLICY "Users can delete own quotes" ON public.quotes;
 
-## 3. Paginas
+DROP POLICY "Users can view own projects" ON public.projects;
+DROP POLICY "Users can insert own projects" ON public.projects;
+DROP POLICY "Users can update own projects" ON public.projects;
+DROP POLICY "Users can delete own projects" ON public.projects;
 
-### `/auth` — `src/pages/Auth.tsx`
-- Tabs: **Login** e **Cadastro**
-- Login: email + senha, botao "Entrar", link "Esqueci minha senha"
-- Cadastro: nome, email, senha, botao "Criar Conta"
-- `signUp` com `emailRedirectTo: window.location.origin`
-- `resetPasswordForEmail` com `redirectTo` para `/reset-password`
-- Redireciona para `/dashboard` se ja logado
+-- Recreate with TO authenticated
+CREATE POLICY "Users can view own profile" ON public.profiles
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can update own profile" ON public.profiles
+  FOR UPDATE TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own profile" ON public.profiles
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
 
-### `/reset-password` — `src/pages/ResetPassword.tsx`
-- Formulario para nova senha
-- Verifica `type=recovery` no hash da URL
-- Chama `updateUser({ password })`
+CREATE POLICY "Users can view own quotes" ON public.quotes
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own quotes" ON public.quotes
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own quotes" ON public.quotes
+  FOR UPDATE TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own quotes" ON public.quotes
+  FOR DELETE TO authenticated USING (auth.uid() = user_id);
 
-### `/dashboard` — `src/pages/Dashboard.tsx`
-- Rota protegida via `ProtectedRoute`
-- Header com nome do usuario e botao de logout
-- Tabs usando componente Tabs do shadcn:
-  - **Orcamentos** — lista de orcamentos do usuario + botao para solicitar novo
-  - **Projetos** — lista de projetos com status
-- Dados carregados via `@tanstack/react-query` com queries ao Supabase
+CREATE POLICY "Users can view own projects" ON public.projects
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own projects" ON public.projects
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own projects" ON public.projects
+  FOR UPDATE TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own projects" ON public.projects
+  FOR DELETE TO authenticated USING (auth.uid() = user_id);
+```
 
----
+## Impacto
 
-## 4. Atualizacoes Existentes
+- Zero impacto na funcionalidade existente (usuarios logados continuam acessando normalmente)
+- Elimina qualquer possibilidade de acesso pelo role `anon`
+- Resolve os 2 alertas de seguranca reportados
 
-### `src/App.tsx`
-- Envolver app com `AuthProvider`
-- Adicionar rotas: `/auth`, `/dashboard`, `/reset-password`
-- Dashboard envolvido em `ProtectedRoute`
+## Arquivos
 
-### `src/components/Navbar.tsx`
-- Adicionar botao "Entrar" / "Meu Painel" condicional baseado na sessao
-- Se logado: botao "Meu Painel" linka para `/dashboard`
-- Se nao logado: botao "Entrar" linka para `/auth`
+| Acao | Arquivo |
+|------|---------|
+| SQL | Nova migracao para recriar politicas RLS com `TO authenticated` |
 
----
-
-## Arquivos a Criar/Editar
-
-| Acao   | Arquivo |
-|--------|---------|
-| Criar  | `src/contexts/AuthContext.tsx` |
-| Criar  | `src/components/ProtectedRoute.tsx` |
-| Criar  | `src/pages/Auth.tsx` |
-| Criar  | `src/pages/ResetPassword.tsx` |
-| Criar  | `src/pages/Dashboard.tsx` |
-| Editar | `src/App.tsx` |
-| Editar | `src/components/Navbar.tsx` |
-| SQL    | Migracao: profiles + quotes + projects + trigger + RLS |
-
----
-
-## Detalhes Tecnicos
-
-- Nenhuma biblioteca nova necessaria (shadcn Tabs, react-router-dom e @tanstack/react-query ja estao instalados)
-- Supabase Auth ja esta disponivel via `supabase.auth`
-- Tipos do Supabase serao atualizados automaticamente apos a migracao
-- Todas as queries usam `supabase.from('table').select()` com filtro automatico via RLS
+Nenhuma alteracao no codigo frontend e necessaria.
