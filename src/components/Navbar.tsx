@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { label: "Serviços", href: "#servicos" },
@@ -14,6 +15,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -28,7 +30,7 @@ const Navbar = () => {
       }`}
     >
       <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-8">
-        <a href="#" className="font-display text-xl font-bold tracking-tight text-foreground">
+        <a href="/" className="font-display text-xl font-bold tracking-tight text-foreground">
           Vincere<span className="text-primary">Tech</span>
         </a>
 
@@ -46,11 +48,22 @@ const Navbar = () => {
           ))}
         </ul>
 
-        <a href="#cta" className="hidden md:inline-flex">
-          <Button size="sm" className="font-display font-semibold">
-            Solicitar Orçamento
-          </Button>
-        </a>
+        <div className="hidden md:flex items-center gap-3">
+          {user ? (
+            <a href="/dashboard">
+              <Button size="sm" className="font-display font-semibold">Meu Painel</Button>
+            </a>
+          ) : (
+            <>
+              <a href="/auth">
+                <Button size="sm" variant="ghost" className="font-display font-semibold">Entrar</Button>
+              </a>
+              <a href="#cta">
+                <Button size="sm" className="font-display font-semibold">Solicitar Orçamento</Button>
+              </a>
+            </>
+          )}
+        </div>
 
         {/* Mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
@@ -72,11 +85,20 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <a href="#cta" onClick={() => setOpen(false)}>
-                <Button className="w-full font-display font-semibold">
-                  Solicitar Orçamento
-                </Button>
-              </a>
+              {user ? (
+                <a href="/dashboard" onClick={() => setOpen(false)}>
+                  <Button className="w-full font-display font-semibold">Meu Painel</Button>
+                </a>
+              ) : (
+                <>
+                  <a href="/auth" onClick={() => setOpen(false)}>
+                    <Button variant="outline" className="w-full font-display font-semibold">Entrar</Button>
+                  </a>
+                  <a href="#cta" onClick={() => setOpen(false)}>
+                    <Button className="w-full font-display font-semibold">Solicitar Orçamento</Button>
+                  </a>
+                </>
+              )}
             </div>
           </SheetContent>
         </Sheet>
