@@ -3,6 +3,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const navLinks = [
   { label: "Serviços", href: "#servicos" },
@@ -16,7 +17,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
-
+  const { isAdmin } = useIsAdmin();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
@@ -49,6 +50,11 @@ const Navbar = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
+          {isAdmin && (
+            <a href="/admin">
+              <Button size="sm" variant="outline" className="font-display font-semibold">Admin</Button>
+            </a>
+          )}
           {user ? (
             <a href="/dashboard">
               <Button size="sm" className="font-display font-semibold">Meu Painel</Button>
@@ -85,6 +91,11 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
+              {isAdmin && (
+                <a href="/admin" onClick={() => setOpen(false)}>
+                  <Button variant="outline" className="w-full font-display font-semibold">Admin</Button>
+                </a>
+              )}
               {user ? (
                 <a href="/dashboard" onClick={() => setOpen(false)}>
                   <Button className="w-full font-display font-semibold">Meu Painel</Button>
