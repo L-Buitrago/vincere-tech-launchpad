@@ -1,59 +1,131 @@
 
+# Plano de Implementacao — Vincere Tech Backend
 
-# Vincere Tech — Site Institucional
+## Visao Geral
 
-## Visão Geral
-Site institucional moderno, responsivo e single-page para a Vincere Tech, empresa de soluções de software. Design minimalista com paleta azul escuro (#0B1C2D) e prata (#C0C0C0), tipografia elegante e estilo tecnológico sofisticado.
-
----
-
-## Seções do Site
-
-### 1. Hero Section
-- Fundo escuro com elementos visuais abstratos de tecnologia (gradientes, padrões geométricos/circuitos via CSS)
-- Título impactante: *"Transformamos empresas através da tecnologia."*
-- Subtítulo descritivo
-- Dois botões CTA: **Solicitar Orçamento** e **Conhecer Soluções**
-- Animações suaves de entrada
-
-### 2. Nossos Serviços
-- 4 cards modernos com ícones (Lucide icons) e hover effects
-- Agentes de IA, Controle Financeiro, Softwares Sob Medida, Automação de Processos
-- Layout em grid responsivo (2x2 desktop, 1 coluna mobile)
-
-### 3. Sobre a Vincere Tech
-- Seção elegante com texto institucional sobre a missão da empresa
-- Layout com destaque visual, possível uso de imagem ou ícone decorativo
-
-### 4. Quem Somos (Equipe)
-- 3 cards para Nathan, Luis e Ryan com espaço para foto (avatar placeholder), nome, cargo e descrição profissional
-- Textos institucionais focados em visão, inovação e resultado
-
-### 5. Diferenciais
-- 5 itens com ícones de check: Tecnologia Moderna, Soluções Escaláveis, Foco em Resultado, Atendimento Personalizado, Inovação Constante
-- Layout visual limpo e impactante
-
-### 6. Como Funciona
-- 4 passos em timeline/stepper visual: Diagnóstico → Planejamento → Desenvolvimento → Implementação e Suporte
-- Numeração e ícones para cada etapa
-
-### 7. Call To Action Final
-- Seção de destaque com fundo contrastante
-- *"Pronto para transformar sua empresa?"*
-- Botão **Solicitar Proposta**
-
-### 8. Rodapé
-- Logo/nome Vincere Tech © 2026
-- Links de contato, redes sociais, email
-- Links para Termos e Privacidade
+Adicionar autenticacao por email/senha, painel do usuario com pedidos (orcamentos + projetos), chatbot de IA, analise de dados com IA, pagamentos via Stripe (unico + assinatura), notificacoes por email e tarefas agendadas.
 
 ---
 
-## Design & UX
-- **Navegação fixa** no topo com links âncora para cada seção e menu hamburger no mobile
-- **Scroll suave** entre seções
-- **Animações de entrada** (fade-in/slide-up) ao rolar a página
-- **Paleta**: Azul escuro (#0B1C2D) como fundo principal, Prata (#C0C0C0) como acento, branco para textos
-- **100% responsivo** — desktop, tablet e mobile
-- Sem necessidade de backend — site puramente frontend/estático
+## 1. Autenticacao (Email e Senha)
 
+**Tabelas no Supabase:**
+- `profiles` — id (FK auth.users), full_name, avatar_url, phone, created_at
+- Trigger para criar perfil automaticamente ao registrar
+
+**Paginas:**
+- `/auth` — formulario de login e cadastro (tabs)
+- `/dashboard` — painel do usuario (rota protegida)
+- `/reset-password` — redefinicao de senha
+
+**Componentes:**
+- `AuthProvider` com contexto de sessao usando `onAuthStateChange`
+- `ProtectedRoute` wrapper para rotas autenticadas
+- Botao de login/logout no Navbar
+
+---
+
+## 2. Pedidos (Orcamentos + Projetos)
+
+**Tabelas:**
+- `quotes` — id, user_id, service_type, description, status (pending/approved/rejected), created_at
+- `projects` — id, user_id, quote_id (opcional), title, description, status (in_progress/completed/paused), start_date, end_date, created_at
+
+**RLS:** usuarios veem apenas seus proprios registros.
+
+**No Dashboard:**
+- Aba "Orcamentos" — listar, solicitar novo orcamento
+- Aba "Projetos" — listar projetos com status e progresso
+
+---
+
+## 3. Chatbot de IA (Atendimento)
+
+**Edge Function:** `chat` — usa Lovable AI Gateway (google/gemini-3-flash-preview)
+- Prompt de sistema configurado como assistente da Vincere Tech
+- Streaming SSE para respostas em tempo real
+- Tratamento de erros 429/402
+
+**Frontend:**
+- Componente de chat flutuante (widget no canto inferior direito)
+- Renderizacao de markdown com react-markdown
+- Historico de conversa na sessao
+
+---
+
+## 4. Analise de Dados com IA
+
+**Edge Function:** `analyze-data` — recebe dados do usuario e retorna insights
+- Analisa metricas de projetos e orcamentos do usuario
+- Retorna resumo e sugestoes via Lovable AI Gateway
+
+**No Dashboard:**
+- Aba "Insights" — mostra analise gerada pela IA sobre seus projetos/orcamentos
+- Graficos com Recharts para visualizacao
+
+---
+
+## 5. Pagamentos com Stripe
+
+**Integracao:**
+- Habilitar Stripe via ferramenta integrada do Lovable
+- Suportar pagamento unico (por projeto) e assinaturas mensais
+
+**Edge Functions:**
+- `create-checkout` — cria sessao de checkout Stripe
+- `stripe-webhook` — processa eventos do Stripe (pagamento confirmado, assinatura atualizada)
+
+**Tabela:**
+- `payments` — id, user_id, stripe_session_id, amount, status, type (one_time/subscription), created_at
+
+**No Dashboard:**
+- Aba "Pagamentos" — historico e status
+- Botoes para pagar projeto ou assinar plano
+
+---
+
+## 6. Notificacoes por Email
+
+**Emails de autenticacao:**
+- Templates customizados via `scaffold_auth_email_templates` (confirmacao, reset de senha)
+- Estilizados com a identidade visual da Vincere Tech (azul escuro + prata)
+
+**Emails transacionais (orcamento aprovado, projeto atualizado):**
+- Edge function `send-notification` usando Lovable AI Gateway ou servico externo
+- Disparados por triggers no banco ou chamadas da aplicacao
+
+---
+
+## 7. Tarefas Agendadas (Cron)
+
+**Extensoes:** Habilitar `pg_cron` e `pg_net`
+
+**Jobs agendados:**
+- Verificar orcamentos pendentes ha mais de 7 dias e enviar lembrete
+- Atualizar status de projetos com prazo vencido
+- Gerar relatorio semanal de insights por IA
+
+**Implementacao:** SQL cron jobs chamando edge functions via `net.http_post`
+
+---
+
+## Ordem de Implementacao
+
+1. Autenticacao + Profiles (base para tudo)
+2. Tabelas de quotes e projects + Dashboard
+3. Chatbot de IA (edge function + widget)
+4. Analise de dados com IA
+5. Stripe (habilitar + checkout + webhook)
+6. Email templates customizados
+7. Cron jobs para tarefas agendadas
+
+---
+
+## Detalhes Tecnicos
+
+- **Banco:** 4 tabelas novas (profiles, quotes, projects, payments) com RLS
+- **Edge Functions:** 4-5 funcoes (chat, analyze-data, create-checkout, stripe-webhook, send-notification)
+- **Rotas:** /auth, /dashboard, /reset-password
+- **Bibliotecas novas:** react-markdown (para chatbot)
+- **Stripe:** habilitado via ferramenta integrada do Lovable
+- **Cron:** pg_cron + pg_net para agendamento
