@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, forwardRef } from "react";
 import { Bot, X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +12,9 @@ function generateSessionId() {
   return crypto.randomUUID();
 }
 
-const ChatWidget = () => {
+const ALLOWED_MARKDOWN_ELEMENTS = ['p', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'br', 'h1', 'h2', 'h3'];
+
+const ChatWidget = forwardRef<HTMLDivElement>((_props, ref) => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -166,7 +168,7 @@ const ChatWidget = () => {
   };
 
   return (
-    <>
+    <div ref={ref}>
       {/* Floating buttons */}
       {!open && (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
@@ -221,7 +223,7 @@ const ChatWidget = () => {
                 >
                   {msg.role === "assistant" ? (
                     <div className="prose prose-sm prose-invert max-w-none [&>p]:m-0 [&>ul]:m-0 [&>ol]:m-0">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown allowedElements={ALLOWED_MARKDOWN_ELEMENTS} unwrapDisallowed>{msg.content}</ReactMarkdown>
                     </div>
                   ) : (
                     msg.content
@@ -269,8 +271,10 @@ const ChatWidget = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
-};
+});
+
+ChatWidget.displayName = "ChatWidget";
 
 export default ChatWidget;

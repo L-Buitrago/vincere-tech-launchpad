@@ -1,6 +1,7 @@
+import { forwardRef } from "react";
 import { Mail, Instagram } from "lucide-react";
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_props, ref) => {
   return (
     <footer className="border-t border-border py-12">
       <div className="container mx-auto px-4 md:px-8">
@@ -34,6 +35,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;
