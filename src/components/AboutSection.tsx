@@ -11,7 +11,7 @@ const AboutSection = () => {
           </div>
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Sobre Nós</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Tecnologia Personalizada</h2>
-          <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+          <p className="text-muted-foreground text-xl leading-relaxed mb-6">
             Geramos valor às empresas otimizando processos e tomadas de decisão das empresas através de automação de IA,
             relatórios e softwares personalizados, exclusivamente, para o seu negócio.
           </p>
