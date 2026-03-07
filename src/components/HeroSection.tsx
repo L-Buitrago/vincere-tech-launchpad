@@ -20,7 +20,7 @@ const HeroSection = () => {
         </h1>
 
         <p
-          className="text-lg md:text-3xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up"
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up"
           style={{ animationDelay: "0.15s" }}
         >
           A Vincere Tech desenvolve softwares e agentes de inteligência artificial que ajudam empresas a operar com mais
