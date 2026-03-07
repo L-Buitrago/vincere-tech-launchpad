@@ -16,16 +16,21 @@ const HeroSection = () => {
         </div>
 
         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 animate-fade-in-up">
-          Transformamos empresas{" "}
-          <span className="text-gradient">através da tecnologia.</span>
+          Tecnologia que trabalha <span className="text-gradient">para o seu négocio.</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-          Soluções inteligentes em software, automação e inteligência artificial
-          para acelerar o crescimento do seu negócio.
+        <p
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up"
+          style={{ animationDelay: "0.15s" }}
+        >
+          Soluções inteligentes em software, automação e inteligência artificial para acelerar o crescimento do seu
+          negócio.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+        <div
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
+          style={{ animationDelay: "0.3s" }}
+        >
           <a href="#cta">
             <Button size="lg" className="font-display font-semibold text-base px-8 gap-2">
               Solicitar Orçamento
