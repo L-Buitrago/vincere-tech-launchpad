@@ -12,13 +12,10 @@ const AboutSection = () => {
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Sobre Nós</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Tecnologia Personalizada</h2>
           <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-            A Vincere Tech nasceu com o propósito de ajudar empresas a evoluírem através da tecnologia. Nosso foco é
-            desenvolver soluções modernas, eficientes e escaláveis que geram resultados reais.
+            Geramos valor às empresas otimizando processos e tomadas de decisão das empresas através de automação de IA,
+            relatórios e softwares personalizados, exclusivamente, para o seu negócio.
           </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Combinamos expertise técnica com visão estratégica para entregar softwares que transformam processos,
-            reduzem custos e abrem novas oportunidades de crescimento para nossos clientes.
-          </p>
+          <p className="text-muted-foreground leading-relaxed"></p>
         </div>
       </div>
     </section>
