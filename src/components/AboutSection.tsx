@@ -10,7 +10,7 @@ const AboutSection = () => {
             <Target className="h-7 w-7" />
           </div>
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Sobre Nós</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Tecnologia Exclusiva</h2>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Tecnologia Personalizada</h2>
           <p className="text-muted-foreground text-lg leading-relaxed mb-6">
             A Vincere Tech nasceu com o propósito de ajudar empresas a evoluírem através da tecnologia. Nosso foco é
             desenvolver soluções modernas, eficientes e escaláveis que geram resultados reais.
