@@ -23,8 +23,8 @@ const HeroSection = () => {
           className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 animate-fade-in-up"
           style={{ animationDelay: "0.15s" }}
         >
-          A Vincere Tech desenvolve softwares e agentes de inteligência artificial que ajudam empresas a operar com mais
-          eficiência e escalar resultados.
+          A Vincere Tech desenvolve softwares e automações de inteligência artificial que otimizam processos e tomadas
+          de decisão.
         </p>
 
         <div
