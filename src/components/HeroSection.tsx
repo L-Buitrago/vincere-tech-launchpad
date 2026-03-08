@@ -16,7 +16,7 @@ const HeroSection = () => {
         </div>
 
         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 animate-fade-in-up">
-          Tecnologia que trabalha <span className="text-gradient">para o seu négocio.</span>
+          Tecnologia que potencializa <span className="text-gradient">a perfomance do seu negócio.</span>
         </h1>
 
         <p
