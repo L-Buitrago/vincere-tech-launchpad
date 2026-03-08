@@ -16,7 +16,7 @@ const DifferentialsSection = () => {
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Diferenciais</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Por que escolher a Vincere Tech?
+            Por que escolher a Vincere?
           </h2>
         </div>
 

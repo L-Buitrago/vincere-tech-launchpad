@@ -8,9 +8,9 @@ const Footer = forwardRef<HTMLElement>((_props, ref) => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">
             <p className="font-display text-lg font-bold mb-1">
-              Vincere<span className="text-primary">Tech</span>
+              Vincere
             </p>
-            <p className="text-muted-foreground text-sm">© 2026 Vincere Tech. Todos os direitos reservados.</p>
+            <p className="text-muted-foreground text-sm">© 2026 Vincere. Todos os direitos reservados.</p>
           </div>
 
           <div className="flex items-center gap-6">
