@@ -115,7 +115,7 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="font-display text-2xl">
-            Vincere<span className="text-primary">Tech</span>
+            Vincere
           </CardTitle>
           <CardDescription>Acesse sua conta ou crie uma nova</CardDescription>
         </CardHeader>

@@ -32,7 +32,7 @@ const Navbar = () => {
     >
       <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-8">
         <a href="/" className="font-display text-xl font-bold tracking-tight text-foreground">
-          Vincere<span className="text-primary">Tech</span>
+          Vincere
         </a>
 
         {/* Desktop */}
