@@ -131,7 +131,7 @@ const Dashboard = () => {
 
       {/* Content */}
       <main className="container mx-auto py-8 px-4 md:px-8">
-        <h1 className="text-3xl font-display font-bold mb-6">Meu Painel</h1>
+        <h1 className="text-3xl font-display font-bold mb-6">Meu Dashboard</h1>
 
         <Tabs defaultValue="quotes">
           <TabsList>

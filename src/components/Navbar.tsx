@@ -56,8 +56,8 @@ const Navbar = () => {
             </a>
           )}
           {user ? (
-            <a href="/dashboard">
-              <Button size="sm" className="font-display font-semibold">Meu Painel</Button>
+            <a href="/plataforma">
+              <Button size="sm" className="font-display font-semibold">Meu Dashboard</Button>
             </a>
           ) : (
             <>
@@ -97,8 +97,8 @@ const Navbar = () => {
                 </a>
               )}
               {user ? (
-                <a href="/dashboard" onClick={() => setOpen(false)}>
-                  <Button className="w-full font-display font-semibold">Meu Painel</Button>
+                <a href="/plataforma" onClick={() => setOpen(false)}>
+                  <Button className="w-full font-display font-semibold">Meu Dashboard</Button>
                 </a>
               ) : (
                 <>
