@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
-import { Search, Filter, X, MessageCircle, Eye, Trash2, Send, Plus, Upload } from "lucide-react";
+import { Search, Filter, X, MessageCircle, Eye, Trash2, Send, Plus, Upload, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, type Client } from "@/data/platformMockData";
@@ -24,6 +24,7 @@ type Customer = {
   status: string;
   total_spent: number;
   last_order_date: string | null;
+  due_date: string | null;
   created_at: string;
 };
 
@@ -42,6 +43,7 @@ export default function PlatformClients() {
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newStatus, setNewStatus] = useState("Lead");
+  const [newDueDate, setNewDueDate] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
   const addClient = async () => {
@@ -55,6 +57,7 @@ export default function PlatformClients() {
       email: newEmail,
       phone: newPhone || null,
       status: newStatus,
+      due_date: newDueDate || null,
       org_id: orgId || null,
     });
     setIsAdding(false);
@@ -62,7 +65,7 @@ export default function PlatformClients() {
       toast({ title: "Erro ao adicionar", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "\u2705 Cliente adicionado!", description: `${newName} foi cadastrado.` });
-      setNewName(""); setNewEmail(""); setNewPhone(""); setNewStatus("Lead");
+      setNewName(""); setNewEmail(""); setNewPhone(""); setNewStatus("Lead"); setNewDueDate("");
       setShowAddModal(false);
       queryClient.invalidateQueries({ queryKey: ['customers'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
@@ -86,6 +89,7 @@ export default function PlatformClients() {
         email: cols[1] || `import_${Date.now()}@temp.csv`,
         phone: cols[2] || null,
         status: cols[3] || 'Lead',
+        due_date: cols[4] || null,
         org_id: orgId || null,
       };
     });
@@ -215,6 +219,10 @@ export default function PlatformClients() {
                   <option value="Cancelado">Cancelado</option>
                 </select>
               </div>
+              <div>
+                <label className="text-xs text-[#888] mb-1 block">Data de Vencimento</label>
+                <Input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="bg-white/5 border-white/10 text-white" />
+              </div>
               <Button
                 className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold"
                 onClick={addClient}
@@ -263,6 +271,7 @@ export default function PlatformClients() {
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Email</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Produto</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Data</th>
+                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Vencimento</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Valor</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Status</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Ações</th>
@@ -298,6 +307,17 @@ export default function PlatformClients() {
                       <td className="px-5 py-3.5 text-[#ccc]">{c.status}</td> {/* Assuming initial status is the same as current status for now */}
                       <td className="px-5 py-3.5 text-[#888] text-xs">
                         {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {c.due_date ? (() => {
+                          const isOverdue = new Date(c.due_date) < new Date() && c.status === 'Cliente Ativo';
+                          return (
+                            <span className={`text-xs flex items-center gap-1 ${isOverdue ? 'text-red-400 font-semibold' : 'text-[#888]'}`}>
+                              {isOverdue && <AlertTriangle className="w-3 h-3" />}
+                              {new Date(c.due_date).toLocaleDateString("pt-BR")}
+                            </span>
+                          );
+                        })() : <span className="text-xs text-[#555]">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.total_spent || 0)}</td>
                       <td className="px-5 py-3.5">
