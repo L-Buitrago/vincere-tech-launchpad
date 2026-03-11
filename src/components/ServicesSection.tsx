@@ -1,6 +1,16 @@
-import { Bot, Wallet, Code2, Cog } from "lucide-react";
+import { Bot, Wallet, Code2, Cog, Layout, ShoppingBag } from "lucide-react";
 
 const services = [
+  {
+    icon: Layout,
+    title: "Sites e Landing Pages",
+    description: "Criação de páginas modernas focadas em alta conversão de leads e vendas.",
+  },
+  {
+    icon: ShoppingBag,
+    title: "E-commerce e Lojas Virtuais",
+    description: "Plataformas robustas de vendas com integrações de pagamento e frete.",
+  },
   {
     icon: Bot,
     title: "Agentes de IA Empresariais",
@@ -37,7 +47,7 @@ const ServicesSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {services.map((service) => (
             <div
               key={service.title}

@@ -6,6 +6,7 @@ import TeamSection from "@/components/TeamSection";
 import DifferentialsSection from "@/components/DifferentialsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import CTASection from "@/components/CTASection";
+import PricingSection from "@/components/PricingSection";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 
@@ -20,6 +21,7 @@ const Index = () => {
         <TeamSection />
         <DifferentialsSection />
         <HowItWorksSection />
+        <PricingSection />
         <CTASection />
       </main>
       <Footer />

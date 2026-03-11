@@ -16,8 +16,14 @@ const CTASection = () => {
         <p className="text-muted-foreground text-lg mb-10 max-w-xl mx-auto">
           Entre em contato e descubra como a tecnologia pode acelerar seus resultados.
         </p>
-        <Button size="lg" className="font-display font-semibold text-base px-10 gap-2">
-          Solicitar Proposta
+        <Button
+          size="lg"
+          className="font-display font-semibold text-base px-10 gap-2"
+          onClick={() => {
+            document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
+          Ver Nossos Pacotes
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
