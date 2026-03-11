@@ -7,7 +7,6 @@ import DifferentialsSection from "@/components/DifferentialsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import CTASection from "@/components/CTASection";
 import PricingSection from "@/components/PricingSection";
-import PlatformPricingSection from "@/components/PlatformPricingSection";
 import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 
@@ -23,7 +22,6 @@ const Index = () => {
         <DifferentialsSection />
         <HowItWorksSection />
         <PricingSection />
-        <PlatformPricingSection />
         <CTASection />
       </main>
       <Footer />
