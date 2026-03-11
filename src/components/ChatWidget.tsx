@@ -55,6 +55,7 @@ const ChatWidget = forwardRef<HTMLDivElement>((_props, ref) => {
     customer_phone?: string;
     customer_email?: string;
   }) => {
+    // 1. Save to old contact_requests table
     await supabase.from("contact_requests" as any).insert({
       session_id: sessionId,
       service_type: data.service_type,
@@ -64,6 +65,16 @@ const ChatWidget = forwardRef<HTMLDivElement>((_props, ref) => {
       message: messages.map(m => `${m.role}: ${m.content}`).join("\n"),
       status: "pending",
     });
+
+    // 2. Save to new CRM customers table as a Lead
+    if (data.customer_email && data.customer_name) {
+      await supabase.from("customers" as any).upsert({
+        name: data.customer_name,
+        email: data.customer_email,
+        phone: data.customer_phone || null,
+        status: "Lead"
+      }, { onConflict: 'email' });
+    }
   };
 
   const send = async () => {

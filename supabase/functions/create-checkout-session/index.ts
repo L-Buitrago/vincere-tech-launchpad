@@ -43,7 +43,7 @@ serve(async (req) => {
         },
       ],
       mode: 'subscription',
-      return_url: `${req.headers.get("origin")}/plataforma/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `${req.headers.get("origin") || 'https://vincere-tecnologia.lovable.app'}/plataforma/dashboard?session_id={CHECKOUT_SESSION_ID}`,
     })
 
     return new Response(
@@ -54,11 +54,13 @@ serve(async (req) => {
       }
     )
   } catch (err) {
+    const error = err as Error;
+    console.error("Stripe Error:", error.message);
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 200, // Changed to 200 so the frontend fetch doesn't throw a generic HttpError
       }
     )
   }
