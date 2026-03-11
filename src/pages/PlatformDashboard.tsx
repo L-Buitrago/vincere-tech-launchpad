@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
@@ -14,6 +15,8 @@ import { ptBR } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { CheckCircle2 } from "lucide-react";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -49,7 +52,23 @@ type Customer = {
 export default function PlatformDashboard() {
   const [activePeriod, setActivePeriod] = useState("Todos");
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showSuccess, setShowSuccess] = useState(false);
 
+  // Detect post-payment return from Stripe
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    if (sessionId) {
+      setShowSuccess(true);
+      toast({
+        title: "🎉 Pagamento confirmado!",
+        description: "Sua assinatura foi ativada com sucesso. Bem-vindo à Vincere!",
+      });
+      // Clean URL without reloading
+      searchParams.delete('session_id');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   // Fetch all customers
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['dashboard-customers'],
@@ -107,6 +126,24 @@ export default function PlatformDashboard() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
+      {/* Payment Success Banner */}
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 rounded-2xl bg-platform-green/10 border border-platform-green/20 flex items-center gap-4"
+        >
+          <CheckCircle2 className="w-8 h-8 text-platform-green shrink-0" />
+          <div className="flex-1">
+            <h3 className="text-white font-semibold">Pagamento Confirmado! 🎉</h3>
+            <p className="text-sm text-[#aaa]">Sua assinatura foi ativada com sucesso. Aproveite todos os recursos da plataforma Vincere!</p>
+          </div>
+          <button onClick={() => setShowSuccess(false)} className="text-[#888] hover:text-white text-sm px-3 py-1 rounded-lg hover:bg-white/5 transition-colors">
+            Fechar
+          </button>
+        </motion.div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
