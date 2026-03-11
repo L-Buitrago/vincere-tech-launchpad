@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
 import {
   TrendingUp, TrendingDown, DollarSign, Users,
@@ -54,6 +55,7 @@ export default function PlatformDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [searchParams, setSearchParams] = useSearchParams();
   const [showSuccess, setShowSuccess] = useState(false);
+  const { orgId, isAdmin } = useOrganization();
 
   // Detect post-payment return from Stripe
   useEffect(() => {
@@ -64,20 +66,26 @@ export default function PlatformDashboard() {
         title: "🎉 Pagamento confirmado!",
         description: "Sua assinatura foi ativada com sucesso. Bem-vindo à Vincere!",
       });
-      // Clean URL without reloading
       searchParams.delete('session_id');
       setSearchParams(searchParams, { replace: true });
     }
   }, [searchParams, setSearchParams]);
-  // Fetch all customers
+
+  // Fetch customers filtered by org (admins see all)
   const { data: customers = [], isLoading } = useQuery({
-    queryKey: ['dashboard-customers'],
+    queryKey: ['dashboard-customers', orgId, isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('customers' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
+      // Non-admin users only see their org's customers
+      if (!isAdmin && orgId) {
+        query = query.eq('org_id', orgId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as any[] as Customer[];
     }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
 import { Search, Filter, X, MessageCircle, Eye, Ban, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,15 +33,21 @@ export default function PlatformClients() {
   const [selected, setSelected] = useState<Customer | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 10;
+  const { orgId, isAdmin } = useOrganization();
 
   const { data: clients = [], isLoading } = useQuery({
-    queryKey: ['customers'],
+    queryKey: ['customers', orgId, isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('customers' as any)
         .select('*')
         .order('created_at', { ascending: false });
-      
+
+      if (!isAdmin && orgId) {
+        query = query.eq('org_id', orgId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as any[] as Customer[];
     }
