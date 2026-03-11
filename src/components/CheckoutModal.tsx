@@ -30,8 +30,9 @@ export function CheckoutModal({ isOpen, onClose, planName, priceAmount }: Checko
       })
       .then(({ data, error }) => {
         if (error || !data?.clientSecret) {
-          console.error("Stripe Checkout Error:", error);
-          toast.error("Falha ao abrir o checkout. Verifique as configurações do servidor.");
+          const errMsg = error?.message || data?.error || data?.message || "Servidor não retornou o client_secret";
+          console.error("Stripe Checkout Error:", error, data);
+          toast.error(`Falha ao abrir checkout: ${errMsg}`);
           setLoading(false);
           onClose();
           return;
@@ -41,7 +42,7 @@ export function CheckoutModal({ isOpen, onClose, planName, priceAmount }: Checko
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Erro desconhecido ao carregar checkout.");
+        toast.error("Erro ao comunicar com o servidor de pagamento.");
         setLoading(false);
         onClose();
       });

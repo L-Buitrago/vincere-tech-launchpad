@@ -53,7 +53,6 @@ export default function PlatformSidebar() {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-platform-green flex items-center justify-center text-black font-bold text-sm">V</div>
         {!collapsed && (
           <span className="text-base font-semibold text-white tracking-tight">Vincere</span>
         )}

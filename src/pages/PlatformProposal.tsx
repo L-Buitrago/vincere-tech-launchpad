@@ -72,7 +72,6 @@ export default function PlatformProposal() {
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-platform-green flex items-center justify-center text-black font-bold text-xs">V</div>
             <div>
               <p className="text-sm font-semibold text-white">Vincere Assistente</p>
               <p className="text-[10px] text-platform-green">Online</p>

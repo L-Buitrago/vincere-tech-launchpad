@@ -4,11 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   TrendingUp, TrendingDown, DollarSign, ShoppingCart,
-  Clock, XCircle, Calendar
+  Clock, XCircle, CalendarIcon
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/data/platformMockData";
 
@@ -33,6 +37,8 @@ const statusColors: Record<string, string> = {
 
 export default function PlatformDashboard() {
   const [activePeriod, setActivePeriod] = useState("Semana");
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  
   const m = dashboardMetrics;
   const totalChart = revenueChartData.reduce((s, d) => s + d.value, 0);
 
@@ -66,7 +72,7 @@ export default function PlatformDashboard() {
         .limit(8);
       
       if (error) throw error;
-      return data;
+      return data as any[];
     }
   });
 
@@ -92,10 +98,25 @@ export default function PlatformDashboard() {
               {p}
             </button>
           ))}
-          <Button variant="outline" size="sm" className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 hover:text-white h-8">
-            <Calendar className="w-3.5 h-3.5 mr-1.5" />
-            Calendário
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 hover:text-white h-8 font-normal">
+                <CalendarIcon className="w-3.5 h-3.5 mr-1.5" />
+                {date ? format(date, "PPP", { locale: ptBR }) : <span>Calendário</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(d) => {
+                  if (d) setDate(d);
+                  setActivePeriod("");
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
