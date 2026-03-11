@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, ArrowRight, ShieldCheck, Zap, Layout, Server, TrendingUp, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CheckoutModal } from "./CheckoutModal";
 
 const servicePackages = [
   {
@@ -106,7 +107,19 @@ const platformPlans = [
 
 const PricingSection = () => {
   const [activeTab, setActiveTab] = useState<'platform' | 'services'>('platform');
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedPlanName, setSelectedPlanName] = useState("");
+  const [selectedPlanPrice, setSelectedPlanPrice] = useState(0);
+
   const activePackages = activeTab === 'services' ? servicePackages : platformPlans;
+
+  const handleCheckout = (planName: string, priceText: string) => {
+    // Parser to convert "197" -> 197 or "1.997" -> 1997
+    const priceAmount = parseFloat(priceText.replace(/\./g, '').replace(',', '.'));
+    setSelectedPlanName(planName);
+    setSelectedPlanPrice(priceAmount);
+    setIsCheckoutOpen(true);
+  };
 
   return (
     <section id="pacotes" className="py-24 md:py-32 bg-secondary/30">
@@ -196,7 +209,7 @@ const PricingSection = () => {
                 className={`w-full gap-2 ${pkg.popular ? "h-12 text-base" : "h-11"}`}
                 onClick={() => {
                   if (activeTab === 'platform') {
-                    window.location.href = pkg.link;
+                    handleCheckout(pkg.name, pkg.price);
                   } else {
                     window.open(pkg.link, '_blank');
                   }
@@ -209,6 +222,13 @@ const PricingSection = () => {
           ))}
         </div>
       </div>
+
+      <CheckoutModal 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)} 
+        planName={selectedPlanName} 
+        priceAmount={selectedPlanPrice} 
+      />
     </section>
   );
 };
