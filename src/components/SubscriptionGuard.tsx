@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 
 const ADMIN_EMAILS = [
   "assasinghost910@gmail.com",
-  // Add more team emails here
+  "nathanwar03@gmail.com",
+  "ryanfernandosilva12@gmail.com",
 ];
 
 const SubscriptionGuard = ({ children }: { children: React.ReactNode }) => {
