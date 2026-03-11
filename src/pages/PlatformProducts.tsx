@@ -82,9 +82,9 @@ export default function PlatformProducts() {
             <PlanIcon className={`w-7 h-7 text-${plan.color}`} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white capitalize">Plano {currentPlan}</h2>
+            <h2 className="text-xl font-bold text-white capitalize">{isAdmin ? "Admin Vincere" : `Plano ${currentPlan}`}</h2>
             <p className="text-sm text-[#888]">
-              {isAdmin ? "Conta Admin — Acesso total" : org?.status === 'active' ? "Assinatura ativa" : "Sem assinatura"}
+              {isAdmin ? "Acesso total a todas as organizações" : org?.status === 'active' ? "Assinatura ativa" : "Sem assinatura"}
             </p>
           </div>
         </div>

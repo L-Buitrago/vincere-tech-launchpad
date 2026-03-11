@@ -66,14 +66,26 @@ const ChatWidget = forwardRef<HTMLDivElement>((_props, ref) => {
       status: "pending",
     });
 
-    // 2. Save to new CRM customers table as a Lead
-    if (data.customer_email && data.customer_name) {
-      await supabase.from("customers" as any).upsert({
-        name: data.customer_name,
-        email: data.customer_email,
-        phone: data.customer_phone || null,
-        status: "Lead"
-      }, { onConflict: 'email' });
+    // 2. Save to CRM customers table as a Lead
+    if (data.customer_name) {
+      if (data.customer_email) {
+        // Has email → upsert by email (avoids duplicates)
+        await supabase.from("customers" as any).upsert({
+          name: data.customer_name,
+          email: data.customer_email,
+          phone: data.customer_phone || null,
+          status: "Lead"
+        }, { onConflict: 'email' });
+      } else {
+        // No email yet → insert with a generated placeholder
+        const placeholderEmail = `lead_${sessionId.substring(0, 8)}@vincere.temp`;
+        await supabase.from("customers" as any).upsert({
+          name: data.customer_name,
+          email: placeholderEmail,
+          phone: data.customer_phone || null,
+          status: "Lead"
+        }, { onConflict: 'email' });
+      }
     }
   };
 
