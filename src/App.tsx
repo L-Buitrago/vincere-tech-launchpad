@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import SubscriptionGuard from "@/components/SubscriptionGuard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -58,10 +59,24 @@ const App = () => (
             {/* Platform SaaS */}
             <Route path="/plataforma" element={<PlatformLanding />} />
             <Route path="/plataforma/proposta" element={<PlatformProposal />} />
-            <Route 
+            {/* Payments page is accessible to any logged-in user (so they can subscribe) */}
+            <Route
+              path="/plataforma/pagamentos"
               element={
                 <ProtectedRoute>
                   <PlatformLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<PlatformPayments />} />
+            </Route>
+            {/* All other platform pages require an active subscription */}
+            <Route 
+              element={
+                <ProtectedRoute>
+                  <SubscriptionGuard>
+                    <PlatformLayout />
+                  </SubscriptionGuard>
                 </ProtectedRoute>
               }
             >
@@ -69,7 +84,6 @@ const App = () => (
               <Route path="/plataforma/clientes" element={<PlatformClients />} />
               <Route path="/plataforma/produtos" element={<PlatformProducts />} />
               <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
-              <Route path="/plataforma/pagamentos" element={<PlatformPayments />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
