@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
-import { Search, Filter, X, MessageCircle, Eye, Trash2, Send } from "lucide-react";
+import { Search, Filter, X, MessageCircle, Eye, Trash2, Send, Plus, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, type Client } from "@/data/platformMockData";
@@ -35,6 +35,70 @@ export default function PlatformClients() {
   const perPage = 10;
   const { orgId, isAdmin } = useOrganization();
   const queryClient = useQueryClient();
+
+  // New client modal state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newStatus, setNewStatus] = useState("Lead");
+  const [isAdding, setIsAdding] = useState(false);
+
+  const addClient = async () => {
+    if (!newName || !newEmail) {
+      toast({ title: "Preencha nome e email", variant: "destructive" });
+      return;
+    }
+    setIsAdding(true);
+    const { error } = await supabase.from('customers' as any).insert({
+      name: newName,
+      email: newEmail,
+      phone: newPhone || null,
+      status: newStatus,
+      org_id: orgId || null,
+    });
+    setIsAdding(false);
+    if (error) {
+      toast({ title: "Erro ao adicionar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "\u2705 Cliente adicionado!", description: `${newName} foi cadastrado.` });
+      setNewName(""); setNewEmail(""); setNewPhone(""); setNewStatus("Lead");
+      setShowAddModal(false);
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
+    }
+  };
+
+  const importCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length < 2) {
+      toast({ title: "Arquivo vazio ou inválido", variant: "destructive" });
+      return;
+    }
+    // Skip header row, parse each line
+    const rows = lines.slice(1).map(line => {
+      const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+      return {
+        name: cols[0] || 'Sem nome',
+        email: cols[1] || `import_${Date.now()}@temp.csv`,
+        phone: cols[2] || null,
+        status: cols[3] || 'Lead',
+        org_id: orgId || null,
+      };
+    });
+    const { error } = await supabase.from('customers' as any).insert(rows);
+    if (error) {
+      toast({ title: "Erro no import", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: `\u2705 ${rows.length} clientes importados!` });
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
+    }
+    e.target.value = '';
+  };
 
   const deleteClient = async (client: Customer) => {
     const confirmed = window.confirm(`Tem certeza que quer remover "${client.name}"?`);
@@ -90,7 +154,63 @@ export default function PlatformClients() {
           <h1 className="text-2xl font-bold text-white">Clientes</h1>
           <p className="text-sm text-[#888] mt-1">{filtered.length} clientes encontrados</p>
         </div>
+        <div className="flex gap-2">
+          <label className="cursor-pointer">
+            <input type="file" accept=".csv" className="hidden" onChange={importCSV} />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-[#ccc] hover:bg-white/5 transition-colors">
+              <Upload className="w-4 h-4" /> Importar CSV
+            </div>
+          </label>
+          <Button
+            className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
+            onClick={() => setShowAddModal(true)}
+          >
+            <Plus className="w-4 h-4" /> Novo Cliente
+          </Button>
+        </div>
       </div>
+
+      {/* Add Client Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white">Novo Cliente</h2>
+              <button onClick={() => setShowAddModal(false)} className="text-[#888] hover:text-white"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-[#888] mb-1 block">Nome *</label>
+                <Input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nome do cliente" className="bg-white/5 border-white/10 text-white" />
+              </div>
+              <div>
+                <label className="text-xs text-[#888] mb-1 block">Email *</label>
+                <Input value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="email@cliente.com" className="bg-white/5 border-white/10 text-white" />
+              </div>
+              <div>
+                <label className="text-xs text-[#888] mb-1 block">Telefone</label>
+                <Input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="(11) 99999-9999" className="bg-white/5 border-white/10 text-white" />
+              </div>
+              <div>
+                <label className="text-xs text-[#888] mb-1 block">Status</label>
+                <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm">
+                  <option value="Lead">Lead</option>
+                  <option value="Negociação">Negociação</option>
+                  <option value="Cliente Ativo">Cliente Ativo</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+              <Button
+                className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold"
+                onClick={addClient}
+                disabled={isAdding}
+              >
+                {isAdding ? "Salvando..." : "Salvar Cliente"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
