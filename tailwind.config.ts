@@ -60,6 +60,9 @@ export default {
           light: "hsl(var(--navy-light))",
           lighter: "hsl(var(--navy-lighter))",
         },
+        "platform-green": "#00C37F",
+        "platform-orange": "#FF8C00",
+        "platform-red": "#FF4444",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
