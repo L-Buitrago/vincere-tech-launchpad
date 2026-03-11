@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
-  TrendingUp, TrendingDown, DollarSign, ShoppingCart,
-  Clock, XCircle, CalendarIcon
+  TrendingUp, TrendingDown, DollarSign, Users,
+  Clock, UserPlus, CalendarIcon
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -14,10 +14,10 @@ import { ptBR } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/data/platformMockData";
 
-// Temporary mock data for charts/metrics until we build aggregations
-import { dashboardMetrics, revenueChartData } from "@/data/platformMockData";
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
 const periods = ["Ontem", "Hoje", "Semana", "Mês", "Ano", "Todos"];
 
 const fadeUp = {
@@ -28,53 +28,82 @@ const fadeUp = {
   }),
 };
 
-const statusColors: Record<string, string> = {
-  aprovado: "text-platform-green bg-platform-green/10",
-  pendente: "text-platform-orange bg-platform-orange/10",
-  recusado: "text-platform-red bg-platform-red/10",
-  estornado: "text-[#888] bg-white/5",
+const statusConfig: Record<string, { label: string; cls: string }> = {
+  "Cliente Ativo": { label: "Ativo", cls: "text-platform-green bg-platform-green/10" },
+  "Lead": { label: "Lead", cls: "text-platform-orange bg-platform-orange/10" },
+  "Negociação": { label: "Negociação", cls: "text-blue-400 bg-blue-400/10" },
+  "Cancelado": { label: "Cancelado", cls: "text-[#888] bg-white/5" },
+};
+
+type Customer = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  status: string;
+  total_spent: number;
+  last_order_date: string | null;
+  created_at: string;
 };
 
 export default function PlatformDashboard() {
-  const [activePeriod, setActivePeriod] = useState("Semana");
+  const [activePeriod, setActivePeriod] = useState("Todos");
   const [date, setDate] = useState<Date | undefined>(new Date());
-  
-  const m = dashboardMetrics;
-  const totalChart = revenueChartData.reduce((s, d) => s + d.value, 0);
+
+  // Fetch all customers
+  const { data: customers = [], isLoading } = useQuery({
+    queryKey: ['dashboard-customers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('customers' as any)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as any[] as Customer[];
+    }
+  });
+
+  // Compute real metrics
+  const totalClientes = customers.filter(c => c.status === 'Cliente Ativo').length;
+  const totalLeads = customers.filter(c => c.status === 'Lead').length;
+  const totalNegociacao = customers.filter(c => c.status === 'Negociação').length;
+  const totalReceita = customers.reduce((sum, c) => sum + (c.total_spent || 0), 0);
 
   const metrics = [
     {
-      label: "Total de Vendas", value: m.totalSales.value, change: m.totalSales.change,
-      icon: ShoppingCart, color: "platform-green", prefix: ""
+      label: "Clientes Ativos", value: totalClientes, change: 0,
+      icon: Users, color: "platform-green", prefix: ""
     },
     {
-      label: "Receita Total", value: formatCurrency(m.totalRevenue.value), change: m.totalRevenue.change,
+      label: "Receita Total", value: formatCurrency(totalReceita), change: 0,
       icon: DollarSign, color: "platform-green", prefix: ""
     },
     {
-      label: "Vendas Pendentes", value: m.pending.value, change: m.pending.change,
-      icon: Clock, color: "platform-orange", prefix: "", sub: "aguardando pagamento"
+      label: "Leads Capturados", value: totalLeads, change: 0,
+      icon: UserPlus, color: "platform-orange", prefix: "", sub: "pela Vi e formulários"
     },
     {
-      label: "Vendas Falhadas", value: m.failed.value, change: m.failed.change,
-      icon: XCircle, color: "platform-red", prefix: ""
+      label: "Em Negociação", value: totalNegociacao, change: 0,
+      icon: Clock, color: "platform-blue", prefix: ""
     },
   ];
 
-  // Fetch recent transactions
-  const { data: recentTransactions = [], isLoading } = useQuery({
-    queryKey: ['recent-transactions'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('date', { ascending: false })
-        .limit(8);
-      
-      if (error) throw error;
-      return data as any[];
-    }
-  });
+  // Build chart data from customers by grouping by day
+  const chartData = (() => {
+    const byDay: Record<string, number> = {};
+    customers.forEach(c => {
+      const day = new Date(c.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+      byDay[day] = (byDay[day] || 0) + (c.total_spent || 0);
+    });
+    return Object.entries(byDay)
+      .map(([date, value]) => ({ date, value }))
+      .slice(-11); // last 11 entries
+  })();
+  const totalChart = chartData.reduce((s, d) => s + d.value, 0);
+
+  // Recent customers for the table
+  const recentCustomers = customers.slice(0, 8);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
@@ -82,7 +111,7 @@ export default function PlatformDashboard() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-sm text-[#888] mt-1">Visão geral das suas vendas e métricas.</p>
+          <p className="text-sm text-[#888] mt-1">Visão geral do seu CRM e métricas reais.</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {periods.map((p) => (
@@ -149,7 +178,7 @@ export default function PlatformDashboard() {
                 <span className="text-xs text-[#888]">—</span>
               )}
               {met.sub && <span className="text-[10px] text-[#666]">{met.sub}</span>}
-              {!met.sub && <span className="text-[10px] text-[#666]">vs período anterior</span>}
+              {!met.sub && <span className="text-[10px] text-[#666]">dados em tempo real</span>}
             </div>
           </motion.div>
         ))}
@@ -162,74 +191,75 @@ export default function PlatformDashboard() {
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-sm font-medium text-[#888] mb-1">Vendas — Receita no período selecionado</h3>
+            <h3 className="text-sm font-medium text-[#888] mb-1">Faturamento — Por dia de registro</h3>
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold text-white">{formatCurrency(totalChart)}</span>
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-platform-green/10 text-platform-green text-xs font-medium">
-                <TrendingUp className="w-3 h-3" />
-                +206.6%
-              </span>
             </div>
           </div>
         </div>
         <div className="h-[300px] sm:h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={revenueChartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-              <defs>
-                <linearGradient id="chartGreen" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00C37F" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#00C37F" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="date" stroke="#444" tick={{ fill: "#666", fontSize: 12 }} tickLine={false} axisLine={false} />
-              <YAxis
-                stroke="#444"
-                tick={{ fill: "#666", fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v: number) => `R$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "#1a1a1a",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 12,
-                  color: "#fff",
-                  fontSize: 13,
-                }}
-                formatter={(v: number) => [formatCurrency(v), "Receita"]}
-                labelStyle={{ color: "#888" }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#00C37F"
-                strokeWidth={2}
-                fill="url(#chartGreen)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="chartGreen" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#00C37F" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#00C37F" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="date" stroke="#444" tick={{ fill: "#666", fontSize: 12 }} tickLine={false} axisLine={false} />
+                <YAxis
+                  stroke="#444"
+                  tick={{ fill: "#666", fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v: number) => `R$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#1a1a1a",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 12,
+                    color: "#fff",
+                    fontSize: 13,
+                  }}
+                  formatter={(v: number) => [formatCurrency(v), "Receita"]}
+                  labelStyle={{ color: "#888" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#00C37F"
+                  strokeWidth={2}
+                  fill="url(#chartGreen)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full flex items-center justify-center text-[#888] text-sm">
+              Nenhum dado de faturamento ainda. Os gráficos aparecerão quando houver clientes com valores registrados.
+            </div>
+          )}
         </div>
       </motion.div>
 
-      {/* Recent Transactions */}
+      {/* Recent Customers */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={5}
         className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden"
       >
         <div className="p-5 border-b border-white/5">
-          <h3 className="text-base font-semibold text-white">Transações recentes</h3>
+          <h3 className="text-base font-semibold text-white">Últimos registros no CRM</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/5">
-                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">ID</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Cliente</th>
-                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Produto</th>
-                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Valor</th>
-                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Gateway</th>
+                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Email</th>
+                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Telefone</th>
+                <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Gasto</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Status</th>
                 <th className="text-left text-xs text-[#888] font-medium px-5 py-3">Data</th>
               </tr>
@@ -237,30 +267,39 @@ export default function PlatformDashboard() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Carregando transações...</td>
+                  <td colSpan={6} className="px-5 py-8 text-center text-[#888]">Carregando dados do CRM...</td>
                 </tr>
-              ) : recentTransactions.length === 0 ? (
+              ) : recentCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhuma transação encontrada no banco de dados.</td>
+                  <td colSpan={6} className="px-5 py-8 text-center text-[#888]">Nenhum cliente cadastrado ainda. Os dados aparecerão quando a Vi capturar leads ou alguém pagar pelo Stripe.</td>
                 </tr>
               ) : (
-                recentTransactions.map((tx) => (
-                  <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3.5 text-[#888] font-mono text-xs">{tx.id.substring(0, 8)}...</td>
-                    <td className="px-5 py-3.5 text-white">{tx.client_name}</td>
-                    <td className="px-5 py-3.5 text-[#ccc]">{tx.product}</td>
-                    <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(tx.amount || 0)}</td>
-                    <td className="px-5 py-3.5 text-[#888]">{tx.gateway}</td>
-                    <td className="px-5 py-3.5">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[tx.status || '']} || 'text-[#888] bg-white/5'`}>
-                        {tx.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-[#888] text-xs">
-                      {new Date(tx.date).toLocaleDateString("pt-BR")}
-                    </td>
-                  </tr>
-                ))
+                recentCustomers.map((c) => {
+                  const sc = statusConfig[c.status] || statusConfig['Lead'];
+                  return (
+                    <tr key={c.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-medium text-[#ccc]">
+                            {c.name.substring(0, 2).toUpperCase()}
+                          </div>
+                          <span className="text-white font-medium">{c.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 text-[#888]">{c.email}</td>
+                      <td className="px-5 py-3.5 text-[#888]">{c.phone || '—'}</td>
+                      <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.total_spent || 0)}</td>
+                      <td className="px-5 py-3.5">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${sc.cls}`}>
+                          {sc.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-[#888] text-xs">
+                        {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
