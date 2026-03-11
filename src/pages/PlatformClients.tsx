@@ -119,6 +119,21 @@ export default function PlatformClients() {
     }
   };
 
+  const updateStatus = async (client: Customer, newStatus: string) => {
+    const { error } = await supabase
+      .from('customers' as any)
+      .update({ status: newStatus })
+      .eq('id', client.id);
+
+    if (error) {
+      toast({ title: "Erro ao atualizar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "✅ Status atualizado", description: `${client.name} agora é "${newStatus}"` });
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
+    }
+  };
+
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['customers', orgId, isAdmin],
     queryFn: async () => {
@@ -286,9 +301,17 @@ export default function PlatformClients() {
                       </td>
                       <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.total_spent || 0)}</td>
                       <td className="px-5 py-3.5">
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${sc.cls}`}>
-                          {sc.label}
-                        </span>
+                        <select
+                          value={c.status}
+                          onChange={(e) => updateStatus(c, e.target.value)}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium border-0 cursor-pointer outline-none ${sc.cls}`}
+                          style={{ WebkitAppearance: 'none', appearance: 'none', paddingRight: '8px' }}
+                        >
+                          <option value="Lead">Lead</option>
+                          <option value="Negociação">Negociação</option>
+                          <option value="Cliente Ativo">Ativo</option>
+                          <option value="Cancelado">Cancelado</option>
+                        </select>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-1">
