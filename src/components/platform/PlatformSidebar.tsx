@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, CreditCard, Package, ShoppingCart, Store,
   TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle,
-  LogOut, Menu, X, ChevronRight
+  LogOut, Menu, X, ChevronRight, Crown
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOrganization } from "@/hooks/useOrganization";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -32,6 +33,7 @@ export default function PlatformSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isAdmin } = useOrganization();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -78,6 +80,25 @@ export default function PlatformSidebar() {
             )}
           </Link>
         ))}
+
+        {/* Admin link - only visible to admins */}
+        {isAdmin && (
+          <Link
+            to="/plataforma/admin"
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group ${
+              isActive("/plataforma/admin")
+                ? "bg-purple-500/10 text-purple-400"
+                : "text-purple-400/60 hover:text-purple-400 hover:bg-purple-500/5"
+            }`}
+          >
+            <Crown className="w-[18px] h-[18px] shrink-0" />
+            {!collapsed && <span>Painel Admin</span>}
+            {!collapsed && isActive("/plataforma/admin") && (
+              <ChevronRight className="w-3 h-3 ml-auto opacity-50" />
+            )}
+          </Link>
+        )}
       </nav>
 
       {/* Bottom Menu */}
