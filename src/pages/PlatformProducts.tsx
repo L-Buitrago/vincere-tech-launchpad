@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
-import { Plus, Edit, Copy, ExternalLink, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatCurrency, type Product } from "@/data/platformMockData";
-import { toast } from "@/hooks/use-toast";
+import { Package, Users, DollarSign, Crown, Sparkles } from "lucide-react";
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -15,93 +15,130 @@ const fadeUp = {
   }),
 };
 
-const typeColors: Record<string, string> = {
-  Curso: "text-blue-400 bg-blue-400/10",
-  Serviço: "text-purple-400 bg-purple-400/10",
-  Assinatura: "text-platform-green bg-platform-green/10",
-  "Produto físico": "text-platform-orange bg-platform-orange/10",
+const planDetails: Record<string, { icon: any; color: string; features: string[] }> = {
+  starter: {
+    icon: Package,
+    color: "platform-green",
+    features: ["Até 100 clientes", "CRM Básico", "1 usuário", "Suporte por email"],
+  },
+  pro: {
+    icon: Crown,
+    color: "platform-orange",
+    features: ["Clientes ilimitados", "CRM Completo", "5 usuários", "Suporte prioritário", "Relatórios avançados"],
+  },
+  enterprise: {
+    icon: Sparkles,
+    color: "purple-400",
+    features: ["Tudo do Pro", "Usuários ilimitados", "API dedicada", "White-label", "Suporte 24/7"],
+  },
 };
 
 export default function PlatformProducts() {
-  const { data: products = [], isLoading, refetch } = useQuery({
-    queryKey: ['products'],
+  const { orgId, isAdmin, org } = useOrganization();
+
+  // Get org stats
+  const { data: stats } = useQuery({
+    queryKey: ['org-stats', orgId, isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
+      let query = supabase
+        .from('customers' as any)
+        .select('*');
+
+      if (!isAdmin && orgId) {
+        query = query.eq('org_id', orgId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
-      
-      // Map database snake_case to frontend camelCase
-      return data.map(p => ({
-        ...p,
-        totalSales: p.total_sales
-      })) as Product[];
+      const customers = data as any[];
+
+      return {
+        totalCustomers: customers.length,
+        activeCustomers: customers.filter((c: any) => c.status === 'Cliente Ativo').length,
+        totalRevenue: customers.reduce((sum: number, c: any) => sum + (c.total_spent || 0), 0),
+        leads: customers.filter((c: any) => c.status === 'Lead').length,
+      };
     }
   });
 
+  const currentPlan = org?.plan || 'starter';
+  const plan = planDetails[currentPlan] || planDetails.starter;
+  const PlanIcon = plan.icon;
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Produtos</h1>
-          <p className="text-sm text-[#888] mt-1">{products.length} produtos cadastrados</p>
-        </div>
-        <Button
-          className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
-          onClick={() => toast({ title: "Em breve!", description: "Cadastro de produtos será implementado." })}
-        >
-          <Plus className="w-4 h-4" /> Novo Produto
-        </Button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-white">Meu Plano</h1>
+        <p className="text-sm text-[#888] mt-1">Gerencie sua assinatura e veja o uso da sua conta.</p>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-12 text-[#888]">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-[#444]" />
-          <p>Carregando produtos...</p>
+      {/* Current Plan Card */}
+      <motion.div
+        initial="hidden" animate="visible" variants={fadeUp} custom={0}
+        className="p-6 rounded-2xl bg-[#111] border border-white/5 mb-6"
+      >
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`w-14 h-14 rounded-xl bg-${plan.color}/10 flex items-center justify-center`}>
+            <PlanIcon className={`w-7 h-7 text-${plan.color}`} />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-white capitalize">Plano {currentPlan}</h2>
+            <p className="text-sm text-[#888]">
+              {isAdmin ? "Conta Admin — Acesso total" : org?.status === 'active' ? "Assinatura ativa" : "Sem assinatura"}
+            </p>
+          </div>
         </div>
-      ) : products.length === 0 ? (
-        <div className="text-center py-12 text-[#888] bg-[#111] rounded-2xl border border-white/5">
-          <p>Nenhum produto cadastrado no banco de dados.</p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-white/5">
+            <Users className="w-5 h-5 text-platform-green mb-2" />
+            <p className="text-2xl font-bold text-white">{stats?.totalCustomers || 0}</p>
+            <p className="text-xs text-[#888]">Total de Clientes</p>
+          </div>
+          <div className="p-4 rounded-xl bg-white/5">
+            <Users className="w-5 h-5 text-platform-orange mb-2" />
+            <p className="text-2xl font-bold text-white">{stats?.leads || 0}</p>
+            <p className="text-xs text-[#888]">Leads Capturados</p>
+          </div>
+          <div className="p-4 rounded-xl bg-white/5">
+            <Users className="w-5 h-5 text-blue-400 mb-2" />
+            <p className="text-2xl font-bold text-white">{stats?.activeCustomers || 0}</p>
+            <p className="text-xs text-[#888]">Clientes Ativos</p>
+          </div>
+          <div className="p-4 rounded-xl bg-white/5">
+            <DollarSign className="w-5 h-5 text-platform-green mb-2" />
+            <p className="text-2xl font-bold text-white">{formatCurrency(stats?.totalRevenue || 0)}</p>
+            <p className="text-xs text-[#888]">Receita Total</p>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {products.map((p, i) => (
-            <motion.div
-              key={p.id}
-              initial="hidden" animate="visible" variants={fadeUp} custom={i}
-              className="p-5 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 transition-all group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-2xl">
-                  {p.image || "📦"}
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${typeColors[p.type] || 'text-[#888] bg-white/5'}`}>
-                  {p.type}
-                </span>
-              </div>
-              <h3 className="text-base font-semibold text-white mb-1">{p.name}</h3>
-              <p className="text-lg font-bold text-white mb-1">{formatCurrency(p.price || 0)}</p>
-              <p className="text-xs text-[#888] mb-5">{p.totalSales || 0} vendas realizadas</p>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="flex-1 border-white/10 text-white bg-transparent hover:bg-white/5 gap-1.5 text-xs h-8">
-                  <Edit className="w-3 h-3" /> Editar
-                </Button>
-                <Button variant="outline" size="sm" className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 h-8 w-8 p-0">
-                  <ExternalLink className="w-3 h-3" />
-                </Button>
-                <Button
-                  variant="outline" size="sm"
-                  className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 h-8 w-8 p-0"
-                  onClick={() => toast({ title: "Produto duplicado!" })}
-                >
-                  <Copy className="w-3 h-3" />
-                </Button>
-              </div>
-            </motion.div>
+
+        <h3 className="text-sm font-semibold text-white mb-3">Recursos do seu plano:</h3>
+        <ul className="space-y-2">
+          {plan.features.map((feat, i) => (
+            <li key={i} className="flex items-center gap-2 text-sm text-[#ccc]">
+              <div className={`w-1.5 h-1.5 rounded-full bg-${plan.color}`} />
+              {feat}
+            </li>
           ))}
-        </div>
+        </ul>
+      </motion.div>
+
+      {/* Upgrade cards */}
+      {currentPlan !== 'enterprise' && (
+        <motion.div
+          initial="hidden" animate="visible" variants={fadeUp} custom={1}
+          className="p-6 rounded-2xl bg-gradient-to-br from-platform-green/5 to-transparent border border-platform-green/10"
+        >
+          <h3 className="text-lg font-bold text-white mb-2">🚀 Quer mais recursos?</h3>
+          <p className="text-sm text-[#888] mb-4">
+            Faça upgrade do seu plano para desbloquear funcionalidades avançadas e suporte prioritário.
+          </p>
+          <a href="/plataforma/pagamentos">
+            <button className="px-6 py-2.5 rounded-xl bg-platform-green hover:bg-platform-green/90 text-black font-semibold text-sm transition-colors">
+              Ver planos disponíveis
+            </button>
+          </a>
+        </motion.div>
       )}
     </div>
   );

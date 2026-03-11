@@ -98,6 +98,25 @@ serve(async (req) => {
         if (error) {
           console.error("Erro ao salvar cliente no CRM:", error)
         }
+
+        // 4. Send welcome email
+        try {
+          const emailUrl = `${supabaseUrl}/functions/v1/send-welcome-email`
+          await fetch(emailUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseServiceKey}`,
+            },
+            body: JSON.stringify({
+              customerName: name,
+              customerEmail: email,
+              planName: 'Starter',
+            }),
+          })
+        } catch (emailErr) {
+          console.error("Welcome email error (non-blocking):", emailErr)
+        }
       }
     }
 
