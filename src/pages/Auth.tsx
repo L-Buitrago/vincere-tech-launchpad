@@ -30,7 +30,7 @@ const Auth = () => {
   const [showReset, setShowReset] = useState(false);
 
   useEffect(() => {
-    if (user) navigate("/dashboard", { replace: true });
+    if (user) navigate("/plataforma/dashboard", { replace: true });
   }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -44,7 +44,7 @@ const Auth = () => {
     if (error) {
       toast({ title: "Erro ao entrar", description: error.message, variant: "destructive" });
     } else {
-      navigate("/dashboard");
+      navigate("/plataforma/dashboard");
     }
   };
 

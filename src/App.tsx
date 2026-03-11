@@ -58,7 +58,13 @@ const App = () => (
             {/* Platform SaaS */}
             <Route path="/plataforma" element={<PlatformLanding />} />
             <Route path="/plataforma/proposta" element={<PlatformProposal />} />
-            <Route element={<PlatformLayout />}>
+            <Route 
+              element={
+                <ProtectedRoute>
+                  <PlatformLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route path="/plataforma/dashboard" element={<PlatformDashboard />} />
               <Route path="/plataforma/clientes" element={<PlatformClients />} />
               <Route path="/plataforma/produtos" element={<PlatformProducts />} />

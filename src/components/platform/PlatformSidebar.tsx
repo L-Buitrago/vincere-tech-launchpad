@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, CreditCard, Package, ShoppingCart, Store,
   TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle,
   LogOut, Menu, X, ChevronRight
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const menuItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/plataforma/dashboard" },
@@ -27,8 +30,24 @@ export default function PlatformSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate("/");
+      toast.success("Saiu com sucesso");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const userName = user?.user_metadata?.full_name || "Membro";
+  const userInitials = userName.substring(0, 2).toUpperCase();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -75,7 +94,10 @@ export default function PlatformSidebar() {
             {!collapsed && <span>{item.label}</span>}
           </Link>
         ))}
-        <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 w-full">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 w-full"
+        >
           <LogOut className="w-[18px] h-[18px] shrink-0" />
           {!collapsed && <span>Sair</span>}
         </button>
@@ -85,10 +107,12 @@ export default function PlatformSidebar() {
       {!collapsed && (
         <div className="p-4 mx-3 mb-3 rounded-lg bg-white/5 border border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-platform-green/20 text-platform-green flex items-center justify-center text-xs font-bold">VP</div>
+            <div className="w-8 h-8 rounded-full bg-platform-green/20 text-platform-green flex items-center justify-center text-xs font-bold">
+              {userInitials}
+            </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-white truncate">Vincere Pro</p>
-              <p className="text-[10px] text-[#666]">admin@vincere.com</p>
+              <p className="text-xs font-medium text-white truncate">{userName}</p>
+              <p className="text-[10px] text-[#666] truncate">{user?.email}</p>
             </div>
           </div>
         </div>
