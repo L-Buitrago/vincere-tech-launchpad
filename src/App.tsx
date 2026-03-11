@@ -14,6 +14,14 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Returns from "./pages/Returns";
 import Admin from "./pages/Admin";
+import PlatformLanding from "./pages/PlatformLanding";
+import PlatformLayout from "./components/platform/PlatformLayout";
+import PlatformDashboard from "./pages/PlatformDashboard";
+import PlatformClients from "./pages/PlatformClients";
+import PlatformProducts from "./pages/PlatformProducts";
+import PlatformCheckouts from "./pages/PlatformCheckouts";
+import PlatformPayments from "./pages/PlatformPayments";
+import PlatformProposal from "./pages/PlatformProposal";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +55,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            {/* Platform SaaS */}
+            <Route path="/plataforma" element={<PlatformLanding />} />
+            <Route path="/plataforma/proposta" element={<PlatformProposal />} />
+            <Route element={<PlatformLayout />}>
+              <Route path="/plataforma/dashboard" element={<PlatformDashboard />} />
+              <Route path="/plataforma/clientes" element={<PlatformClients />} />
+              <Route path="/plataforma/produtos" element={<PlatformProducts />} />
+              <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
+              <Route path="/plataforma/pagamentos" element={<PlatformPayments />} />
+            </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
