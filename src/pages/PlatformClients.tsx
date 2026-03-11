@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 import { Search, Filter, X, MessageCircle, Eye, Ban, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { mockClients, formatCurrency, type Client } from "@/data/platformMockData";
+import { formatCurrency, type Client } from "@/data/platformMockData";
 import { toast } from "@/hooks/use-toast";
 
 const statusConfig: Record<string, { label: string; cls: string; pulse?: boolean }> = {
@@ -20,7 +22,25 @@ export default function PlatformClients() {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  const filtered = mockClients.filter((c) => {
+  const { data: clients = [], isLoading } = useQuery({
+    queryKey: ['clients'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      // Map database snake_case to frontend camelCase
+      return data.map(c => ({
+        ...c,
+        purchaseDate: c.purchase_date
+      })) as Client[];
+    }
+  });
+
+  const filtered = clients.filter((c) => {
     const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "todos" || c.status === statusFilter;
@@ -81,46 +101,62 @@ export default function PlatformClients() {
               </tr>
             </thead>
             <tbody>
-              {paginated.map((c) => {
-                const sc = statusConfig[c.status];
-                return (
-                  <tr key={c.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-medium text-[#ccc]">
-                          {c.avatar}
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Carregando clientes...</td>
+                </tr>
+              ) : clients.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhum cliente cadastrado no banco de dados.</td>
+                </tr>
+              ) : paginated.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhum cliente encontrado com estes filtros.</td>
+                </tr>
+              ) : (
+                paginated.map((c) => {
+                  const sc = statusConfig[c.status || 'ativo'] || statusConfig['ativo'];
+                  return (
+                    <tr key={c.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-medium text-[#ccc]">
+                            {c.avatar || c.name.substring(0,2).toUpperCase()}
+                          </div>
+                          <span className="text-white font-medium">{c.name}</span>
                         </div>
-                        <span className="text-white font-medium">{c.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5 text-[#888]">{c.email}</td>
-                    <td className="px-5 py-3.5 text-[#ccc]">{c.product}</td>
-                    <td className="px-5 py-3.5 text-[#888] text-xs">{new Date(c.purchaseDate).toLocaleDateString("pt-BR")}</td>
-                    <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.amount)}</td>
-                    <td className="px-5 py-3.5">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${sc.cls}`}>
-                        {sc.label}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => setSelected(c)} className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => toast({ title: "Mensagem enviada!", description: `WhatsApp enviado para ${c.name}` })}
-                          className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                        <button className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-platform-red transition-colors">
-                          <Ban className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                      <td className="px-5 py-3.5 text-[#888]">{c.email}</td>
+                      <td className="px-5 py-3.5 text-[#ccc]">{c.product || '-'}</td>
+                      <td className="px-5 py-3.5 text-[#888] text-xs">
+                        {c.purchaseDate ? new Date(c.purchaseDate).toLocaleDateString("pt-BR") : '-'}
+                      </td>
+                      <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.amount || 0)}</td>
+                      <td className="px-5 py-3.5">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${sc.cls}`}>
+                          {sc.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => setSelected(c)} className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors">
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => toast({ title: "Mensagem enviada!", description: `WhatsApp enviado para ${c.name}` })}
+                            className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                          <button className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-platform-red transition-colors">
+                            <Ban className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -142,7 +178,6 @@ export default function PlatformClients() {
       </div>
 
       {/* Detail Panel */}
-      <AnimatePresence>
         {selected && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -168,7 +203,7 @@ export default function PlatformClients() {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-lg font-bold text-[#ccc]">
-                  {selected.avatar}
+                  {selected.avatar || selected.name.substring(0,2).toUpperCase()}
                 </div>
                 <div>
                   <p className="text-white font-semibold text-lg">{selected.name}</p>
@@ -188,8 +223,8 @@ export default function PlatformClients() {
                   </div>
                   <div className="p-4 rounded-xl bg-[#111] border border-white/5">
                     <p className="text-xs text-[#888] mb-1">Status</p>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[selected.status].cls}`}>
-                      {statusConfig[selected.status].label}
+                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[selected.status || 'ativo']?.cls || ''}`}>
+                      {statusConfig[selected.status || 'ativo']?.label || selected.status}
                     </span>
                   </div>
                 </div>
@@ -236,7 +271,6 @@ export default function PlatformClients() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   TrendingUp, TrendingDown, DollarSign, ShoppingCart,
@@ -8,8 +10,10 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
 import { Button } from "@/components/ui/button";
-import { dashboardMetrics, revenueChartData, formatCurrency, mockTransactions } from "@/data/platformMockData";
+import { formatCurrency } from "@/data/platformMockData";
 
+// Temporary mock data for charts/metrics until we build aggregations
+import { dashboardMetrics, revenueChartData } from "@/data/platformMockData";
 const periods = ["Ontem", "Hoje", "Semana", "Mês", "Ano", "Todos"];
 
 const fadeUp = {
@@ -50,6 +54,21 @@ export default function PlatformDashboard() {
       icon: XCircle, color: "platform-red", prefix: ""
     },
   ];
+
+  // Fetch recent transactions
+  const { data: recentTransactions = [], isLoading } = useQuery({
+    queryKey: ['recent-transactions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(8);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
@@ -195,21 +214,33 @@ export default function PlatformDashboard() {
               </tr>
             </thead>
             <tbody>
-              {mockTransactions.slice(0, 8).map((tx) => (
-                <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
-                  <td className="px-5 py-3.5 text-[#888] font-mono text-xs">{tx.id}</td>
-                  <td className="px-5 py-3.5 text-white">{tx.clientName}</td>
-                  <td className="px-5 py-3.5 text-[#ccc]">{tx.product}</td>
-                  <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(tx.amount)}</td>
-                  <td className="px-5 py-3.5 text-[#888]">{tx.gateway}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[tx.status]}`}>
-                      {tx.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 text-[#888] text-xs">{tx.date}</td>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Carregando transações...</td>
                 </tr>
-              ))}
+              ) : recentTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhuma transação encontrada no banco de dados.</td>
+                </tr>
+              ) : (
+                recentTransactions.map((tx) => (
+                  <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3.5 text-[#888] font-mono text-xs">{tx.id.substring(0, 8)}...</td>
+                    <td className="px-5 py-3.5 text-white">{tx.client_name}</td>
+                    <td className="px-5 py-3.5 text-[#ccc]">{tx.product}</td>
+                    <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(tx.amount || 0)}</td>
+                    <td className="px-5 py-3.5 text-[#888]">{tx.gateway}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[tx.status || '']} || 'text-[#888] bg-white/5'`}>
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-[#888] text-xs">
+                      {new Date(tx.date).toLocaleDateString("pt-BR")}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

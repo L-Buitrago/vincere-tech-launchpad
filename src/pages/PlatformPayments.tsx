@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Eye } from "lucide-react";
-import { mockTransactions, formatCurrency } from "@/data/platformMockData";
+import { Eye, RefreshCw } from "lucide-react";
+import { formatCurrency, type Transaction } from "@/data/platformMockData";
 
 const statusColors: Record<string, string> = {
   aprovado: "text-platform-green bg-platform-green/10",
@@ -18,13 +20,31 @@ const fadeUp = {
 export default function PlatformPayments() {
   const [page, setPage] = useState(1);
   const perPage = 10;
-  const paginated = mockTransactions.slice((page - 1) * perPage, page * perPage);
-  const totalPages = Math.ceil(mockTransactions.length / perPage);
+  
+  const { data: transactions = [], isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (error) throw error;
+      
+      return data.map(t => ({
+        ...t,
+        clientName: t.client_name
+      })) as Transaction[];
+    }
+  });
+
+  const paginated = transactions.slice((page - 1) * perPage, page * perPage);
+  const totalPages = Math.ceil(transactions.length / perPage);
 
   const totals = {
-    aprovado: mockTransactions.filter(t => t.status === "aprovado").reduce((s, t) => s + t.amount, 0),
-    pendente: mockTransactions.filter(t => t.status === "pendente").reduce((s, t) => s + t.amount, 0),
-    estornado: mockTransactions.filter(t => t.status === "estornado").reduce((s, t) => s + t.amount, 0),
+    aprovado: transactions.filter(t => t.status === "aprovado").reduce((s, t) => s + (t.amount || 0), 0),
+    pendente: transactions.filter(t => t.status === "pendente").reduce((s, t) => s + (t.amount || 0), 0),
+    estornado: transactions.filter(t => t.status === "estornado").reduce((s, t) => s + (t.amount || 0), 0),
   };
 
   return (
@@ -67,26 +87,43 @@ export default function PlatformPayments() {
               </tr>
             </thead>
             <tbody>
-              {paginated.map((tx) => (
-                <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
-                  <td className="px-5 py-3.5 text-[#888] font-mono text-xs">{tx.id}</td>
-                  <td className="px-5 py-3.5 text-white">{tx.clientName}</td>
-                  <td className="px-5 py-3.5 text-[#ccc]">{tx.product}</td>
-                  <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(tx.amount)}</td>
-                  <td className="px-5 py-3.5 text-[#888]">{tx.gateway}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[tx.status]}`}>
-                      {tx.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 text-[#888] text-xs">{tx.date}</td>
-                  <td className="px-5 py-3.5">
-                    <button className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors">
-                      <Eye className="w-4 h-4" />
-                    </button>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-[#888]">
+                    <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-[#444]" />
+                    Carregando pagamentos...
                   </td>
                 </tr>
-              ))}
+              ) : transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-[#888]">
+                    Nenhum pagamento encontrado no banco de dados.
+                  </td>
+                </tr>
+              ) : (
+                paginated.map((tx) => (
+                  <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3.5 text-[#888] font-mono text-xs">{tx.id.substring(0, 8)}...</td>
+                    <td className="px-5 py-3.5 text-white">{tx.clientName}</td>
+                    <td className="px-5 py-3.5 text-[#ccc]">{tx.product}</td>
+                    <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(tx.amount || 0)}</td>
+                    <td className="px-5 py-3.5 text-[#888]">{tx.gateway}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[tx.status || ''] || 'text-[#888] bg-white/5'}`}>
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-[#888] text-xs">
+                      {new Date(tx.date).toLocaleDateString("pt-BR")}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <button className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-white transition-colors">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
