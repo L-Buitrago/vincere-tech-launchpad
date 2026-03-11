@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Equipe", href: "#equipe" },
   { label: "Diferenciais", href: "#diferenciais" },
   { label: "Como Funciona", href: "#como-funciona" },
+  { label: "Plataforma", href: "#demo" },
 ];
 
 const Navbar = () => {
