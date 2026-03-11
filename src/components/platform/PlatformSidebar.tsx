@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, CreditCard, Package, ShoppingCart, Store,
-  TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle,
+  TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle, Headset,
   LogOut, Menu, X, ChevronRight, Crown
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,7 +24,7 @@ const menuItems = [
 const bottomItems = [
   { label: "Configurações", icon: Settings, path: "/plataforma/dashboard" },
   { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/dashboard" },
-  { label: "Ajuda", icon: HelpCircle, path: "/plataforma/dashboard" },
+  { label: "Suporte", icon: Headset, path: "/plataforma/suporte" },
 ];
 
 export default function PlatformSidebar() {
