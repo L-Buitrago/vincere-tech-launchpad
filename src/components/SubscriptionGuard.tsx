@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
  */
 
 const ADMIN_EMAILS = [
-  "lucasbuitrago08@gmail.com",
+  "assasinghost910@gmail.com",
   // Add more team emails here
 ];
 
