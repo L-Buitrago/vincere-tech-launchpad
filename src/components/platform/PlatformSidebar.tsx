@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import NotificationBell from "./NotificationBell";
 
 const menuItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/plataforma/dashboard" },
@@ -54,10 +55,13 @@ export default function PlatformSidebar() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
-        {!collapsed && (
-          <span className="text-base font-semibold text-white tracking-tight">Vincere</span>
-        )}
+      <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {!collapsed && (
+            <span className="text-base font-semibold text-white tracking-tight">Vincere</span>
+          )}
+        </div>
+        <NotificationBell />
       </div>
 
       {/* Main Menu */}

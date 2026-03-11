@@ -47,49 +47,54 @@ export default function PlatformSupport() {
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;
-      setIsLoading(true);
+      try {
+        setIsLoading(true);
 
-      if (isAdmin) {
-        // Load all conversations for admin
-        const { data: convs, error } = await supabase
-          .from('support_conversations' as any)
-          .select('*')
-          .order('last_message_at', { ascending: false });
-        
-        if (!error && convs) {
-          setConversations(convs as any as Conversation[]);
-          if (convs.length > 0) setActiveConversation(convs[0] as any as Conversation);
-        }
-      } else if (orgId) {
-        // Load or create conversation for the company
-        let { data: convs, error } = await supabase
-          .from('support_conversations' as any)
-          .select('*')
-          .eq('org_id', orgId);
-        
-        let conv = convs?.[0] as any as Conversation;
-
-        if (!conv && organization) {
-          // Create conversation if it doesn't exist
-          const { data: newConv, error: createError } = await supabase
+        if (isAdmin) {
+          // Load all conversations for admin
+          const { data: convs, error } = await supabase
             .from('support_conversations' as any)
-            .insert({
-              org_id: orgId,
-              org_name: organization.name
-            })
-            .select()
-            .single();
+            .select('*')
+            .order('last_message_at', { ascending: false });
           
-          if (!createError && newConv) {
-            conv = newConv as any as Conversation;
+          if (!error && convs) {
+            setConversations(convs as any as Conversation[]);
+            if (convs.length > 0) setActiveConversation(convs[0] as any as Conversation);
+          }
+        } else if (orgId) {
+          // Load or create conversation for the company
+          let { data: convs, error } = await supabase
+            .from('support_conversations' as any)
+            .select('*')
+            .eq('org_id', orgId);
+          
+          let conv = convs?.[0] as any as Conversation;
+
+          if (!conv && organization) {
+            // Create conversation if it doesn't exist
+            const { data: newConv, error: createError } = await supabase
+              .from('support_conversations' as any)
+              .insert({
+                org_id: orgId,
+                org_name: (organization as any).name
+              })
+              .select()
+              .single();
+            
+            if (!createError && newConv) {
+              conv = newConv as any as Conversation;
+            }
+          }
+
+          if (conv) {
+            setActiveConversation(conv);
           }
         }
-
-        if (conv) {
-          setActiveConversation(conv);
-        }
+      } catch (err) {
+        console.error("Error loading chat:", err);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     loadData();
