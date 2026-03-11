@@ -9,34 +9,40 @@ import { formatCurrency, type Client } from "@/data/platformMockData";
 import { toast } from "@/hooks/use-toast";
 
 const statusConfig: Record<string, { label: string; cls: string; pulse?: boolean }> = {
-  ativo: { label: "Ativo", cls: "text-platform-green bg-platform-green/10" },
-  pendente: { label: "Pendente", cls: "text-platform-orange bg-platform-orange/10 animate-pulse" , pulse: true },
-  vencido: { label: "Vencido", cls: "text-platform-red bg-platform-red/10 animate-pulse", pulse: true },
-  cancelado: { label: "Cancelado", cls: "text-[#888] bg-white/5" },
+  "Cliente Ativo": { label: "Ativo", cls: "text-platform-green bg-platform-green/10" },
+  "Lead": { label: "Lead", cls: "text-platform-orange bg-platform-orange/10 animate-pulse", pulse: true },
+  "Negociação": { label: "Negociação", cls: "text-platform-blue bg-platform-blue/10 animate-pulse", pulse: true },
+  "Cancelado": { label: "Cancelado", cls: "text-[#888] bg-white/5" },
+};
+
+type Customer = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  status: string;
+  total_spent: number;
+  last_order_date: string | null;
+  created_at: string;
 };
 
 export default function PlatformClients() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
-  const [selected, setSelected] = useState<Client | null>(null);
+  const [selected, setSelected] = useState<Customer | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 10;
 
   const { data: clients = [], isLoading } = useQuery({
-    queryKey: ['clients'],
+    queryKey: ['customers'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('clients')
+        .from('customers' as any)
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      
-      // Map database snake_case to frontend camelCase
-      return data.map(c => ({
-        ...c,
-        purchaseDate: c.purchase_date
-      })) as Client[];
+      return data as any[] as Customer[];
     }
   });
 
@@ -71,7 +77,7 @@ export default function PlatformClients() {
           />
         </div>
         <div className="flex items-center gap-2">
-          {["todos", "ativo", "pendente", "vencido", "cancelado"].map((s) => (
+          {["todos", "Cliente Ativo", "Lead", "Negociação", "Cancelado"].map((s) => (
             <button
               key={s}
               onClick={() => { setStatusFilter(s); setPage(1); }}
@@ -115,23 +121,23 @@ export default function PlatformClients() {
                 </tr>
               ) : (
                 paginated.map((c) => {
-                  const sc = statusConfig[c.status || 'ativo'] || statusConfig['ativo'];
+                  const sc = statusConfig[c.status || 'Cliente Ativo'] || statusConfig['Cliente Ativo'];
                   return (
                     <tr key={c.id} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-medium text-[#ccc]">
-                            {c.avatar || c.name.substring(0,2).toUpperCase()}
+                            {c.name.substring(0,2).toUpperCase()}
                           </div>
                           <span className="text-white font-medium">{c.name}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-[#888]">{c.email}</td>
-                      <td className="px-5 py-3.5 text-[#ccc]">{c.product || '-'}</td>
+                      <td className="px-5 py-3.5 text-[#ccc]">{c.status}</td> {/* Assuming initial status is the same as current status for now */}
                       <td className="px-5 py-3.5 text-[#888] text-xs">
-                        {c.purchaseDate ? new Date(c.purchaseDate).toLocaleDateString("pt-BR") : '-'}
+                        {new Date(c.created_at).toLocaleDateString("pt-BR")}
                       </td>
-                      <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.amount || 0)}</td>
+                      <td className="px-5 py-3.5 text-white font-medium">{formatCurrency(c.total_spent || 0)}</td>
                       <td className="px-5 py-3.5">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${sc.cls}`}>
                           {sc.label}
@@ -203,71 +209,75 @@ export default function PlatformClients() {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-lg font-bold text-[#ccc]">
-                  {selected.avatar || selected.name.substring(0,2).toUpperCase()}
+                  {selected.name.substring(0,2).toUpperCase()}
                 </div>
                 <div>
                   <p className="text-white font-semibold text-lg">{selected.name}</p>
                   <p className="text-sm text-[#888]">{selected.email}</p>
+                  <p className="text-sm text-[#888]">{selected.phone || 'Sem telefone'}</p>
                 </div>
               </div>
 
               <div className="space-y-4 mb-8">
-                <div className="p-4 rounded-xl bg-[#111] border border-white/5">
-                  <p className="text-xs text-[#888] mb-1">Produto</p>
-                  <p className="text-sm text-white font-medium">{selected.product}</p>
-                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-[#111] border border-white/5">
-                    <p className="text-xs text-[#888] mb-1">Valor</p>
-                    <p className="text-sm text-white font-medium">{formatCurrency(selected.amount)}</p>
+                    <p className="text-xs text-[#888] mb-1">Gasto Total</p>
+                    <p className="text-sm text-white font-medium">{formatCurrency(selected.total_spent)}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#111] border border-white/5">
                     <p className="text-xs text-[#888] mb-1">Status</p>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[selected.status || 'ativo']?.cls || ''}`}>
-                      {statusConfig[selected.status || 'ativo']?.label || selected.status}
+                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[selected.status || 'Cliente Ativo']?.cls || ''}`}>
+                      {statusConfig[selected.status || 'Cliente Ativo']?.label || selected.status}
                     </span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <Button
-                  className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
-                  onClick={() => {
-                    window.open(`https://wa.me/${selected.phone}?text=Olá ${selected.name}, identificamos uma pendência...`, "_blank");
-                    toast({ title: "WhatsApp aberto!" });
-                  }}
-                >
-                  <MessageCircle className="w-4 h-4" /> Enviar cobrança no WhatsApp
-                </Button>
+                {selected.phone && (
+                  <Button
+                    className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
+                    onClick={() => {
+                      const cleanPhone = selected.phone?.replace(/\D/g, '');
+                      window.open(`https://wa.me/${cleanPhone}?text=Olá ${selected.name}, tudo bem?`, "_blank");
+                      toast({ title: "WhatsApp aberto!" });
+                    }}
+                  >
+                    <MessageCircle className="w-4 h-4" /> Enviar WhatsApp
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   className="w-full border-white/10 text-white bg-transparent hover:bg-white/5 gap-2"
                   onClick={() => toast({ title: "Acesso reenviado!", description: `Email enviado para ${selected.email}` })}
                 >
-                  <Send className="w-4 h-4" /> Reenviar acesso
+                  <Send className="w-4 h-4" /> Reenviar Acesso
                 </Button>
               </div>
 
               {/* Timeline */}
               <div className="mt-8">
-                <h3 className="text-sm font-semibold text-white mb-4">Atividade recente</h3>
+                <h3 className="text-sm font-semibold text-white mb-4">Registro CRM</h3>
                 <div className="space-y-4">
-                  {[
-                    { date: selected.purchaseDate, text: `Comprou ${selected.product}` },
-                    { date: selected.purchaseDate, text: "Acesso liberado automaticamente" },
-                    { date: "2026-03-10", text: "Acessou a plataforma" },
-                  ].map((ev, i) => (
-                    <div key={i} className="flex gap-3">
+                  <div className="flex gap-3">
+                    <div className="w-2 h-2 rounded-full bg-platform-green mt-1.5 shrink-0" />
+                    <div>
+                      <p className="text-xs text-white">Criado como {selected.status}</p>
+                      <p className="text-[10px] text-[#666]">{new Date(selected.created_at).toLocaleDateString("pt-BR")}</p>
+                    </div>
+                  </div>
+                  {selected.last_order_date && (
+                    <div className="flex gap-3">
                       <div className="w-2 h-2 rounded-full bg-platform-green mt-1.5 shrink-0" />
                       <div>
-                        <p className="text-xs text-white">{ev.text}</p>
-                        <p className="text-[10px] text-[#666]">{new Date(ev.date).toLocaleDateString("pt-BR")}</p>
+                        <p className="text-xs text-white">Última compra</p>
+                        <p className="text-[10px] text-[#666]">{new Date(selected.last_order_date).toLocaleDateString("pt-BR")}</p>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
+
             </motion.div>
           </motion.div>
         )}
