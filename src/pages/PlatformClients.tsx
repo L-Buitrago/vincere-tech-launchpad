@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/useOrganization";
 import { motion } from "framer-motion";
-import { Search, Filter, X, MessageCircle, Eye, Ban, Send } from "lucide-react";
+import { Search, Filter, X, MessageCircle, Eye, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, type Client } from "@/data/platformMockData";
@@ -34,6 +34,26 @@ export default function PlatformClients() {
   const [page, setPage] = useState(1);
   const perPage = 10;
   const { orgId, isAdmin } = useOrganization();
+  const queryClient = useQueryClient();
+
+  const deleteClient = async (client: Customer) => {
+    const confirmed = window.confirm(`Tem certeza que quer remover "${client.name}"?`);
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('customers' as any)
+      .delete()
+      .eq('id', client.id);
+
+    if (error) {
+      toast({ title: "Erro ao remover", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "✅ Cliente removido", description: `${client.name} foi removido do CRM.` });
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
+      if (selected?.id === client.id) setSelected(null);
+    }
+  };
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['customers', orgId, isAdmin],
@@ -161,8 +181,12 @@ export default function PlatformClients() {
                           >
                             <MessageCircle className="w-4 h-4" />
                           </button>
-                          <button className="p-1.5 rounded-lg hover:bg-white/5 text-[#888] hover:text-platform-red transition-colors">
-                            <Ban className="w-4 h-4" />
+                          <button
+                            onClick={() => deleteClient(c)}
+                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#888] hover:text-red-400 transition-colors"
+                            title="Remover cliente"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
