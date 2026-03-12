@@ -53,20 +53,20 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {isAdmin && (
             <a href="/admin">
-              <Button size="sm" variant="outline" className="font-display font-semibold">Admin</Button>
+              <Button size={"sm" as any} variant={"outline" as any} className="font-display font-semibold">Admin</Button>
             </a>
           )}
           {user ? (
             <a href="/plataforma">
-              <Button size="sm" className="font-display font-semibold">Meu Dashboard</Button>
+              <Button size={"sm" as any} className="font-display font-semibold">Meu Dashboard</Button>
             </a>
           ) : (
             <>
               <a href="/auth">
-                <Button size="sm" variant="ghost" className="font-display font-semibold">Entrar / Cadastrar</Button>
+                <Button size={"sm" as any} variant={"ghost" as any} className="font-display font-semibold">Entrar / Cadastrar</Button>
               </a>
               <a href="#pacotes" onClick={(e) => { e.preventDefault(); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                <Button size="sm" className="font-display font-semibold">Solicitar Orçamento</Button>
+                <Button size={"sm" as any} className="font-display font-semibold">Solicitar Orçamento</Button>
               </a>
             </>
           )}
@@ -75,11 +75,11 @@ const Navbar = () => {
         {/* Mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant={"ghost" as any} size={"icon" as any}>
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="bg-background border-border">
+          <SheetContent side={"right" as any} className="bg-background border-border">
             <SheetTitle className="font-display text-lg">Menu</SheetTitle>
             <div className="flex flex-col gap-6 mt-8">
               {navLinks.map((link) => (

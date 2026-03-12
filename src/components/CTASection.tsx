@@ -17,7 +17,7 @@ const CTASection = () => {
           Entre em contato e descubra como a tecnologia pode acelerar seus resultados.
         </p>
         <Button
-          size="lg"
+          size={"lg" as any}
           className="font-display font-semibold text-base px-10 gap-2"
           onClick={() => {
             document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
