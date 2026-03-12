@@ -65,7 +65,7 @@ const Navbar = () => {
               <a href="/auth">
                 <Button size="sm" variant="ghost" className="font-display font-semibold">Entrar / Cadastrar</Button>
               </a>
-              <a href="#cta">
+              <a href="#pacotes" onClick={(e) => { e.preventDefault(); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
                 <Button size="sm" className="font-display font-semibold">Solicitar Orçamento</Button>
               </a>
             </>
