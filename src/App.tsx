@@ -25,6 +25,8 @@ import PlatformPayments from "./pages/PlatformPayments";
 import PlatformProposal from "./pages/PlatformProposal";
 import PlatformAdmin from "./pages/PlatformAdmin";
 import PlatformSupport from "./pages/PlatformSupport";
+import PlatformSettings from "./pages/PlatformSettings";
+import PlatformPurchases from "./pages/PlatformPurchases";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +90,8 @@ const App = () => (
               <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
               <Route path="/plataforma/admin" element={<PlatformAdmin />} />
               <Route path="/plataforma/suporte" element={<PlatformSupport />} />
+              <Route path="/plataforma/configuracoes" element={<PlatformSettings />} />
+              <Route path="/plataforma/compras" element={<PlatformPurchases />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

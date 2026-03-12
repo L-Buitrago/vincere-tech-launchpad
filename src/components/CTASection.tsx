@@ -20,7 +20,7 @@ const CTASection = () => {
           size="lg"
           className="font-display font-semibold text-base px-10 gap-2"
           onClick={() => {
-            document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }}
         >
           Ver Nossos Pacotes

@@ -41,6 +41,78 @@ export type Database = {
         }
         Relationships: []
       }
+      checkouts: {
+        Row: {
+          conversion: number | null
+          created_at: string | null
+          id: string
+          link: string | null
+          name: string
+          product: string | null
+          status: string | null
+          total_sales: number | null
+        }
+        Insert: {
+          conversion?: number | null
+          created_at?: string | null
+          id?: string
+          link?: string | null
+          name: string
+          product?: string | null
+          status?: string | null
+          total_sales?: number | null
+        }
+        Update: {
+          conversion?: number | null
+          created_at?: string | null
+          id?: string
+          link?: string | null
+          name?: string
+          product?: string | null
+          status?: string | null
+          total_sales?: number | null
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          amount: number | null
+          avatar: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          product: string | null
+          purchase_date: string | null
+          status: string | null
+        }
+        Insert: {
+          amount?: number | null
+          avatar?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          phone?: string | null
+          product?: string | null
+          purchase_date?: string | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number | null
+          avatar?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          product?: string | null
+          purchase_date?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       contact_requests: {
         Row: {
           company_phone: string | null
@@ -80,6 +152,217 @@ export type Database = {
           session_id?: string | null
           status?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      customer_notes: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          id: string
+          note: string
+          org_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          note: string
+          org_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          note?: string
+          org_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_notes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_notes_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string | null
+          due_date: string | null
+          email: string
+          id: string
+          last_order_date: string | null
+          name: string
+          org_id: string | null
+          phone: string | null
+          status: string | null
+          total_spent: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          due_date?: string | null
+          email: string
+          id?: string
+          last_order_date?: string | null
+          name: string
+          org_id?: string | null
+          phone?: string | null
+          status?: string | null
+          total_spent?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          due_date?: string | null
+          email?: string
+          id?: string
+          last_order_date?: string | null
+          name?: string
+          org_id?: string | null
+          phone?: string | null
+          status?: string | null
+          total_spent?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          read: boolean | null
+          title: string
+          type: string
+          user_email: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_email: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_email?: string
+        }
+        Relationships: []
+      }
+      org_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          org_id: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          org_id?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          org_id?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner_email: string
+          plan: string | null
+          status: string | null
+          stripe_customer_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_email: string
+          plan?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_email?: string
+          plan?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          id: string
+          image: string | null
+          name: string
+          price: number | null
+          total_sales: number | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          price?: number | null
+          total_sales?: number | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          price?: number | null
+          total_sales?: number | null
+          type?: string | null
         }
         Relationships: []
       }
@@ -178,6 +461,109 @@ export type Database = {
           service_type?: string
           status?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      support_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          org_id: string | null
+          org_name: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          org_id?: string | null
+          org_name: string
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          org_id?: string | null
+          org_name?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_conversations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_admin: boolean | null
+          sender_id: string | null
+          sender_name: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_admin?: boolean | null
+          sender_id?: string | null
+          sender_name: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_admin?: boolean | null
+          sender_id?: string | null
+          sender_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "support_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number | null
+          client_name: string
+          date: string | null
+          gateway: string | null
+          id: string
+          product: string | null
+          status: string | null
+        }
+        Insert: {
+          amount?: number | null
+          client_name: string
+          date?: string | null
+          gateway?: string | null
+          id?: string
+          product?: string | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number | null
+          client_name?: string
+          date?: string | null
+          gateway?: string | null
+          id?: string
+          product?: string | null
+          status?: string | null
         }
         Relationships: []
       }
