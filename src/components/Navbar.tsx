@@ -104,7 +104,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <a href="/auth" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full font-display font-semibold">Entrar</Button>
+                    <Button variant="outline" className="w-full font-display font-semibold">Entrar / Cadastrar</Button>
                   </a>
                   <a href="#cta" onClick={() => setOpen(false)}>
                     <Button className="w-full font-display font-semibold">Solicitar Orçamento</Button>
