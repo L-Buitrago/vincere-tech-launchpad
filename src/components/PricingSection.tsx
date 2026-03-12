@@ -39,7 +39,7 @@ const servicePackages = [
   {
     icon: ShieldCheck,
     name: "E-commerce Completo",
-    price: "3.497",
+    price: "1.997",
     desc: "Para marcas que querem vender online com catálogo e checkouts próprios.",
     features: [
       "Loja completa com até 50 produtos base",

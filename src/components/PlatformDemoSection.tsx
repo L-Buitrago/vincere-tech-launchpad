@@ -137,7 +137,7 @@ export default function PlatformDemoSection() {
                   <p className="text-xs font-medium text-gray-400 mb-2">Pipeline de Vendas</p>
                   {[
                     { name: "Nathan Silva", val: "R$ 2.500", status: "Propota" },
-                    { name: "Escola Leme", val: "R$ 15.000", status: "Em Negociação" },
+                    { name: "Escola Conecta", val: "R$ 15.000", status: "Em Negociação" },
                     { name: "Maria Oliveira", val: "R$ 900", status: "Novo Lead" }
                   ].map((lead, i) => (
                     <motion.div 

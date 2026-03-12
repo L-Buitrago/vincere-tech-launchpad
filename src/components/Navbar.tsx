@@ -106,7 +106,7 @@ const Navbar = () => {
                   <a href="/auth" onClick={() => setOpen(false)}>
                     <Button variant="outline" className="w-full font-display font-semibold">Entrar / Cadastrar</Button>
                   </a>
-                  <a href="#cta" onClick={() => setOpen(false)}>
+                  <a href="#pacotes" onClick={(e) => { e.preventDefault(); setOpen(false); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
                     <Button className="w-full font-display font-semibold">Solicitar Orçamento</Button>
                   </a>
                 </>

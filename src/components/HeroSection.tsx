@@ -31,7 +31,7 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
           style={{ animationDelay: "0.3s" }}
         >
-          <a href="#cta">
+          <a href="#pacotes" onClick={(e) => { e.preventDefault(); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
             <Button size="lg" className="font-display font-semibold text-base px-8 gap-2">
               Solicitar Orçamento
               <ArrowRight className="h-4 w-4" />

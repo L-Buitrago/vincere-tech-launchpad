@@ -212,7 +212,7 @@ const ChatWidget = forwardRef<HTMLDivElement>((_props, ref) => {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/50">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="font-display font-semibold text-sm">Vincere Assistente</span>
+              <span className="font-display font-semibold text-sm">Vincere Assist</span>
             </div>
             <button
               onClick={() => setOpen(false)}
