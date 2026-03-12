@@ -91,6 +91,8 @@ const App = () => (
               <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
               <Route path="/plataforma/admin" element={<PlatformAdmin />} />
               <Route path="/plataforma/suporte" element={<PlatformSupport />} />
+              <Route path="/plataforma/configuracoes" element={<PlatformSettings />} />
+              <Route path="/plataforma/compras" element={<PlatformPurchases />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

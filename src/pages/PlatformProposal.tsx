@@ -36,20 +36,29 @@ export default function PlatformProposal() {
     setInput("");
     setLoading(true);
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
     try {
       const { data, error } = await supabase.functions.invoke("platform-proposal", {
         body: { messages: [...messages, userMsg] },
       });
 
+      clearTimeout(timeout);
+
       if (error) throw error;
 
       const reply = data?.reply || "Desculpe, tive um problema ao processar sua mensagem. Tente novamente.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch (e) {
+    } catch (e: any) {
+      clearTimeout(timeout);
       console.error(e);
+      const errorMsg = e?.name === "AbortError"
+        ? "A resposta demorou muito. Tente uma mensagem mais curta."
+        : "Ocorreu um erro. Tente novamente em instantes.";
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Ocorreu um erro. Tente novamente em instantes." },
+        { role: "assistant", content: errorMsg },
       ]);
     } finally {
       setLoading(false);

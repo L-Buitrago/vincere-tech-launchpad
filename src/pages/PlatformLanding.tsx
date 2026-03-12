@@ -69,7 +69,7 @@ export default function PlatformLanding() {
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-[#888] hover:text-white hover:bg-white/5">Login</Button>
+              <Button variant="ghost" size="sm" className="text-[#888] hover:text-white hover:bg-white/5">Entrar / Cadastrar</Button>
             </Link>
             <Link to="/plataforma/proposta">
               <Button size="sm" className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold text-xs">
@@ -150,7 +150,8 @@ export default function PlatformLanding() {
                 key={f.title}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp} custom={i}
-                className="group p-6 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 transition-all duration-300"
+                whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3 } }}
+                className="group p-6 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 transition-all duration-300 hover:shadow-xl hover:shadow-white/[0.02] cursor-pointer"
               >
                 <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-4 ${f.color} group-hover:scale-110 transition-transform`}>
                   <f.icon className="w-5 h-5" />
@@ -164,8 +165,11 @@ export default function PlatformLanding() {
       </section>
 
       {/* Pricing */}
-      <section id="planos" className="py-24 sm:py-32 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="planos" className="py-24 sm:py-32 border-t border-white/5 relative overflow-hidden">
+        {/* Purple glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-purple-500/8 rounded-full blur-[200px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={fadeUp} custom={0}
@@ -181,14 +185,15 @@ export default function PlatformLanding() {
                 key={plan.name}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp} custom={i}
-                className={`relative p-7 rounded-2xl border transition-all duration-300 ${
+                whileHover={{ scale: plan.popular ? 1.05 : 1.03, y: -8, transition: { duration: 0.3 } }}
+                className={`relative p-7 rounded-2xl border transition-all duration-300 cursor-pointer ${
                   plan.popular
-                    ? "bg-[#111] border-platform-green/30 shadow-[0_0_40px_rgba(0,195,127,0.06)]"
-                    : "bg-[#111] border-white/5 hover:border-white/10"
+                    ? "bg-[#111] border-purple-500/40 shadow-[0_0_60px_rgba(168,85,247,0.12)]"
+                    : "bg-[#111] border-white/5 hover:border-purple-500/20 hover:shadow-[0_0_30px_rgba(168,85,247,0.06)]"
                 }`}
               >
                 {plan.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-platform-green text-black text-[10px] font-bold uppercase rounded-full tracking-wider">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-purple-500 to-violet-500 text-white text-[10px] font-bold uppercase rounded-full tracking-wider shadow-lg shadow-purple-500/25">
                     Mais popular
                   </span>
                 )}
@@ -202,7 +207,7 @@ export default function PlatformLanding() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-[#ccc]">
-                      <Check className="w-4 h-4 text-platform-green shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                       {f}
                     </li>
                   ))}
@@ -211,7 +216,7 @@ export default function PlatformLanding() {
                   <Button
                     className={`w-full font-semibold h-11 ${
                       plan.popular
-                        ? "bg-platform-green hover:bg-platform-green/90 text-black"
+                        ? "bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white shadow-lg shadow-purple-500/20"
                         : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
                     }`}
                   >
@@ -242,7 +247,8 @@ export default function PlatformLanding() {
                 key={t.name}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp} custom={i}
-                className="p-6 rounded-2xl bg-[#111] border border-white/5"
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="p-6 rounded-2xl bg-[#111] border border-white/5 hover:border-white/10 transition-all"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (

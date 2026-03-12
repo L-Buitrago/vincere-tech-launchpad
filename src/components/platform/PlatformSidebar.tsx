@@ -23,8 +23,8 @@ const menuItems = [
 ];
 
 const bottomItems = [
-  { label: "Configurações", icon: Settings, path: "/plataforma/dashboard" },
-  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/dashboard" },
+  { label: "Configurações", icon: Settings, path: "/plataforma/configuracoes" },
+  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
   { label: "Suporte", icon: Headset, path: "/plataforma/suporte" },
 ];
 
