@@ -25,6 +25,9 @@ import PlatformPayments from "./pages/PlatformPayments";
 import PlatformProposal from "./pages/PlatformProposal";
 import PlatformAdmin from "./pages/PlatformAdmin";
 import PlatformSupport from "./pages/PlatformSupport";
+import PlatformSettings from "./pages/PlatformSettings";
+import PlatformPurchases from "./pages/PlatformPurchases";
+import PlatformSupport from "./pages/PlatformSupport";
 
 const queryClient = new QueryClient();
 
