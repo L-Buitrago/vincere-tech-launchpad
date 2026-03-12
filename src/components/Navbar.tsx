@@ -63,7 +63,7 @@ const Navbar = () => {
           ) : (
             <>
               <a href="/auth">
-                <Button size="sm" variant="ghost" className="font-display font-semibold">Entrar</Button>
+                <Button size="sm" variant="ghost" className="font-display font-semibold">Entrar / Cadastrar</Button>
               </a>
               <a href="#cta">
                 <Button size="sm" className="font-display font-semibold">Solicitar Orçamento</Button>
