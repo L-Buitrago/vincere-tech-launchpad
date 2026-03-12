@@ -7,7 +7,7 @@ const servicePackages = [
   {
     icon: Zap,
     name: "Landing Page",
-    price: "997",
+    price: "497",
     desc: "Perfeito para vendas de infoprodutos, paginas de captura ou lançamento único.",
     features: [
       "Página única (Single Page)",
