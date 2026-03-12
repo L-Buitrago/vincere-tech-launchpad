@@ -23,7 +23,7 @@ const servicePackages = [
   {
     icon: Layout,
     name: "Site Institucional",
-    price: "1.997",
+    price: "987",
     desc: "A melhor escolha para empresas e negócios locais criarem autoridade online.",
     features: [
       "Até 5 páginas internas (Home, Sobre, etc.)",
