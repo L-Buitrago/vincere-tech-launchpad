@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const AboutSection = () => {
   return (
     <section id="sobre" className="py-24 md:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-secondary/30" />
+      <div className="absolute inset-0 bg-[#0A0A0A]" />
       
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />

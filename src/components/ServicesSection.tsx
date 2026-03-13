@@ -83,7 +83,7 @@ const ServicesSection = () => {
           className="text-center mb-16"
         >
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Nossos Serviços</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-white">
             Soluções que impulsionam resultados
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">

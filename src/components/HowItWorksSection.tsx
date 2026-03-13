@@ -62,7 +62,7 @@ const HowItWorksSection = () => {
           className="text-center mb-16"
         >
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Como Funciona</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-white">
             Do diagnóstico à entrega
           </h2>
         </motion.div>
@@ -84,7 +84,7 @@ const HowItWorksSection = () => {
               {i < steps.length - 1 && (
                 <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-px bg-border" />
               )}
-              <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-xl bg-accent/50 text-primary mb-5 border border-border">
+              <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-xl bg-accent/50 text-primary mb-5 border border-white/10">
                 <step.icon className="h-7 w-7" />
                 <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center font-display">
                   {step.number}

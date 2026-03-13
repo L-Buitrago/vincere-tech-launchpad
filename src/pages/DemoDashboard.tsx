@@ -197,22 +197,22 @@ const DemoDashboard = () => {
         {/* Analytics Section */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            {/* Main Revenue Chart */}
-           <Card className="lg:col-span-2 bg-card border-border rounded-3xl overflow-hidden shadow-2xl">
+           <Card className="lg:col-span-2 bg-[#111] border-white/5 rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 pb-0 flex items-center justify-between">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-foreground">Faturamento Mensal</h3>
+                  <h3 className="text-xl font-bold text-white">Faturamento Mensal</h3>
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded-full border-2 border-premium-purple flex items-center justify-center">
                         <div className="w-1.5 h-1.5 rounded-full bg-premium-purple" />
                       </div>
-                      <span className="text-xs font-bold text-foreground">Este Ano</span>
+                      <span className="text-xs font-bold text-white">Este Ano</span>
                     </div>
                     <div className="flex items-center gap-2">
                        <div className="w-4 h-4 rounded-full border-2 border-slate-700 flex items-center justify-center">
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
                       </div>
-                      <span className="text-xs font-bold text-foreground">Ano Anterior</span>
+                      <span className="text-xs font-bold text-white">Ano Anterior</span>
                     </div>
                   </div>
                 </div>
@@ -270,9 +270,9 @@ const DemoDashboard = () => {
            </Card>
 
            {/* Metrics Breakdown */}
-           <Card className="bg-card border-border rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
+           <Card className="bg-[#111] border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
               <div className="flex items-center justify-between mb-12">
-                <h3 className="text-xl font-bold text-foreground">Origem de Vendas</h3>
+                <h3 className="text-xl font-bold text-white">Origem de Vendas</h3>
                 <button className="bg-[#252644] px-4 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2 hover:bg-[#2e2f56] transition-colors">
                   Ver Todos <ArrowUpRight className="w-3 h-3" />
                 </button>
@@ -381,7 +381,7 @@ const DemoDashboard = () => {
 
            <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                   <FolderOpen className="w-5 h-5 text-premium-green" />
                   Projetos Ativos
                 </h3>
@@ -405,7 +405,7 @@ const DemoDashboard = () => {
                           <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex flex-col">
-                                <span className="font-bold text-sm tracking-tight text-foreground">{p.title}</span>
+                                <span className="font-bold text-sm tracking-tight text-white">{p.title}</span>
                                 <span className="text-[10px] text-premium-text-muted uppercase">Previsão: {new Date(p.end_date).toLocaleDateString("pt-BR")}</span>
                               </div>
                             </td>
