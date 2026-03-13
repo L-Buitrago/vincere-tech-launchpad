@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, CopyCheck, ExternalLink, Inbox } from "lucide-react";
+import { Bell, CopyCheck, Inbox } from "lucide-react";
 
 type Notification = {
   id: string;
@@ -21,7 +21,6 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -32,11 +31,9 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch initial notifications and subscribe to realtime
   useEffect(() => {
     if (!isAdmin || !user?.email) return;
 
-    // 1. Fetch unread and recent ones
     const fetchNotifications = async () => {
       const { data, error } = await supabase
         .from('notifications' as any)
@@ -52,12 +49,11 @@ export default function NotificationBell() {
 
     fetchNotifications();
 
-    // 2. Listen for new notifications
     const channel = supabase.channel(`notifications_${user.id}`)
       .on(
         'postgres_changes',
         {
-          event: '*', // INSERT or UPDATE (when marked as read)
+          event: '*',
           schema: 'public',
           table: 'notifications',
           filter: `user_email=eq.${user.email}`
@@ -65,7 +61,6 @@ export default function NotificationBell() {
         (payload) => {
           if (payload.eventType === 'INSERT') {
             setNotifications(prev => [payload.new as any as Notification, ...prev]);
-            // Optional: You could trigger a toast here for the new notification!
           } else if (payload.eventType === 'UPDATE') {
             setNotifications(prev => prev.map(n => n.id === payload.new.id ? payload.new as any as Notification : n));
           }
@@ -79,7 +74,6 @@ export default function NotificationBell() {
   }, [user?.email, user?.id, isAdmin]);
 
   const markAsRead = async (id: string) => {
-    // Optimistic UI update
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     
     await supabase
@@ -100,7 +94,7 @@ export default function NotificationBell() {
       .in('id', unreadIds);
   };
 
-  if (!isAdmin) return null; // Only show for admins
+  if (!isAdmin) return null;
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -112,7 +106,7 @@ export default function NotificationBell() {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-platform-orange ring-2 ring-[#0a0a0a] animate-pulse"></span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-platform-purple ring-2 ring-[#0a0a0a] animate-pulse"></span>
         )}
       </button>
 
@@ -146,11 +140,11 @@ export default function NotificationBell() {
                       if (!notif.read) markAsRead(notif.id);
                     }}
                     className={`p-4 transition-colors cursor-pointer hover:bg-white/[0.02] ${
-                      !notif.read ? 'bg-platform-orange/5' : ''
+                      !notif.read ? 'bg-purple-500/5' : ''
                     }`}
                   >
                     <div className="flex gap-3">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!notif.read ? 'bg-platform-orange' : 'bg-transparent'}`} />
+                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!notif.read ? 'bg-platform-purple' : 'bg-transparent'}`} />
                       <div>
                         <p className={`text-sm ${!notif.read ? 'text-white font-medium' : 'text-[#888]'}`}>
                           {notif.title}

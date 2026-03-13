@@ -30,7 +30,6 @@ export default function PlatformSettings() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Tabs */}
           <div className="flex lg:flex-col gap-2 overflow-x-auto lg:w-48 shrink-0">
             {tabs.map((tab) => (
               <button
@@ -38,7 +37,7 @@ export default function PlatformSettings() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm whitespace-nowrap transition-all ${
                   activeTab === tab.id
-                    ? "bg-white/10 text-white"
+                    ? "bg-purple-500/10 text-violet-400"
                     : "text-[#888] hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -48,7 +47,6 @@ export default function PlatformSettings() {
             ))}
           </div>
 
-          {/* Content */}
           <div className="flex-1 bg-[#111] border border-white/5 rounded-2xl p-6">
             {activeTab === "perfil" && (
               <div className="space-y-6">
@@ -56,7 +54,7 @@ export default function PlatformSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Nome completo</label>
-                    <input defaultValue={user?.user_metadata?.full_name || ""} className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-platform-green/30" />
+                    <input defaultValue={user?.user_metadata?.full_name || ""} className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Email</label>
@@ -64,14 +62,14 @@ export default function PlatformSettings() {
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Telefone</label>
-                    <input placeholder="(11) 99999-9999" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-platform-green/30" />
+                    <input placeholder="(11) 99999-9999" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Empresa</label>
-                    <input placeholder="Nome da empresa" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-platform-green/30" />
+                    <input placeholder="Nome da empresa" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
                   </div>
                 </div>
-                <Button onClick={handleSave} className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2">
+                <Button onClick={handleSave} className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2">
                   <Save className="w-4 h-4" /> Salvar alterações
                 </Button>
               </div>
@@ -85,7 +83,7 @@ export default function PlatformSettings() {
                     <span className="text-sm text-[#ccc]">{item}</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[#333] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-platform-green" />
+                      <div className="w-9 h-5 bg-[#333] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-platform-purple" />
                     </label>
                   </div>
                 ))}
@@ -97,13 +95,13 @@ export default function PlatformSettings() {
                 <h2 className="text-lg font-semibold text-white mb-4">Segurança</h2>
                 <div>
                   <label className="text-xs text-[#888] block mb-1.5">Senha atual</label>
-                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-platform-green/30" />
+                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
                 </div>
                 <div>
                   <label className="text-xs text-[#888] block mb-1.5">Nova senha</label>
-                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-platform-green/30" />
+                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
                 </div>
-                <Button onClick={handleSave} className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2">
+                <Button onClick={handleSave} className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2">
                   <Save className="w-4 h-4" /> Atualizar senha
                 </Button>
               </div>
@@ -114,7 +112,7 @@ export default function PlatformSettings() {
                 <h2 className="text-lg font-semibold text-white mb-4">Método de Pagamento</h2>
                 <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/10">
                   <div className="flex items-center gap-3">
-                    <CreditCard className="w-5 h-5 text-platform-green" />
+                    <CreditCard className="w-5 h-5 text-violet-400" />
                     <div>
                       <p className="text-sm text-white">•••• •••• •••• 4242</p>
                       <p className="text-xs text-[#666]">Expira em 12/2028</p>

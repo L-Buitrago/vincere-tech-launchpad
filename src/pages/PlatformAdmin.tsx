@@ -3,8 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/useOrganization";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Building2, Users, DollarSign, TrendingUp, Crown, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Building2, Users, DollarSign, TrendingUp, Crown } from "lucide-react";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -29,10 +28,8 @@ type Org = {
 export default function PlatformAdmin() {
   const { isAdmin } = useOrganization();
 
-  // Only admins can see this page
   if (!isAdmin) return <Navigate to="/plataforma/dashboard" replace />;
 
-  // Fetch all organizations
   const { data: orgs = [], isLoading: orgsLoading } = useQuery({
     queryKey: ['admin-orgs'],
     queryFn: async () => {
@@ -45,7 +42,6 @@ export default function PlatformAdmin() {
     }
   });
 
-  // Fetch all customers for global stats
   const { data: allCustomers = [] } = useQuery({
     queryKey: ['admin-all-customers'],
     queryFn: async () => {
@@ -62,7 +58,6 @@ export default function PlatformAdmin() {
   const totalActive = allCustomers.filter(c => c.status === 'Cliente Ativo').length;
   const totalLeads = allCustomers.filter(c => c.status === 'Lead').length;
 
-  // Group customers by org for per-org stats
   const orgStats = orgs.map(org => {
     const orgCustomers = allCustomers.filter(c => c.org_id === org.id);
     return {
@@ -75,7 +70,6 @@ export default function PlatformAdmin() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
-      {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
@@ -88,13 +82,12 @@ export default function PlatformAdmin() {
         </div>
       </div>
 
-      {/* Global Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Organizações", value: orgs.length, icon: Building2, color: "purple-400" },
-          { label: "Total de Clientes", value: totalClients, icon: Users, color: "platform-green" },
-          { label: "Clientes Ativos", value: totalActive, icon: TrendingUp, color: "blue-400" },
-          { label: "Receita Global", value: formatCurrency(totalRevenue), icon: DollarSign, color: "platform-green" },
+          { label: "Organizações", value: orgs.length, icon: Building2, bgCls: "bg-purple-500/10", textCls: "text-purple-400" },
+          { label: "Total de Clientes", value: totalClients, icon: Users, bgCls: "bg-violet-500/10", textCls: "text-violet-400" },
+          { label: "Clientes Ativos", value: totalActive, icon: TrendingUp, bgCls: "bg-blue-400/10", textCls: "text-blue-400" },
+          { label: "Receita Global", value: formatCurrency(totalRevenue), icon: DollarSign, bgCls: "bg-violet-500/10", textCls: "text-violet-400" },
         ].map((met, i) => (
           <motion.div
             key={met.label}
@@ -103,8 +96,8 @@ export default function PlatformAdmin() {
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs text-[#888] font-medium">{met.label}</span>
-              <div className={`w-8 h-8 rounded-lg bg-${met.color}/10 flex items-center justify-center`}>
-                <met.icon className={`w-4 h-4 text-${met.color}`} />
+              <div className={`w-8 h-8 rounded-lg ${met.bgCls} flex items-center justify-center`}>
+                <met.icon className={`w-4 h-4 ${met.textCls}`} />
               </div>
             </div>
             <p className="text-2xl font-bold text-white">
@@ -115,7 +108,6 @@ export default function PlatformAdmin() {
         ))}
       </div>
 
-      {/* Leads overview */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={4}
         className="p-5 rounded-2xl bg-gradient-to-r from-platform-orange/5 to-transparent border border-platform-orange/10 mb-8 flex items-center justify-between"
@@ -126,7 +118,6 @@ export default function PlatformAdmin() {
         </div>
       </motion.div>
 
-      {/* Organizations Table */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={5}
         className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden"
@@ -175,7 +166,7 @@ export default function PlatformAdmin() {
                     </td>
                     <td className="px-5 py-3.5 text-[#888]">{org.owner_email}</td>
                     <td className="px-5 py-3.5">
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium text-platform-green bg-platform-green/10 capitalize">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium text-violet-400 bg-violet-500/10 capitalize">
                         {org.plan}
                       </span>
                     </td>
@@ -184,7 +175,7 @@ export default function PlatformAdmin() {
                     <td className="px-5 py-3.5">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         org.status === 'active'
-                          ? 'text-platform-green bg-platform-green/10'
+                          ? 'text-violet-400 bg-violet-500/10'
                           : 'text-[#888] bg-white/5'
                       }`}>
                         {org.status === 'active' ? 'Ativa' : org.status}

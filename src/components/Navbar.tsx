@@ -28,11 +28,11 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/90 backdrop-blur-md border-b border-border shadow-lg shadow-black/10" : "bg-transparent"
+        scrolled ? "bg-black/80 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20" : "bg-transparent backdrop-blur-sm"
       }`}
     >
       <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-8">
-        <a href="/" className="font-display text-xl font-bold tracking-tight text-foreground">
+        <a href="/" className="font-display text-xl font-medium tracking-tight text-white">
           Vincere
         </a>
 
@@ -42,7 +42,7 @@ const Navbar = () => {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm font-medium text-white/50 hover:text-white transition-colors"
               >
                 {link.label}
               </a>
@@ -53,20 +53,20 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {isAdmin && (
             <a href="/admin">
-              <Button size={"sm" as any} variant={"outline" as any} className="font-display font-semibold">Admin</Button>
+              <Button size={"sm" as any} variant={"outline" as any} className="font-display font-semibold border-white/10 text-white hover:bg-white/5 bg-transparent">Admin</Button>
             </a>
           )}
           {user ? (
             <a href="/plataforma">
-              <Button size={"sm" as any} className="font-display font-semibold">Meu Dashboard</Button>
+              <Button size={"sm" as any} className="font-display font-semibold bg-gradient-to-r from-white/90 to-white/70 text-black hover:from-white hover:to-white/80">Meu Dashboard</Button>
             </a>
           ) : (
             <>
               <a href="/auth">
-                <Button size={"sm" as any} variant={"ghost" as any} className="font-display font-semibold">Entrar / Cadastrar</Button>
+                <Button size={"sm" as any} variant={"ghost" as any} className="font-display font-semibold text-white/70 hover:text-white hover:bg-white/5">Entrar / Cadastrar</Button>
               </a>
               <a href="#pacotes" onClick={(e) => { e.preventDefault(); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                <Button size={"sm" as any} className="font-display font-semibold">Solicitar Orçamento</Button>
+                <Button size={"sm" as any} className="font-display font-semibold bg-gradient-to-r from-white/90 to-white/70 text-black hover:from-white hover:to-white/80">Solicitar Orçamento</Button>
               </a>
             </>
           )}
@@ -75,39 +75,39 @@ const Navbar = () => {
         {/* Mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant={"ghost" as any} size={"icon" as any}>
+            <Button variant={"ghost" as any} size={"icon" as any} className="text-white">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side={"right" as any} className="bg-background border-border">
-            <SheetTitle className="font-display text-lg">Menu</SheetTitle>
+          <SheetContent side={"right" as any} className="bg-black/95 backdrop-blur-xl border-white/5">
+            <SheetTitle className="font-display text-lg text-white">Menu</SheetTitle>
             <div className="flex flex-col gap-6 mt-8">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-lg font-medium text-white/50 hover:text-white transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
               {isAdmin && (
                 <a href="/admin" onClick={() => setOpen(false)}>
-                  <Button variant="outline" className="w-full font-display font-semibold">Admin</Button>
+                  <Button variant="outline" className="w-full font-display font-semibold border-white/10 text-white bg-transparent">Admin</Button>
                 </a>
               )}
               {user ? (
                 <a href="/plataforma" onClick={() => setOpen(false)}>
-                  <Button className="w-full font-display font-semibold">Meu Dashboard</Button>
+                  <Button className="w-full font-display font-semibold bg-gradient-to-r from-white/90 to-white/70 text-black">Meu Dashboard</Button>
                 </a>
               ) : (
                 <>
                   <a href="/auth" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full font-display font-semibold">Entrar / Cadastrar</Button>
+                    <Button variant="outline" className="w-full font-display font-semibold border-white/10 text-white bg-transparent">Entrar / Cadastrar</Button>
                   </a>
                   <a href="#pacotes" onClick={(e) => { e.preventDefault(); setOpen(false); document.getElementById('pacotes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                    <Button className="w-full font-display font-semibold">Solicitar Orçamento</Button>
+                    <Button className="w-full font-display font-semibold bg-gradient-to-r from-white/90 to-white/70 text-black">Solicitar Orçamento</Button>
                   </a>
                 </>
               )}
