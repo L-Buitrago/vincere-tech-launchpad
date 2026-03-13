@@ -42,7 +42,7 @@ const Navbar = () => {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-white/50 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/50 hover:text-purple-400 hover:scale-110 inline-block transform transition-all duration-300"
               >
                 {link.label}
               </a>
@@ -87,7 +87,7 @@ const Navbar = () => {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="text-lg font-medium text-white/50 hover:text-white transition-colors"
+                  className="text-lg font-medium text-white/50 hover:text-purple-400 hover:scale-105 inline-block transform transition-all duration-300"
                 >
                   {link.label}
                 </a>
