@@ -1,4 +1,5 @@
 import { Search, Map, Code2, Headphones } from "lucide-react";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -27,20 +28,58 @@ const steps = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
+
 const HowItWorksSection = () => {
   return (
-    <section id="como-funciona" className="py-24 md:py-32">
+    <section id="como-funciona" className="py-24 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="text-center mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <p className="text-sm font-medium text-primary tracking-wider uppercase mb-3">Como Funciona</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
             Do diagnóstico à entrega
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto"
+        >
           {steps.map((step, i) => (
-            <div key={step.number} className="relative text-center p-6">
+            <motion.div 
+              key={step.number} 
+              variants={itemVariants}
+              className="relative text-center p-6"
+            >
               {/* Connector line */}
               {i < steps.length - 1 && (
                 <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-px bg-border" />
@@ -53,9 +92,9 @@ const HowItWorksSection = () => {
               </div>
               <h3 className="font-display text-base font-semibold mb-2">{step.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
