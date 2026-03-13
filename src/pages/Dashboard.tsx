@@ -142,7 +142,7 @@ const Dashboard = () => {
   const initials = fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
   const planName = useMemo(() => {
-    if (isAdmin) return "Enterprise (Admin)";
+    if (isAdmin) return "Admin";
     if (!org?.plan) return "Starter";
     const mapped: Record<string, string> = {
       free: "Starter",
