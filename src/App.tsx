@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import SubscriptionGuard from "@/components/SubscriptionGuard";
+import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -33,71 +34,73 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/privacidade" element={<Privacy />} />
-            <Route path="/termos" element={<Terms />} />
-            <Route path="/devolucoes" element={<Returns />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-            {/* Platform SaaS */}
-            <Route path="/plataforma" element={<PlatformLanding />} />
-            <Route path="/plataforma/proposta" element={<PlatformProposal />} />
-            {/* Payments page is accessible to any logged-in user (so they can subscribe) */}
-            <Route
-              path="/plataforma/pagamentos"
-              element={
-                <ProtectedRoute>
-                  <PlatformLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<PlatformPayments />} />
-            </Route>
-            {/* All other platform pages require an active subscription */}
-            <Route 
-              element={
-                <ProtectedRoute>
-                  <SubscriptionGuard>
+      <ThemeProvider defaultTheme="dark" storageKey="vincere-theme">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/privacidade" element={<Privacy />} />
+              <Route path="/termos" element={<Terms />} />
+              <Route path="/devolucoes" element={<Returns />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Platform SaaS */}
+              <Route path="/plataforma" element={<PlatformLanding />} />
+              <Route path="/plataforma/proposta" element={<PlatformProposal />} />
+              {/* Payments page is accessible to any logged-in user (so they can subscribe) */}
+              <Route
+                path="/plataforma/pagamentos"
+                element={
+                  <ProtectedRoute>
                     <PlatformLayout />
-                  </SubscriptionGuard>
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/plataforma/dashboard" element={<PlatformDashboard />} />
-              <Route path="/plataforma/clientes" element={<PlatformClients />} />
-              <Route path="/plataforma/produtos" element={<PlatformProducts />} />
-              <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
-              <Route path="/plataforma/admin" element={<PlatformAdmin />} />
-              <Route path="/plataforma/suporte" element={<PlatformSupport />} />
-              <Route path="/plataforma/configuracoes" element={<PlatformSettings />} />
-              <Route path="/plataforma/compras" element={<PlatformPurchases />} />
-            </Route>
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<PlatformPayments />} />
+              </Route>
+              {/* All other platform pages require an active subscription */}
+              <Route 
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard>
+                      <PlatformLayout />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/plataforma/dashboard" element={<PlatformDashboard />} />
+                <Route path="/plataforma/clientes" element={<PlatformClients />} />
+                <Route path="/plataforma/produtos" element={<PlatformProducts />} />
+                <Route path="/plataforma/checkouts" element={<PlatformCheckouts />} />
+                <Route path="/plataforma/admin" element={<PlatformAdmin />} />
+                <Route path="/plataforma/suporte" element={<PlatformSupport />} />
+                <Route path="/plataforma/configuracoes" element={<PlatformSettings />} />
+                <Route path="/plataforma/compras" element={<PlatformPurchases />} />
+              </Route>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

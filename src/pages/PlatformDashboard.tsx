@@ -195,38 +195,47 @@ export default function PlatformDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {metrics.map((met, i) => {
-          const colors = getMetricColorClasses(met.color);
+          const bgColors: Record<string, string> = {
+            violet: "bg-violet-600",
+            green: "bg-emerald-500",
+            orange: "bg-amber-500",
+            blue: "bg-sky-500",
+          };
+          const bgColor = bgColors[met.color] || "bg-[#111]";
+          
           return (
             <motion.div
               key={met.label}
               initial="hidden" animate="visible" variants={fadeUp} custom={i}
-              className="p-5 rounded-2xl bg-[#111] border border-white/5"
+              whileHover={{ y: -4 }}
+              className={`p-6 rounded-2xl ${bgColor} text-white shadow-xl border-none relative overflow-hidden group transition-all duration-300`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-[#888] font-medium">{met.label}</span>
-                <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center`}>
-                  <met.icon className={`w-4 h-4 ${colors.text}`} />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs text-white/70 font-bold uppercase tracking-widest">{met.label}</span>
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center transition-transform group-hover:scale-110 duration-500">
+                    <met.icon className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+                <p className="text-3xl font-extrabold text-white tracking-tight mb-2">
+                  {met.prefix}{typeof met.value === "number" ? met.value.toLocaleString("pt-BR") : met.value}
+                </p>
+                <div className="flex items-center gap-2">
+                  {met.change !== 0 ? (
+                    <span className="flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-full bg-white/10 text-white">
+                      {met.change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      {met.change > 0 ? "+" : ""}{met.change}%
+                    </span>
+                  ) : (
+                    <span className="text-xs text-white/50">sem alterações</span>
+                  )}
+                  <span className="text-[10px] text-white/40 font-medium">dados em tempo real</span>
                 </div>
               </div>
-              <p className="text-2xl font-bold text-white mb-1">
-                {typeof met.value === "number" ? met.value.toLocaleString("pt-BR") : met.value}
-              </p>
-              <div className="flex items-center gap-2">
-                {met.change !== 0 ? (
-                  <span className={`flex items-center gap-0.5 text-xs font-medium ${
-                    met.change > 0 ? "text-violet-400" : "text-platform-red"
-                  }`}>
-                    {met.change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {met.change > 0 ? "+" : ""}{met.change}%
-                  </span>
-                ) : (
-                  <span className="text-xs text-[#888]">—</span>
-                )}
-                {met.sub && <span className="text-[10px] text-[#666]">{met.sub}</span>}
-                {!met.sub && <span className="text-[10px] text-[#666]">dados em tempo real</span>}
-              </div>
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
             </motion.div>
           );
         })}

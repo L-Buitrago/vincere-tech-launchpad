@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, CreditCard, Package, ShoppingCart, Store,
   TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle, Headset,
-  LogOut, Menu, X, ChevronRight, Crown, Rocket, MessageSquare
+  LogOut, Menu, X, ChevronRight, Crown, Rocket, MessageSquare, Sun, Moon
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
+import { useTheme } from "@/components/theme-provider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NotificationBell from "./NotificationBell";
@@ -18,14 +19,15 @@ const menuItems = [
   { label: "Produtos", icon: Package, path: "/plataforma/produtos" },
   { label: "Checkouts", icon: ShoppingCart, path: "/plataforma/checkouts" },
   { label: "Clientes", icon: Store, path: "/plataforma/clientes" },
-  { label: "Mensagens", icon: MessageSquare, path: "/plataforma/suporte" },
+  { label: "Suporte", icon: MessageSquare, path: "/plataforma/suporte" },
   { label: "Upsell", icon: TrendingUp, path: "/plataforma/dashboard" },
   { label: "Funis", icon: GitBranch, path: "/plataforma/dashboard" },
-  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
 ];
 
 const bottomItems = [
   { label: "Configurações", icon: Settings, path: "/plataforma/configuracoes" },
+  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
+  { label: "Ajuda", icon: HelpCircle, path: "/plataforma/suporte" },
 ];
 
 export default function PlatformSidebar() {
@@ -35,6 +37,7 @@ export default function PlatformSidebar() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin } = useOrganization();
+  const { theme, setTheme } = useTheme();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -59,6 +62,14 @@ export default function PlatformSidebar() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white tracking-tight font-display">Vincere</span>
         </div>
+        {!collapsed && (
+          <button 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 rounded-lg bg-white/5 border border-white/5 text-premium-text-muted hover:text-white transition-colors"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+        )}
       </div>
 
       {/* Main Menu */}
@@ -110,7 +121,7 @@ export default function PlatformSidebar() {
         <div className="space-y-1 border-t border-white/5 pt-4">
           {!collapsed && (
             <div className="px-3 mb-2">
-              <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Suporte</span>
+              <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Geral</span>
             </div>
           )}
           {bottomItems.map((item) => (

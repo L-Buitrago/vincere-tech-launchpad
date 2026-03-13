@@ -11,10 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { 
   LogOut, Plus, FileText, FolderOpen, Loader2, Search, 
-  Bell, Moon, Zap, Wallet, Truck, Clock, MoreHorizontal,
+  Bell, Moon, Sun, Zap, Wallet, Truck, Clock, MoreHorizontal,
   TrendingUp, ArrowUpRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/components/theme-provider";
 import {
   Dialog,
   DialogContent,
@@ -96,32 +97,23 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const StatCard = ({ title, value, subtext, icon: Icon, variant = "ghost" }: any) => (
-  <Card className={`overflow-hidden border-white/5 relative group transition-all duration-500 hover:translate-y-[-4px] ${
-    variant === "premium"
-      ? "bg-[#1C1D3A]"
-      : "bg-premium-card text-white"
-  }`}>
-    {variant === "premium" && (
-      <div className="absolute inset-0 bg-gradient-to-br from-premium-purple/40 to-transparent pointer-events-none" />
-    )}
+const StatCard = ({ title, value, icon: Icon, bgColor }: any) => (
+  <Card className={`overflow-hidden border-none relative group transition-all duration-500 hover:translate-y-[-4px] ${bgColor} text-white shadow-xl`}>
     <CardContent className="p-6 relative z-10">
       <div className="flex items-start justify-between">
         <div className="space-y-4">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${
-            variant === "premium" ? "bg-white/10" : "bg-[#252644]"
-          }`}>
-            <Icon className={`w-6 h-6 ${variant === "premium" ? "text-white" : "text-premium-purple"}`} />
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/20 transition-transform group-hover:scale-110 duration-500">
+            <Icon className="w-6 h-6 text-white" />
           </div>
           <div className="space-y-1">
             <h3 className="text-3xl font-bold tracking-tight">{value}</h3>
-            <p className="text-sm font-medium text-premium-text-muted">
+            <p className="text-sm font-medium text-white/80">
               {title}
             </p>
           </div>
         </div>
-        <div className="p-1 rounded-md hover:bg-white/5 cursor-pointer">
-          <MoreHorizontal className="w-4 h-4 text-premium-text-muted" />
+        <div className="p-1 rounded-md hover:bg-white/10 cursor-pointer">
+          <MoreHorizontal className="w-4 h-4 text-white/60" />
         </div>
       </div>
     </CardContent>
@@ -131,6 +123,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, variant = "ghost" }: any)
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { org, isAdmin } = useOrganization();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [newQuoteOpen, setNewQuoteOpen] = useState(false);
@@ -221,19 +214,28 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-3">
-             <button className="p-2.5 bg-premium-card border border-white/5 rounded-xl relative hover:bg-white/5 transition-colors">
+             <button className="p-2.5 bg-[#15162D] border border-white/5 rounded-xl relative hover:bg-white/5 transition-colors">
                <Bell className="w-4 h-4 text-premium-text-muted" />
                <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0A0A]">2</span>
              </button>
 
              <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
+                {/* Theme Switcher */}
+                <button 
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2.5 bg-[#15162D] border border-white/5 rounded-xl text-premium-text-muted hover:text-white transition-colors"
+                >
+                  {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+
                 <div className="flex flex-col items-end">
                    <span className="text-sm font-bold text-white leading-none">{fullName}</span>
+                   <span className="text-[10px] text-premium-text-muted mt-0.5">{user?.email}</span>
                    <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-premium-purple/30 bg-premium-purple/5 text-premium-purple">
                      {planName}
                    </Badge>
                 </div>
-                <Avatar className="w-10 h-10 rounded-xl border border-white/10">
+                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
                   <AvatarImage src={userAvatar} className="object-cover" />
                   <AvatarFallback className="bg-premium-purple/20 text-premium-purple font-bold text-xs">
                     {initials}
@@ -250,33 +252,36 @@ const Dashboard = () => {
         
         {/* Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-           <StatCard 
-              title="Total amount of orders" 
-              value="1174" 
-              icon={FileText} 
-              variant="premium" 
-           />
-           <StatCard 
-              title="Total money paid" 
-              value="$8,126,420" 
-              icon={Wallet} 
-           />
-           <StatCard 
-              title="Available courier" 
-              value="29" 
-              icon={Truck} 
-           />
-           <StatCard 
-              title="Hours on the road" 
-              value="89,011" 
-              icon={Clock} 
-           />
+            <StatCard 
+               title="Total Sales" 
+               value="1.174" 
+               icon={FileText} 
+               bgColor="bg-emerald-500" 
+            />
+            <StatCard 
+               title="Total Revenue" 
+               value="R$ 8.126.420" 
+               icon={Wallet} 
+               bgColor="bg-sky-500"
+            />
+            <StatCard 
+               title="Pending Sales" 
+               value="29" 
+               icon={Truck} 
+               bgColor="bg-amber-500"
+            />
+            <StatCard 
+               title="Failed Sales" 
+               value="89.011" 
+               icon={Clock} 
+               bgColor="bg-rose-500"
+            />
         </section>
 
         {/* Analytics Section */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            {/* Main Revenue Chart */}
-           <Card className="lg:col-span-2 bg-premium-card border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+           <Card className="lg:col-span-2 bg-[#15162D] border-white/5 rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 pb-0 flex items-center justify-between">
                 <div className="space-y-4">
                   <h3 className="text-xl font-bold">Monthly Revenue</h3>
@@ -288,8 +293,8 @@ const Dashboard = () => {
                       <span className="text-xs font-bold text-white">Last Year</span>
                     </div>
                     <div className="flex items-center gap-2">
-                       <div className="w-4 h-4 rounded-full border-2 border-premium-card-light flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-premium-card-light" />
+                       <div className="w-4 h-4 rounded-full border-2 border-slate-700 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
                       </div>
                       <span className="text-xs font-bold text-white">Previous Year</span>
                     </div>
@@ -334,7 +339,7 @@ const Dashboard = () => {
                               y={0} 
                               dy={16} 
                               textAnchor="middle" 
-                              className={`text-[11px] font-bold ${payload.value === "May" ? "bg-premium-purple px-2 py-1 rounded fill-white" : "fill-[#74769A]"}`}
+                              className="text-[11px] font-bold fill-[#74769A]"
                             >
                               {payload.value}
                             </text>
@@ -380,7 +385,7 @@ const Dashboard = () => {
            </Card>
 
            {/* Top Carriers / Projects Status */}
-           <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
+           <Card className="bg-[#15162D] border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
               <div className="flex items-center justify-between mb-12">
                 <h3 className="text-xl font-bold">Top Carriers</h3>
                 <button className="bg-[#252644] px-4 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2 hover:bg-[#2e2f56] transition-colors">
@@ -499,7 +504,7 @@ const Dashboard = () => {
                 </Dialog>
               </div>
 
-              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
+              <Card className="bg-[#15162D] border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
@@ -561,7 +566,7 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
+              <Card className="bg-[#15162D] border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
