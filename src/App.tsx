@@ -28,6 +28,7 @@ import PlatformAdmin from "./pages/PlatformAdmin";
 import PlatformSupport from "./pages/PlatformSupport";
 import PlatformSettings from "./pages/PlatformSettings";
 import PlatformPurchases from "./pages/PlatformPurchases";
+import DemoDashboard from "./pages/DemoDashboard";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
               {/* Platform SaaS */}
               <Route path="/plataforma" element={<PlatformLanding />} />
               <Route path="/plataforma/proposta" element={<PlatformProposal />} />
+              <Route path="/plataforma/demonstracao" element={<DemoDashboard />} />
               {/* Payments page is accessible to any logged-in user (so they can subscribe) */}
               <Route
                 path="/plataforma/pagamentos"

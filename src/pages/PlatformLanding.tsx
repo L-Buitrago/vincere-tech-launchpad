@@ -96,7 +96,7 @@ export default function PlatformLanding() {
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link to="/plataforma/dashboard">
+            <Link to="/plataforma/demonstracao">
               <Button variant="outline" size="lg" className="border-white/10 text-white hover:bg-white/5 font-semibold px-8 h-12 text-base bg-transparent">
                 Ver demonstração
               </Button>
