@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
-import { useTheme } from "@/components/theme-provider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NotificationBell from "./NotificationBell";
@@ -37,7 +36,6 @@ export default function PlatformSidebar() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin } = useOrganization();
-  const { theme, setTheme } = useTheme();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -56,27 +54,19 @@ export default function PlatformSidebar() {
   const userInitials = userName.substring(0, 2).toUpperCase();
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-sidebar border-r border-sidebar-border transition-colors duration-300">
+    <div className="flex flex-col h-full bg-[#06071A]">
       {/* Logo */}
       <div className="p-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-sidebar-foreground tracking-tight font-display">Vincere</span>
+          <span className="text-lg font-bold text-white tracking-tight font-display">Vincere</span>
         </div>
-        {!collapsed && (
-          <button 
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-lg bg-sidebar-accent border border-sidebar-border text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
-          >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-        )}
       </div>
 
       {/* Main Menu */}
       <nav className="flex-1 px-3 space-y-1 mt-4 overflow-y-auto scrollbar-hide">
         {!collapsed && (
           <div className="px-3 mb-2">
-            <span className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.2em]">Menu</span>
+            <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Menu</span>
           </div>
         )}
         {menuItems.map((item) => (
@@ -86,8 +76,8 @@ export default function PlatformSidebar() {
             onClick={() => setMobileOpen(false)}
             className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all duration-300 group relative ${
               isActive(item.path)
-                ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-lg"
-                : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                ? "bg-premium-purple/20 text-white shadow-[0_0_20px_rgba(104,46,199,0.15)]"
+                : "text-premium-text-muted hover:text-white hover:bg-white/5"
             }`}
           >
             <item.icon className={`w-[20px] h-[20px] shrink-0 ${isActive(item.path) ? "text-premium-purple" : ""}`} />
@@ -121,7 +111,7 @@ export default function PlatformSidebar() {
         <div className="space-y-1 border-t border-sidebar-border pt-4">
           {!collapsed && (
             <div className="px-3 mb-2">
-              <span className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.2em]">Geral</span>
+              <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Geral</span>
             </div>
           )}
           {bottomItems.map((item) => (
@@ -129,7 +119,7 @@ export default function PlatformSidebar() {
               key={item.label}
               to={item.path}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-premium-text-muted hover:text-white hover:bg-white/5 transition-all duration-200"
             >
               <item.icon className="w-[18px] h-[18px] shrink-0" />
               {!collapsed && <span>{item.label}</span>}
@@ -145,7 +135,7 @@ export default function PlatformSidebar() {
         </div>
 
         {!collapsed && (
-           <div className="mt-4 relative overflow-hidden p-5 rounded-2xl bg-sidebar-accent border border-sidebar-border group">
+           <div className="mt-4 relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-premium-card to-[#0A0B1E] border border-white/5 group">
              {/* Rocket Animation Background */}
              <div className="absolute -right-4 -top-4 w-24 h-24 bg-premium-purple/10 rounded-full blur-2xl group-hover:bg-premium-purple/20 transition-all duration-500" />
              
@@ -200,7 +190,7 @@ export default function PlatformSidebar() {
             animate={{ x: 0 }}
             exit={{ x: -280 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-[260px] bg-sidebar border-r border-sidebar-border"
+            className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-[260px] bg-[#0A0A0A] border-r border-white/5"
           >
             <SidebarContent />
           </motion.aside>
@@ -209,7 +199,7 @@ export default function PlatformSidebar() {
 
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex flex-col sticky top-0 h-screen border-r border-sidebar-border bg-sidebar transition-all duration-300 ${
+        className={`hidden lg:flex flex-col sticky top-0 h-screen border-r border-white/5 bg-[#0A0A0A] transition-all duration-300 ${
           collapsed ? "w-[68px]" : "w-[240px]"
         }`}
       >

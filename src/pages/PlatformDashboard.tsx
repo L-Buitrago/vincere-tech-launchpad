@@ -8,7 +8,7 @@ import { useTheme } from "@/components/theme-provider";
 import { motion } from "framer-motion";
 import {
   TrendingUp, TrendingDown, DollarSign, Users,
-  Clock, UserPlus, CalendarIcon, Search, Bell, Sun, Moon
+  Clock, UserPlus, CalendarIcon, Search, Bell
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -62,7 +62,6 @@ export default function PlatformDashboard() {
   const [showSuccess, setShowSuccess] = useState(false);
   const { orgId, isAdmin, org } = useOrganization();
   const { user } = useAuth();
-  const { theme, setTheme } = useTheme();
 
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuário";
   const initials = fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -175,49 +174,42 @@ export default function PlatformDashboard() {
         </motion.div>
       )}
 
-      <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-border mx-[-2rem] mb-8">
+      <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-white/5 mx-[-2rem] mb-8">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight font-display text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Visão geral do seu CRM e métricas reais.</p>
+          <h1 className="text-2xl font-bold tracking-tight font-display text-white">Dashboard</h1>
+          <p className="text-sm text-[#888] mt-1">Visão geral do seu CRM e métricas reais.</p>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
             <Input
-              className="bg-accent/50 border-border pl-10 w-64 text-sm rounded-xl focus-visible:ring-violet-500 text-foreground"
+              className="bg-white/5 border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-violet-500 text-white"
               placeholder="Pesquisar..."
             />
           </div>
 
           <div className="flex items-center gap-3">
-             <button className="p-2.5 bg-accent/50 border border-border rounded-xl relative hover:bg-accent transition-colors">
-               <Bell className="w-4 h-4 text-muted-foreground" />
+             <button className="p-2.5 bg-white/5 border border-white/5 rounded-xl relative hover:bg-white/10 transition-colors">
+               <Bell className="w-4 h-4 text-[#888]" />
                <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-background text-white">2</span>
              </button>
 
              <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
-                {/* Theme Switcher */}
-                <button 
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2.5 bg-accent/50 border border-border rounded-xl text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
 
                 <div className="flex flex-col items-end">
-                   <span className="text-sm font-bold text-foreground leading-none">
+                   <span className="text-sm font-bold text-white leading-none">
                      {fullName}
                    </span>
                    <span className="text-[10px] text-[#888] mt-0.5">
                      {user?.email}
                    </span>
-                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-500">
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-400">
                      {planName}
                    </Badge>
                 </div>
-                <Avatar className="w-10 h-10 rounded-xl border border-border shadow-xl">
-                  <AvatarFallback className="bg-violet-500/20 text-violet-500 font-bold text-xs uppercase">
+                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
+                  <AvatarFallback className="bg-violet-500/20 text-violet-400 font-bold text-xs uppercase">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -309,13 +301,13 @@ export default function PlatformDashboard() {
 
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={4}
-        className="p-6 rounded-2xl bg-card border border-border mb-8 shadow-sm"
+        className="p-6 rounded-2xl bg-[#111] border border-white/5 mb-8"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">Faturamento — Por dia de registro</h3>
+            <h3 className="text-sm font-medium text-[#888] mb-1">Faturamento — Por dia de registro</h3>
             <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-foreground">{formatCurrency(totalChart)}</span>
+              <span className="text-3xl font-bold text-white">{formatCurrency(totalChart)}</span>
             </div>
           </div>
         </div>
@@ -368,10 +360,10 @@ export default function PlatformDashboard() {
 
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={5}
-        className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm"
+        className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden"
       >
-        <div className="p-5 border-b border-border">
-          <h3 className="text-base font-semibold text-foreground">Últimos registros no CRM</h3>
+        <div className="p-5 border-b border-white/5">
+          <h3 className="text-base font-semibold text-white">Últimos registros no CRM</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

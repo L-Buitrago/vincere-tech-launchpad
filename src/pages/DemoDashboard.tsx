@@ -9,7 +9,6 @@ import {
   TrendingUp, ArrowUpRight, FolderOpen
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTheme } from "@/components/theme-provider";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell, PieChart, Pie
@@ -113,10 +112,9 @@ const StatCard = ({ title, value, icon: Icon, bgColor }: any) => (
 );
 
 const DemoDashboard = () => {
-  const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-[#0A0A0A] text-white">
       {/* Alert Banner for Demo */}
       <div className="bg-premium-purple/20 border-b border-premium-purple/30 py-2 px-4 text-center">
         <p className="text-[10px] sm:text-xs font-bold text-premium-purple uppercase tracking-widest">
@@ -127,43 +125,36 @@ const DemoDashboard = () => {
       {/* Header Area */}
       <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-white/5">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight font-display">Analytics Demo</h1>
+          <h1 className="text-2xl font-bold tracking-tight font-display text-white">Analytics Demo</h1>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
             <Input
-              className="bg-accent/50 border-border pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple text-foreground"
+              className="bg-white/5 border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple text-white"
               placeholder="Pesquisar..."
               disabled
             />
           </div>
 
           <div className="flex items-center gap-3">
-             <button className="p-2.5 bg-accent/50 border border-border rounded-xl relative hover:bg-accent transition-colors">
-               <Bell className="w-4 h-4 text-muted-foreground" />
-               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-background text-white">2</span>
+             <button className="p-2.5 bg-white/5 border border-white/5 rounded-xl relative hover:bg-white/10 transition-colors">
+               <Bell className="w-4 h-4 text-[#888]" />
+               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#15162D] text-white">2</span>
              </button>
 
              <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
-                {/* Theme Switcher */}
-                <button 
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2.5 bg-[#15162D] border border-white/5 rounded-xl text-premium-text-muted hover:text-white transition-colors"
-                >
-                  {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
 
                 <div className="flex flex-col items-end">
-                   <span className="text-sm font-bold text-foreground leading-none">Vitor Vincere</span>
-                   <span className="text-[10px] text-muted-foreground mt-0.5">vitor@vincere.tech</span>
-                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-500">
+                   <span className="text-sm font-bold text-white leading-none">Vitor Vincere</span>
+                   <span className="text-[10px] text-premium-text-muted mt-0.5">vitor@vincere.tech</span>
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-400">
                      Plano Pro
                    </Badge>
                 </div>
-                <Avatar className="w-10 h-10 rounded-xl border border-border shadow-xl">
-                  <AvatarFallback className="bg-violet-500/20 text-violet-500 font-bold text-xs">
+                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
+                  <AvatarFallback className="bg-violet-500/20 text-violet-400 font-bold text-xs">
                     VV
                   </AvatarFallback>
                 </Avatar>
@@ -310,8 +301,8 @@ const DemoDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-extrabold tracking-tighter text-foreground">100%</span>
-                    <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">Total</span>
+                    <span className="text-4xl font-extrabold tracking-tighter text-white">100%</span>
+                    <span className="text-xs text-premium-text-muted font-bold uppercase tracking-widest mt-1">Total</span>
                   </div>
                 </div>
               </div>
@@ -366,7 +357,7 @@ const DemoDashboard = () => {
                           <tr key={q.id} className="group hover:bg-white/[0.02] transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex flex-col">
-                                <span className="capitalize font-bold text-sm tracking-tight text-foreground">{q.service_type}</span>
+                                <span className="capitalize font-bold text-sm tracking-tight text-white">{q.service_type}</span>
                                 <span className="text-[10px] text-premium-text-muted uppercase">{new Date(q.created_at).toLocaleDateString("pt-BR")}</span>
                               </div>
                             </td>
