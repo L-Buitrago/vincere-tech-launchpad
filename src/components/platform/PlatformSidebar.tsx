@@ -97,7 +97,7 @@ export default function PlatformSidebar() {
             className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all duration-300 group ${
               isActive("/plataforma/admin")
                 ? "bg-premium-green/20 text-[#7DE260]"
-                : "text-[#7DE260]/60 hover:text-[#7DE260] hover:bg-[#7DE260]/5"
+                : "text-[#7DE260] hover:bg-[#7DE260]/10"
             }`}
           >
             <Crown className="w-[20px] h-[20px] shrink-0" />
