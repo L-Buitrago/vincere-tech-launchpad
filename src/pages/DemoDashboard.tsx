@@ -116,7 +116,7 @@ const DemoDashboard = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0A0A0A] text-white">
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Alert Banner for Demo */}
       <div className="bg-premium-purple/20 border-b border-premium-purple/30 py-2 px-4 text-center">
         <p className="text-[10px] sm:text-xs font-bold text-premium-purple uppercase tracking-widest">
@@ -132,18 +132,18 @@ const DemoDashboard = () => {
 
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-premium-text-muted" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              className="bg-[#15162D] border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple"
+              className="bg-accent/50 border-border pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple text-foreground"
               placeholder="Pesquisar..."
               disabled
             />
           </div>
 
           <div className="flex items-center gap-3">
-             <button className="p-2.5 bg-[#15162D] border border-white/5 rounded-xl relative hover:bg-white/5 transition-colors">
-               <Bell className="w-4 h-4 text-premium-text-muted" />
-               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0A0A]">2</span>
+             <button className="p-2.5 bg-accent/50 border border-border rounded-xl relative hover:bg-accent transition-colors">
+               <Bell className="w-4 h-4 text-muted-foreground" />
+               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-background text-white">2</span>
              </button>
 
              <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
@@ -156,14 +156,14 @@ const DemoDashboard = () => {
                 </button>
 
                 <div className="flex flex-col items-end">
-                   <span className="text-sm font-bold text-white leading-none">Vitor Vincere</span>
-                   <span className="text-[10px] text-premium-text-muted mt-0.5">vitor@vincere.tech</span>
-                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-premium-purple/30 bg-premium-purple/5 text-premium-purple">
+                   <span className="text-sm font-bold text-foreground leading-none">Vitor Vincere</span>
+                   <span className="text-[10px] text-muted-foreground mt-0.5">vitor@vincere.tech</span>
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-500">
                      Plano Pro
                    </Badge>
                 </div>
-                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
-                  <AvatarFallback className="bg-premium-purple/20 text-premium-purple font-bold text-xs">
+                <Avatar className="w-10 h-10 rounded-xl border border-border shadow-xl">
+                  <AvatarFallback className="bg-violet-500/20 text-violet-500 font-bold text-xs">
                     VV
                   </AvatarFallback>
                 </Avatar>
@@ -206,22 +206,22 @@ const DemoDashboard = () => {
         {/* Analytics Section */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            {/* Main Revenue Chart */}
-           <Card className="lg:col-span-2 bg-[#15162D] border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+           <Card className="lg:col-span-2 bg-card border-border rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 pb-0 flex items-center justify-between">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold">Faturamento Mensal</h3>
+                  <h3 className="text-xl font-bold text-foreground">Faturamento Mensal</h3>
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded-full border-2 border-premium-purple flex items-center justify-center">
                         <div className="w-1.5 h-1.5 rounded-full bg-premium-purple" />
                       </div>
-                      <span className="text-xs font-bold text-white">Este Ano</span>
+                      <span className="text-xs font-bold text-foreground">Este Ano</span>
                     </div>
                     <div className="flex items-center gap-2">
                        <div className="w-4 h-4 rounded-full border-2 border-slate-700 flex items-center justify-center">
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
                       </div>
-                      <span className="text-xs font-bold text-white">Ano Anterior</span>
+                      <span className="text-xs font-bold text-foreground">Ano Anterior</span>
                     </div>
                   </div>
                 </div>
@@ -279,9 +279,9 @@ const DemoDashboard = () => {
            </Card>
 
            {/* Metrics Breakdown */}
-           <Card className="bg-[#15162D] border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
+           <Card className="bg-card border-border rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
               <div className="flex items-center justify-between mb-12">
-                <h3 className="text-xl font-bold">Origem de Vendas</h3>
+                <h3 className="text-xl font-bold text-foreground">Origem de Vendas</h3>
                 <button className="bg-[#252644] px-4 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2 hover:bg-[#2e2f56] transition-colors">
                   Ver Todos <ArrowUpRight className="w-3 h-3" />
                 </button>
@@ -310,8 +310,8 @@ const DemoDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-extrabold tracking-tighter text-white">100%</span>
-                    <span className="text-xs text-premium-text-muted font-bold uppercase tracking-widest mt-1">Total</span>
+                    <span className="text-4xl font-extrabold tracking-tighter text-foreground">100%</span>
+                    <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">Total</span>
                   </div>
                 </div>
               </div>
@@ -342,7 +342,7 @@ const DemoDashboard = () => {
         <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-8">
            <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                <h3 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
                   <FileText className="w-5 h-5 text-premium-purple" />
                   Orçamentos Recentes
                 </h3>
@@ -366,7 +366,7 @@ const DemoDashboard = () => {
                           <tr key={q.id} className="group hover:bg-white/[0.02] transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex flex-col">
-                                <span className="capitalize font-bold text-sm tracking-tight">{q.service_type}</span>
+                                <span className="capitalize font-bold text-sm tracking-tight text-foreground">{q.service_type}</span>
                                 <span className="text-[10px] text-premium-text-muted uppercase">{new Date(q.created_at).toLocaleDateString("pt-BR")}</span>
                               </div>
                             </td>
@@ -390,7 +390,7 @@ const DemoDashboard = () => {
 
            <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                <h3 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
                   <FolderOpen className="w-5 h-5 text-premium-green" />
                   Projetos Ativos
                 </h3>
@@ -414,7 +414,7 @@ const DemoDashboard = () => {
                           <tr key={p.id} className="group hover:bg-white/[0.02] transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex flex-col">
-                                <span className="font-bold text-sm tracking-tight">{p.title}</span>
+                                <span className="font-bold text-sm tracking-tight text-foreground">{p.title}</span>
                                 <span className="text-[10px] text-premium-text-muted uppercase">Previsão: {new Date(p.end_date).toLocaleDateString("pt-BR")}</span>
                               </div>
                             </td>

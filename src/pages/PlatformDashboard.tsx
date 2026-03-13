@@ -166,24 +166,24 @@ export default function PlatformDashboard() {
         >
           <CheckCircle2 className="w-8 h-8 text-violet-400 shrink-0" />
           <div className="flex-1">
-            <h3 className="text-white font-semibold">Pagamento Confirmado! 🎉</h3>
-            <p className="text-sm text-[#aaa]">Sua assinatura foi ativada com sucesso. Aproveite todos os recursos da plataforma Vincere!</p>
+            <h3 className="text-foreground font-semibold">Pagamento Confirmado! 🎉</h3>
+            <p className="text-sm text-muted-foreground">Sua assinatura foi ativada com sucesso. Aproveite todos os recursos da plataforma Vincere!</p>
           </div>
-          <button onClick={() => setShowSuccess(false)} className="text-[#888] hover:text-white text-sm px-3 py-1 rounded-lg hover:bg-white/5 transition-colors">
+          <button onClick={() => setShowSuccess(false)} className="text-muted-foreground hover:text-foreground text-sm px-3 py-1 rounded-lg hover:bg-accent transition-colors">
             Fechar
           </button>
         </motion.div>
       )}
 
-      <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-white/5 mx-[-2rem] mb-8">
+      <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-border mx-[-2rem] mb-8">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold tracking-tight font-display text-foreground">Dashboard</h1>
-          <p className="text-sm text-[#888] mt-1">Visão geral do seu CRM e métricas reais.</p>
+          <p className="text-sm text-muted-foreground mt-1">Visão geral do seu CRM e métricas reais.</p>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               className="bg-accent/50 border-border pl-10 w-64 text-sm rounded-xl focus-visible:ring-violet-500 text-foreground"
               placeholder="Pesquisar..."
@@ -212,12 +212,12 @@ export default function PlatformDashboard() {
                    <span className="text-[10px] text-[#888] mt-0.5">
                      {user?.email}
                    </span>
-                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-400">
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-500">
                      {planName}
                    </Badge>
                 </div>
-                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
-                  <AvatarFallback className="bg-violet-500/20 text-violet-400 font-bold text-xs uppercase">
+                <Avatar className="w-10 h-10 rounded-xl border border-border shadow-xl">
+                  <AvatarFallback className="bg-violet-500/20 text-violet-500 font-bold text-xs uppercase">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
