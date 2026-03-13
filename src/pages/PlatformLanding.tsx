@@ -92,7 +92,7 @@ export default function PlatformLanding() {
           >
             <Link to="/plataforma/proposta">
               <Button size="lg" className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold px-8 gap-2 h-12 text-base">
-                Começar agora grátis
+                Começar agora
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/useOrganization";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/components/theme-provider";
 import { motion } from "framer-motion";
 import {
   TrendingUp, TrendingDown, DollarSign, Users,
-  Clock, UserPlus, CalendarIcon
+  Clock, UserPlus, CalendarIcon, Search, Bell, Sun, Moon
 } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -16,6 +18,9 @@ import { ptBR } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle2 } from "lucide-react";
 
@@ -55,7 +60,23 @@ export default function PlatformDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [searchParams, setSearchParams] = useSearchParams();
   const [showSuccess, setShowSuccess] = useState(false);
-  const { orgId, isAdmin } = useOrganization();
+  const { orgId, isAdmin, org } = useOrganization();
+  const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
+
+  const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuário";
+  const initials = fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const planName = useMemo(() => {
+    if (isAdmin) return "Admin";
+    if (!org?.plan) return "Starter";
+    const mapped: Record<string, string> = {
+      free: "Starter",
+      pro: "Pro",
+      enterprise: "Enterprise"
+    };
+    return mapped[org.plan.toLowerCase()] || org.plan;
+  }, [org, isAdmin]);
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
@@ -154,45 +175,90 @@ export default function PlatformDashboard() {
         </motion.div>
       )}
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+      <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-white/5 mx-[-2rem] mb-8">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold tracking-tight font-display text-foreground">Dashboard</h1>
           <p className="text-sm text-[#888] mt-1">Visão geral do seu CRM e métricas reais.</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {periods.map((p) => (
-            <button
-              key={p}
-              onClick={() => setActivePeriod(p)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activePeriod === p
-                  ? "bg-purple-500/10 text-violet-400"
-                  : "text-[#888] hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 hover:text-white h-8 font-normal">
-                <CalendarIcon className="w-3.5 h-3.5 mr-1.5" />
-                {date ? format(date, "PPP", { locale: ptBR }) : <span>Calendário</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(d) => {
-                  if (d) setDate(d);
-                  setActivePeriod("");
-                }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+
+        <div className="flex items-center gap-6">
+          <div className="relative hidden md:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
+            <Input
+              className="bg-accent/50 border-border pl-10 w-64 text-sm rounded-xl focus-visible:ring-violet-500 text-foreground"
+              placeholder="Pesquisar..."
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+             <button className="p-2.5 bg-accent/50 border border-border rounded-xl relative hover:bg-accent transition-colors">
+               <Bell className="w-4 h-4 text-muted-foreground" />
+               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-background text-white">2</span>
+             </button>
+
+             <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
+                {/* Theme Switcher */}
+                <button 
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2.5 bg-accent/50 border border-border rounded-xl text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+
+                <div className="flex flex-col items-end">
+                   <span className="text-sm font-bold text-foreground leading-none">
+                     {fullName}
+                   </span>
+                   <span className="text-[10px] text-[#888] mt-0.5">
+                     {user?.email}
+                   </span>
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-violet-500/30 bg-violet-500/5 text-violet-400">
+                     {planName}
+                   </Badge>
+                </div>
+                <Avatar className="w-10 h-10 rounded-xl border border-white/10 shadow-xl">
+                  <AvatarFallback className="bg-violet-500/20 text-violet-400 font-bold text-xs uppercase">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+             </div>
+          </div>
         </div>
+      </header>
+
+      <div className="flex items-center gap-2 flex-wrap mb-8">
+        {periods.map((p) => (
+          <button
+            key={p}
+            onClick={() => setActivePeriod(p)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              activePeriod === p
+                ? "bg-purple-500/10 text-violet-400"
+                : "text-[#888] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="border-white/10 text-[#888] bg-transparent hover:bg-white/5 hover:text-white h-8 font-normal">
+              <CalendarIcon className="w-3.5 h-3.5 mr-1.5" />
+              {date ? format(date, "PPP", { locale: ptBR }) : <span>Calendário</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(d) => {
+                if (d) setDate(d);
+                setActivePeriod("");
+              }}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -243,13 +309,13 @@ export default function PlatformDashboard() {
 
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={4}
-        className="p-6 rounded-2xl bg-[#111] border border-white/5 mb-8"
+        className="p-6 rounded-2xl bg-card border border-border mb-8 shadow-sm"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-sm font-medium text-[#888] mb-1">Faturamento — Por dia de registro</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-1">Faturamento — Por dia de registro</h3>
             <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-white">{formatCurrency(totalChart)}</span>
+              <span className="text-3xl font-bold text-foreground">{formatCurrency(totalChart)}</span>
             </div>
           </div>
         </div>
@@ -302,10 +368,10 @@ export default function PlatformDashboard() {
 
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={5}
-        className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden"
+        className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm"
       >
-        <div className="p-5 border-b border-white/5">
-          <h3 className="text-base font-semibold text-white">Últimos registros no CRM</h3>
+        <div className="p-5 border-b border-border">
+          <h3 className="text-base font-semibold text-foreground">Últimos registros no CRM</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
