@@ -16,7 +16,11 @@ const partnerLogos = [
   "Stripe", "Supabase", "OpenAI", "Vercel", "Pagar.me", "Kiwify"
 ];
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onVideoLoaded?: () => void;
+}
+
+const HeroSection = ({ onVideoLoaded }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#000000]">
       {/* HLS Video Background */}
@@ -24,6 +28,7 @@ const HeroSection = () => {
         <VideoPlayer
           src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8"
           className="w-full h-full object-cover"
+          onLoaded={onVideoLoaded}
         />
       </div>
 
