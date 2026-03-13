@@ -18,6 +18,7 @@ const menuItems = [
   { label: "Produtos", icon: Package, path: "/plataforma/produtos" },
   { label: "Checkouts", icon: ShoppingCart, path: "/plataforma/checkouts" },
   { label: "Clientes", icon: Store, path: "/plataforma/clientes" },
+  { label: "Mensagens", icon: MessageSquare, path: "/plataforma/suporte" },
   { label: "Upsell", icon: TrendingUp, path: "/plataforma/dashboard" },
   { label: "Funis", icon: GitBranch, path: "/plataforma/dashboard" },
 ];
@@ -25,7 +26,6 @@ const menuItems = [
 const bottomItems = [
   { label: "Configurações", icon: Settings, path: "/plataforma/configuracoes" },
   { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
-  { label: "Mensagens", icon: MessageSquare, path: "/plataforma/suporte" },
 ];
 
 export default function PlatformSidebar() {
