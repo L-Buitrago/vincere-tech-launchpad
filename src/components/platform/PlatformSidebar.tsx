@@ -62,7 +62,7 @@ export default function PlatformSidebar() {
       </div>
 
       {/* Main Menu */}
-      <nav className="flex-1 px-3 space-y-1 mt-4 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 px-3 space-y-1 mt-4 overflow-y-auto scrollbar-hide">
         {!collapsed && (
           <div className="px-3 mb-2">
             <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Menu</span>

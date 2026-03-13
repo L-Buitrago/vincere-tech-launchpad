@@ -84,4 +84,12 @@
       radial-gradient(circle at 75% 75%, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
     background-size: 40px 40px;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
