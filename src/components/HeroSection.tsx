@@ -80,7 +80,7 @@ const HeroSection = () => {
           >
             <Button
               size="lg"
-              className="font-display font-semibold text-base px-8 gap-2 bg-black text-white border border-white/20 hover:bg-white/10 h-12"
+              className="font-display font-semibold text-base px-8 gap-2 bg-black text-white border border-white/20 hover:border-purple-500/50 hover:bg-purple-500/5 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] transition-all duration-300 h-12"
             >
               Solicitar Orçamento
               <ArrowRight className="h-4 w-4" />
@@ -90,7 +90,7 @@ const HeroSection = () => {
             <Button
               variant="outline"
               size="lg"
-              className="font-display font-semibold text-base px-8 gap-2 bg-white/[0.05] backdrop-blur-md border-white/10 text-white hover:bg-white/10 h-12"
+              className="font-display font-semibold text-base px-8 gap-2 bg-white/[0.05] backdrop-blur-md border-white/10 text-white hover:border-purple-500/50 hover:bg-purple-500/5 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] transition-all duration-300 h-12"
             >
               Conhecer Soluções
               <ChevronDown className="h-4 w-4" />
