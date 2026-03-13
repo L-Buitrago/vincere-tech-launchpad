@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, CreditCard, Package, ShoppingCart, Store,
   TrendingUp, GitBranch, Settings, ShoppingBag, HelpCircle, Headset,
-  LogOut, Menu, X, ChevronRight, Crown, Rocket
+  LogOut, Menu, X, ChevronRight, Crown, Rocket, MessageSquare
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
@@ -25,7 +25,7 @@ const menuItems = [
 const bottomItems = [
   { label: "Configurações", icon: Settings, path: "/plataforma/configuracoes" },
   { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
-  { label: "Suporte", icon: Headset, path: "/plataforma/suporte" },
+  { label: "Mensagens", icon: MessageSquare, path: "/plataforma/suporte" },
 ];
 
 export default function PlatformSidebar() {

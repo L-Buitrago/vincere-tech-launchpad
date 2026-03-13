@@ -54,52 +54,68 @@ const statusColors: Record<string, string> = {
 };
 
 const revenueData = [
-  { name: "Jan", value: 400 },
-  { name: "Feb", value: 1200 },
-  { name: "Mar", value: 900 },
-  { name: "Apr", value: 1500 },
-  { name: "May", value: 2100 },
-  { name: "Jun", value: 1800 },
-  { name: "Jul", value: 2400 },
-  { name: "Aug", value: 2000 },
-  { name: "Sep", value: 2800 },
-  { name: "Oct", value: 3200 },
-  { name: "Nov", value: 3000 },
-  { name: "Dec", value: 3800 },
+  { name: "Jan", thisYear: 400, lastYear: 240 },
+  { name: "Feb", thisYear: 1200, lastYear: 1398 },
+  { name: "Mar", thisYear: 900, lastYear: 9800 },
+  { name: "Apr", thisYear: 1500, lastYear: 3908 },
+  { name: "May", thisYear: 2100, lastYear: 4800 },
+  { name: "Jun", thisYear: 1800, lastYear: 3800 },
+  { name: "Jul", thisYear: 2400, lastYear: 4300 },
+  { name: "Aug", thisYear: 2000, lastYear: 2400 },
+  { name: "Sep", thisYear: 2800, lastYear: 2400 },
+  { name: "Oct", thisYear: 3200, lastYear: 2400 },
+  { name: "Nov", thisYear: 3000, lastYear: 2400 },
+  { name: "Dec", thisYear: 3800, lastYear: 2400 },
 ];
 
 const carriersData = [
   { name: "Trucks", value: 57, color: "#682EC7" },
   { name: "Cargo Vans", value: 18, color: "#7DE260" },
-  { name: "Others", value: 25, color: "#282939" },
+  { name: "Last Mile", value: 15, color: "#FF9F0A" },
+  { name: "Others", value: 10, color: "#31335A" },
 ];
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-premium-purple px-4 py-2 rounded-2xl shadow-xl border border-white/20 relative">
+        <p className="text-white font-bold text-sm whitespace-nowrap">
+          ${payload[0].value.toLocaleString()} <span className="text-white/70 font-normal">per month</span>
+        </p>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-premium-purple rotate-45 border-r border-b border-white/20" />
+      </div>
+    );
+  }
+  return null;
+};
+
 const StatCard = ({ title, value, subtext, icon: Icon, variant = "ghost" }: any) => (
-  <Card className={`overflow-hidden border-white/5 ${
+  <Card className={`overflow-hidden border-white/5 relative group transition-all duration-500 hover:translate-y-[-4px] ${
     variant === "premium" 
-      ? "bg-gradient-to-br from-premium-purple to-premium-purple/80 text-white" 
+      ? "bg-[#1C1D3A]" 
       : "bg-premium-card text-white"
   }`}>
-    <CardContent className="p-6">
+    {variant === "premium" && (
+      <div className="absolute inset-0 bg-gradient-to-br from-premium-purple/40 to-transparent pointer-events-none" />
+    )}
+    <CardContent className="p-6 relative z-10">
       <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-            <Icon className={`w-5 h-5 ${variant === "premium" ? "text-white" : "text-premium-purple"}`} />
+        <div className="space-y-4">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${
+            variant === "premium" ? "bg-white/10" : "bg-[#252644]"
+          }`}>
+            <Icon className={`w-6 h-6 ${variant === "premium" ? "text-white" : "text-premium-purple"}`} />
           </div>
-          <div className="pt-2">
+          <div className="space-y-1">
             <h3 className="text-3xl font-bold tracking-tight">{value}</h3>
-            <p className={`text-xs font-medium uppercase tracking-wider ${
-              variant === "premium" ? "text-white/70" : "text-premium-text-muted"
-            }`}>
+            <p className="text-sm font-medium text-premium-text-muted">
               {title}
             </p>
           </div>
         </div>
-        {variant !== "premium" && (
-           <div className="p-1 rounded-md hover:bg-white/5 cursor-pointer">
-              <MoreHorizontal className="w-4 h-4 text-premium-text-muted" />
-           </div>
-        )}
+        <div className="p-1 rounded-md hover:bg-white/5 cursor-pointer">
+          <MoreHorizontal className="w-4 h-4 text-premium-text-muted" />
+        </div>
       </div>
     </CardContent>
   </Card>
@@ -171,40 +187,25 @@ const Dashboard = () => {
       {/* Header Area */}
       <header className="flex items-center justify-between p-6 px-8 bg-transparent sticky top-0 z-30 backdrop-blur-sm border-b border-white/5">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-          <p className="text-xs text-premium-text-muted">Dados e insights da plataforma</p>
+          <h1 className="text-2xl font-bold tracking-tight font-display">Analytics</h1>
         </div>
 
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-premium-text-muted" />
             <Input 
-              className="bg-premium-card border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple" 
+              className="bg-[#15162D] border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple" 
               placeholder="Pesquisar..." 
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-premium-text-muted px-1.5 py-0.5 border border-white/10 rounded">F</span>
           </div>
 
           <div className="flex items-center gap-3">
-             <div className="flex items-center bg-premium-card p-1 rounded-xl border border-white/5">
-               <button className="p-2 bg-transparent text-premium-text-muted hover:text-white transition-colors">
-                 <Zap className="w-4 h-4" />
-               </button>
-               <button className="p-2 bg-premium-purple/20 text-premium-purple rounded-lg">
-                 <Moon className="w-4 h-4" />
-               </button>
-             </div>
-             
              <button className="p-2.5 bg-premium-card border border-white/5 rounded-xl relative hover:bg-white/5 transition-colors">
                <Bell className="w-4 h-4 text-premium-text-muted" />
                <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0A0A]">2</span>
              </button>
 
              <div className="flex items-center gap-3 pl-3 border-l border-white/10 ml-3">
-                <div className="flex flex-col items-end hidden sm:flex">
-                  <span className="text-sm font-bold">{fullName}</span>
-                  <span className="text-[10px] text-premium-text-muted uppercase tracking-wider">Membro</span>
-                </div>
                 <div className="w-10 h-10 rounded-xl bg-premium-purple/20 text-premium-purple flex items-center justify-center font-bold text-sm border border-premium-purple/20">
                   {initials}
                 </div>
@@ -216,47 +217,27 @@ const Dashboard = () => {
       {/* Main Content Area */}
       <main className="flex-1 p-8 pt-4 space-y-8">
         
-        {/* Welcome Section */}
-        <section className="relative overflow-hidden p-8 rounded-3xl bg-premium-card border border-white/5 group">
-           <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-premium-purple/10 to-transparent pointer-events-none" />
-           <div className="relative z-10 space-y-4 max-w-lg">
-              <h2 className="text-3xl font-bold tracking-tight leading-tight">
-                Seu Perfil está Atualmente no <span className="text-premium-purple">Plano Gratuito</span>
-              </h2>
-              <p className="text-premium-text-muted text-sm leading-relaxed">
-                Adquira recursos exclusivos e impulsione seu negócio com nossos planos avançados. 
-                Comece agora e veja a diferença.
-              </p>
-              <Button className="bg-premium-purple hover:bg-premium-purple/90 font-bold px-8 rounded-xl shadow-lg shadow-premium-purple/20">
-                Ver Planos
-              </Button>
-           </div>
-           
-           {/* Abstract Background Elements */}
-           <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-premium-purple/5 rounded-full blur-3xl pointer-events-none group-hover:bg-premium-purple/10 transition-all duration-700" />
-        </section>
-
         {/* Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
            <StatCard 
-              title="Total de Pedidos" 
-              value={quotes.length + projects.length} 
+              title="Total amount of orders" 
+              value="1174" 
               icon={FileText} 
               variant="premium" 
            />
            <StatCard 
-              title="Total Investido" 
-              value="R$ 8.126" 
+              title="Total money paid" 
+              value="$8,126,420" 
               icon={Wallet} 
            />
            <StatCard 
-              title="Entregas Ativas" 
+              title="Available courier" 
               value="29" 
               icon={Truck} 
            />
            <StatCard 
-              title="Horas em Produção" 
-              value="89.011" 
+              title="Hours on the road" 
+              value="89,011" 
               icon={Clock} 
            />
         </section>
@@ -264,61 +245,103 @@ const Dashboard = () => {
         {/* Analytics Section */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            {/* Main Revenue Chart */}
-           <Card className="lg:col-span-2 bg-premium-card border-white/5 rounded-3xl overflow-hidden">
+           <Card className="lg:col-span-2 bg-premium-card border-white/5 rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 pb-0 flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-bold">Faturamento Mensal</h3>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-premium-purple" />
-                    <span className="text-xs text-premium-text-muted">Este Ano</span>
-                    <div className="w-2 h-2 rounded-full bg-premium-card-light ml-2" />
-                    <span className="text-xs text-premium-text-muted">Ano Anterior</span>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Monthly Revenue</h3>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full border-2 border-premium-purple flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-premium-purple" />
+                      </div>
+                      <span className="text-xs font-bold text-white">Last Year</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                       <div className="w-4 h-4 rounded-full border-2 border-premium-card-light flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-premium-card-light" />
+                      </div>
+                      <span className="text-xs font-bold text-white">Previous Year</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-premium-text-muted">
-                   <TrendingUp className="w-4 h-4 text-premium-green" />
-                   <span className="text-premium-green">+12.5%</span>
+                <div className="p-1 rounded-md hover:bg-white/5 cursor-pointer">
+                  <MoreHorizontal className="w-5 h-5 text-premium-text-muted" />
                 </div>
               </div>
-              <div className="h-[350px] w-full p-4 mt-4">
+              <div className="h-[400px] w-full p-4 mt-8 relative">
                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={revenueData}>
+                    <AreaChart data={revenueData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                       <defs>
-                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#682EC7" stopOpacity={0.3}/>
+                        <linearGradient id="colorThisYear" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#682EC7" stopOpacity={0.2}/>
                           <stop offset="95%" stopColor="#682EC7" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="highlightBar" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#682EC7" stopOpacity={0.15}/>
+                          <stop offset="100%" stopColor="#682EC7" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff08" />
+                      
+                      {/* Highlight Bar for May */}
+                      <Area 
+                        type="step"
+                        dataKey={(d) => d.name === "May" ? 10000 : 0}
+                        stroke="none"
+                        fill="url(#highlightBar)"
+                        isAnimationActive={false}
+                      />
+
                       <XAxis 
                         dataKey="name" 
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{ fill: "#74769A", fontSize: 10 }}
-                        dy={10}
+                        tick={({ x, y, payload }) => (
+                          <g transform={`translate(${x},${y})`}>
+                            <text 
+                              x={0} 
+                              y={0} 
+                              dy={16} 
+                              textAnchor="middle" 
+                              className={`text-[11px] font-bold ${payload.value === "May" ? "bg-premium-purple px-2 py-1 rounded fill-white" : "fill-[#74769A]"}`}
+                            >
+                              {payload.value}
+                            </text>
+                            {payload.value === "May" && (
+                              <rect x={-15} y={6} width={30} height={18} rx={4} className="fill-premium-purple/20 -z-10" />
+                            )}
+                          </g>
+                        )}
+                        interval={0}
                       />
                       <YAxis 
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{ fill: "#74769A", fontSize: 10 }}
+                        tick={{ fill: "#74769A", fontSize: 10, fontWeight: "bold" }}
+                        tickFormatter={(v) => `$${v.toLocaleString()}`}
+                        domain={[0, 10000]}
+                        ticks={[100, 1000, 2000, 5000, 10000]}
                       />
                       <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: "#191A30", 
-                          borderColor: "#ffffff10", 
-                          borderRadius: "12px",
-                          fontSize: "12px",
-                          color: "#fff"
-                        }}
-                        itemStyle={{ color: "#fff" }}
+                        content={<CustomTooltip />}
+                        cursor={{ stroke: '#682EC7', strokeWidth: 2, strokeDasharray: '5 5' }}
                       />
                       <Area 
                         type="monotone" 
-                        dataKey="value" 
+                        dataKey="thisYear" 
                         stroke="#682EC7" 
-                        strokeWidth={3}
+                        strokeWidth={4}
                         fillOpacity={1} 
-                        fill="url(#colorValue)" 
+                        fill="url(#colorThisYear)" 
+                        animationDuration={2000}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="lastYear" 
+                        stroke="#4B4E6D" 
+                        strokeWidth={4}
+                        fill="none"
+                        animationDuration={2000}
                       />
                     </AreaChart>
                  </ResponsiveContainer>
@@ -326,49 +349,57 @@ const Dashboard = () => {
            </Card>
 
            {/* Top Carriers / Projects Status */}
-           <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold">Status Projetos</h3>
-                <button className="text-[10px] font-bold uppercase tracking-widest text-premium-purple flex items-center gap-1 hover:opacity-80 transition-opacity">
-                  Ver Todos <ArrowUpRight className="w-3 h-3" />
+           <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-8 flex flex-col shadow-2xl">
+              <div className="flex items-center justify-between mb-12">
+                <h3 className="text-xl font-bold">Top Carriers</h3>
+                <button className="bg-[#252644] px-4 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2 hover:bg-[#2e2f56] transition-colors">
+                  See All <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>
               
-              <div className="flex-1 flex flex-col justify-center items-center py-6">
-                <div className="relative w-48 h-48">
+              <div className="flex-1 flex flex-col justify-center items-center py-6 relative">
+                <div className="relative w-56 h-56">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={carriersData}
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
+                        innerRadius={75}
+                        outerRadius={100}
+                        paddingAngle={8}
                         dataKey="value"
+                        stroke="none"
+                        cornerRadius={10}
                       >
                         {carriersData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.color} 
+                          />
                         ))}
                       </Pie>
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-extrabold tracking-tighter">100%</span>
-                    <span className="text-[10px] text-premium-text-muted uppercase">Concluído</span>
+                    <span className="text-4xl font-extrabold tracking-tighter text-white">100%</span>
+                    <span className="text-xs text-premium-text-muted font-bold uppercase tracking-widest mt-1">Total</span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4 mt-6">
+              <div className="space-y-6 mt-8">
                 {carriersData.map((item) => (
-                  <div key={item.name} className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-premium-text-muted font-medium">{item.name}</span>
-                      <span className="font-bold">{item.value}%</span>
+                  <div key={item.name} className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between text-xs font-bold px-1">
+                      <span className="text-[#9CA3AF]">{item.name}</span>
+                      <span className="text-white">{item.value}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                       <div 
+                    <div className="h-2.5 w-full bg-[#1F203D] rounded-full overflow-hidden p-0.5">
+                       <motion.div 
+                         initial={{ width: 0 }}
+                         animate={{ width: `${item.value}%` }}
+                         transition={{ duration: 1.5, ease: "easeOut" }}
                          className="h-full rounded-full" 
-                         style={{ width: `${item.value}%`, backgroundColor: item.color }} 
+                         style={{ backgroundColor: item.color }} 
                        />
                     </div>
                   </div>
@@ -377,8 +408,8 @@ const Dashboard = () => {
            </Card>
         </section>
 
-        {/* Existing Logic Integration: Quotes Table */}
-        <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* List Areas */}
+        <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-8">
            <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -437,7 +468,7 @@ const Dashboard = () => {
                 </Dialog>
               </div>
 
-              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0">
+              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
@@ -499,7 +530,7 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0">
+              <Card className="bg-premium-card border-white/5 rounded-3xl overflow-hidden p-0 shadow-xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
@@ -533,10 +564,12 @@ const Dashboard = () => {
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex flex-col gap-1.5 min-w-[100px]">
-                                   <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                      <div 
+                                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                      <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: p.status === 'completed' ? '100%' : '45%' }}
+                                        transition={{ duration: 1, ease: "easeInOut" }}
                                         className={`h-full rounded-full ${p.status === 'completed' ? 'bg-premium-green' : 'bg-premium-purple'}`} 
-                                        style={{ width: p.status === 'completed' ? '100%' : '45%' }} 
                                       />
                                    </div>
                                 </div>
