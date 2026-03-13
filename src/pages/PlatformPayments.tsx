@@ -6,7 +6,7 @@ import { Eye, RefreshCw } from "lucide-react";
 import { formatCurrency, type Transaction } from "@/data/platformMockData";
 
 const statusColors: Record<string, string> = {
-  aprovado: "text-platform-green bg-platform-green/10",
+  aprovado: "text-violet-400 bg-violet-500/10",
   pendente: "text-platform-orange bg-platform-orange/10",
   recusado: "text-platform-red bg-platform-red/10",
   estornado: "text-[#888] bg-white/5",
@@ -54,11 +54,10 @@ export default function PlatformPayments() {
         <p className="text-sm text-[#888] mt-1">Todas as transações da sua conta.</p>
       </div>
 
-      {/* Totals */}
       <motion.div initial="hidden" animate="visible" variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="p-5 rounded-2xl bg-[#111] border border-white/5">
           <p className="text-xs text-[#888] mb-1">Total Aprovado</p>
-          <p className="text-xl font-bold text-platform-green">{formatCurrency(totals.aprovado)}</p>
+          <p className="text-xl font-bold text-violet-400">{formatCurrency(totals.aprovado)}</p>
         </div>
         <div className="p-5 rounded-2xl bg-[#111] border border-white/5">
           <p className="text-xs text-[#888] mb-1">Total Pendente</p>
@@ -70,7 +69,6 @@ export default function PlatformPayments() {
         </div>
       </motion.div>
 
-      {/* Table */}
       <div className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -134,7 +132,7 @@ export default function PlatformPayments() {
                 key={i}
                 onClick={() => setPage(i + 1)}
                 className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
-                  page === i + 1 ? "bg-white/10 text-white" : "text-[#888] hover:bg-white/5"
+                  page === i + 1 ? "bg-purple-500/10 text-violet-400" : "text-[#888] hover:bg-white/5"
                 }`}
               >
                 {i + 1}

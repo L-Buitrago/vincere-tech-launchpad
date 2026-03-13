@@ -10,9 +10,9 @@ import { formatCurrency, type Client } from "@/data/platformMockData";
 import { toast } from "@/hooks/use-toast";
 
 const statusConfig: Record<string, { label: string; cls: string; pulse?: boolean }> = {
-  "Cliente Ativo": { label: "Ativo", cls: "text-platform-green bg-platform-green/10" },
+  "Cliente Ativo": { label: "Ativo", cls: "text-violet-400 bg-violet-500/10" },
   "Lead": { label: "Lead", cls: "text-platform-orange bg-platform-orange/10 animate-pulse", pulse: true },
-  "Negociação": { label: "Negociação", cls: "text-platform-blue bg-platform-blue/10 animate-pulse", pulse: true },
+  "Negociação": { label: "Negociação", cls: "text-blue-400 bg-blue-400/10 animate-pulse", pulse: true },
   "Cancelado": { label: "Cancelado", cls: "text-[#888] bg-white/5" },
 };
 
@@ -37,7 +37,6 @@ export default function PlatformClients() {
   const { orgId, isAdmin } = useOrganization();
   const queryClient = useQueryClient();
 
-  // New client modal state
   const [showAddModal, setShowAddModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -64,7 +63,7 @@ export default function PlatformClients() {
     if (error) {
       toast({ title: "Erro ao adicionar", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "\u2705 Cliente adicionado!", description: `${newName} foi cadastrado.` });
+      toast({ title: "✅ Cliente adicionado!", description: `${newName} foi cadastrado.` });
       setNewName(""); setNewEmail(""); setNewPhone(""); setNewStatus("Lead"); setNewDueDate("");
       setShowAddModal(false);
       queryClient.invalidateQueries({ queryKey: ['customers'] });
@@ -81,7 +80,6 @@ export default function PlatformClients() {
       toast({ title: "Arquivo vazio ou inválido", variant: "destructive" });
       return;
     }
-    // Skip header row, parse each line
     const rows = lines.slice(1).map(line => {
       const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
       return {
@@ -97,7 +95,7 @@ export default function PlatformClients() {
     if (error) {
       toast({ title: "Erro no import", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: `\u2705 ${rows.length} clientes importados!` });
+      toast({ title: `✅ ${rows.length} clientes importados!` });
       queryClient.invalidateQueries({ queryKey: ['customers'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-customers'] });
     }
@@ -181,7 +179,7 @@ export default function PlatformClients() {
             </div>
           </label>
           <Button
-            className="bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
+            className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2"
             onClick={() => setShowAddModal(true)}
           >
             <Plus className="w-4 h-4" /> Novo Cliente
@@ -189,7 +187,6 @@ export default function PlatformClients() {
         </div>
       </div>
 
-      {/* Add Client Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
           <div className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
@@ -224,7 +221,7 @@ export default function PlatformClients() {
                 <Input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="bg-white/5 border-white/10 text-white" />
               </div>
               <Button
-                className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold"
+                className="w-full bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold"
                 onClick={addClient}
                 disabled={isAdding}
               >
@@ -235,7 +232,6 @@ export default function PlatformClients() {
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
@@ -252,7 +248,7 @@ export default function PlatformClients() {
               key={s}
               onClick={() => { setStatusFilter(s); setPage(1); }}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${
-                statusFilter === s ? "bg-white/10 text-white" : "text-[#888] hover:text-white hover:bg-white/5"
+                statusFilter === s ? "bg-purple-500/10 text-violet-400" : "text-[#888] hover:text-white hover:bg-white/5"
               }`}
             >
               {s === "todos" ? "Todos" : s}
@@ -261,7 +257,6 @@ export default function PlatformClients() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -280,15 +275,15 @@ export default function PlatformClients() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Carregando clientes...</td>
+                  <td colSpan={8} className="px-5 py-8 text-center text-[#888]">Carregando clientes...</td>
                 </tr>
               ) : clients.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhum cliente cadastrado no banco de dados.</td>
+                  <td colSpan={8} className="px-5 py-8 text-center text-[#888]">Nenhum cliente cadastrado no banco de dados.</td>
                 </tr>
               ) : paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#888]">Nenhum cliente encontrado com estes filtros.</td>
+                  <td colSpan={8} className="px-5 py-8 text-center text-[#888]">Nenhum cliente encontrado com estes filtros.</td>
                 </tr>
               ) : (
                 paginated.map((c) => {
@@ -304,7 +299,7 @@ export default function PlatformClients() {
                         </div>
                       </td>
                       <td className="px-5 py-3.5 text-[#888]">{c.email}</td>
-                      <td className="px-5 py-3.5 text-[#ccc]">{c.status}</td> {/* Assuming initial status is the same as current status for now */}
+                      <td className="px-5 py-3.5 text-[#ccc]">{c.status}</td>
                       <td className="px-5 py-3.5 text-[#888] text-xs">
                         {new Date(c.created_at).toLocaleDateString("pt-BR")}
                       </td>
@@ -367,7 +362,7 @@ export default function PlatformClients() {
                 key={i}
                 onClick={() => setPage(i + 1)}
                 className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
-                  page === i + 1 ? "bg-white/10 text-white" : "text-[#888] hover:bg-white/5"
+                  page === i + 1 ? "bg-purple-500/10 text-violet-400" : "text-[#888] hover:bg-white/5"
                 }`}
               >
                 {i + 1}
@@ -378,103 +373,80 @@ export default function PlatformClients() {
       </div>
 
       {/* Detail Panel */}
-        {selected && (
+      {selected && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-end"
+          onClick={() => setSelected(null)}
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
+            initial={{ x: 400 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", damping: 25 }}
+            className="h-full w-full max-w-md bg-[#111] border-l border-white/5 p-6 overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              initial={{ x: 400 }}
-              animate={{ x: 0 }}
-              exit={{ x: 400 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-md bg-[#0A0A0A] border-l border-white/5 p-6 overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-lg font-bold text-white">Detalhes do Cliente</h2>
-                <button onClick={() => setSelected(null)} className="p-2 rounded-lg hover:bg-white/5 text-[#888]">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white">Detalhes do Cliente</h2>
+              <button onClick={() => setSelected(null)} className="text-[#888] hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
+            <div className="space-y-4">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-lg font-bold text-[#ccc]">
-                  {selected.name.substring(0,2).toUpperCase()}
+                <div className="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center text-violet-400 text-lg font-bold">
+                  {selected.name.substring(0, 2).toUpperCase()}
                 </div>
                 <div>
                   <p className="text-white font-semibold text-lg">{selected.name}</p>
                   <p className="text-sm text-[#888]">{selected.email}</p>
-                  <p className="text-sm text-[#888]">{selected.phone || 'Sem telefone'}</p>
                 </div>
               </div>
 
-              <div className="space-y-4 mb-8">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[#111] border border-white/5">
-                    <p className="text-xs text-[#888] mb-1">Gasto Total</p>
-                    <p className="text-sm text-white font-medium">{formatCurrency(selected.total_spent)}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#111] border border-white/5">
-                    <p className="text-xs text-[#888] mb-1">Status</p>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[selected.status || 'Cliente Ativo']?.cls || ''}`}>
-                      {statusConfig[selected.status || 'Cliente Ativo']?.label || selected.status}
-                    </span>
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl bg-white/5">
+                  <p className="text-[10px] text-[#888] uppercase mb-1">Telefone</p>
+                  <p className="text-sm text-white">{selected.phone || "—"}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/5">
+                  <p className="text-[10px] text-[#888] uppercase mb-1">Gasto Total</p>
+                  <p className="text-sm text-white font-medium">{formatCurrency(selected.total_spent || 0)}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/5">
+                  <p className="text-[10px] text-[#888] uppercase mb-1">Status</p>
+                  <p className="text-sm text-violet-400 font-medium">{selected.status}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white/5">
+                  <p className="text-[10px] text-[#888] uppercase mb-1">Desde</p>
+                  <p className="text-sm text-white">{new Date(selected.created_at).toLocaleDateString("pt-BR")}</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {selected.phone && (
-                  <Button
-                    className="w-full bg-platform-green hover:bg-platform-green/90 text-black font-semibold gap-2"
-                    onClick={() => {
-                      const cleanPhone = selected.phone?.replace(/\D/g, '');
-                      window.open(`https://wa.me/${cleanPhone}?text=Olá ${selected.name}, tudo bem?`, "_blank");
-                      toast({ title: "WhatsApp aberto!" });
-                    }}
-                  >
-                    <MessageCircle className="w-4 h-4" /> Enviar WhatsApp
-                  </Button>
-                )}
+              <div className="pt-4 flex gap-2">
+                <Button
+                  className="flex-1 bg-platform-purple hover:bg-platform-purple/90 text-white gap-2"
+                  onClick={() => {
+                    window.open(`https://wa.me/55${selected.phone?.replace(/\D/g, '')}`, '_blank');
+                  }}
+                >
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </Button>
                 <Button
                   variant="outline"
-                  className="w-full border-white/10 text-white bg-transparent hover:bg-white/5 gap-2"
-                  onClick={() => toast({ title: "Acesso reenviado!", description: `Email enviado para ${selected.email}` })}
+                  className="flex-1 border-white/10 text-white hover:bg-white/5 bg-transparent gap-2"
+                  onClick={() => {
+                    window.open(`mailto:${selected.email}`, '_blank');
+                  }}
                 >
-                  <Send className="w-4 h-4" /> Reenviar Acesso
+                  <Send className="w-4 h-4" /> Email
                 </Button>
               </div>
-
-              {/* Timeline */}
-              <div className="mt-8">
-                <h3 className="text-sm font-semibold text-white mb-4">Registro CRM</h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-2 h-2 rounded-full bg-platform-green mt-1.5 shrink-0" />
-                    <div>
-                      <p className="text-xs text-white">Criado como {selected.status}</p>
-                      <p className="text-[10px] text-[#666]">{new Date(selected.created_at).toLocaleDateString("pt-BR")}</p>
-                    </div>
-                  </div>
-                  {selected.last_order_date && (
-                    <div className="flex gap-3">
-                      <div className="w-2 h-2 rounded-full bg-platform-green mt-1.5 shrink-0" />
-                      <div>
-                        <p className="text-xs text-white">Última compra</p>
-                        <p className="text-[10px] text-[#666]">{new Date(selected.last_order_date).toLocaleDateString("pt-BR")}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            </motion.div>
+            </div>
           </motion.div>
-        )}
+        </motion.div>
+      )}
     </div>
   );
 }

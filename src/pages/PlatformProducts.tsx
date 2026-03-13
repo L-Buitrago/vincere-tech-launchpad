@@ -15,20 +15,26 @@ const fadeUp = {
   }),
 };
 
-const planDetails: Record<string, { icon: any; color: string; features: string[] }> = {
+const planDetails: Record<string, { icon: any; color: string; bgClass: string; textClass: string; features: string[] }> = {
   starter: {
     icon: Package,
-    color: "platform-green",
+    color: "violet",
+    bgClass: "bg-violet-500/10",
+    textClass: "text-violet-400",
     features: ["Até 100 clientes", "CRM Básico", "1 usuário", "Suporte por email"],
   },
   pro: {
     icon: Crown,
-    color: "platform-orange",
+    color: "orange",
+    bgClass: "bg-platform-orange/10",
+    textClass: "text-platform-orange",
     features: ["Clientes ilimitados", "CRM Completo", "5 usuários", "Suporte prioritário", "Relatórios avançados"],
   },
   enterprise: {
     icon: Sparkles,
-    color: "purple-400",
+    color: "purple",
+    bgClass: "bg-purple-500/10",
+    textClass: "text-purple-400",
     features: ["Tudo do Pro", "Usuários ilimitados", "API dedicada", "White-label", "Suporte 24/7"],
   },
 };
@@ -36,7 +42,6 @@ const planDetails: Record<string, { icon: any; color: string; features: string[]
 export default function PlatformProducts() {
   const { orgId, isAdmin, org } = useOrganization();
 
-  // Get org stats
   const { data: stats } = useQuery({
     queryKey: ['org-stats', orgId, isAdmin],
     queryFn: async () => {
@@ -72,14 +77,13 @@ export default function PlatformProducts() {
         <p className="text-sm text-[#888] mt-1">Gerencie sua assinatura e veja o uso da sua conta.</p>
       </div>
 
-      {/* Current Plan Card */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={0}
         className="p-6 rounded-2xl bg-[#111] border border-white/5 mb-6"
       >
         <div className="flex items-center gap-4 mb-6">
-          <div className={`w-14 h-14 rounded-xl bg-${plan.color}/10 flex items-center justify-center`}>
-            <PlanIcon className={`w-7 h-7 text-${plan.color}`} />
+          <div className={`w-14 h-14 rounded-xl ${plan.bgClass} flex items-center justify-center`}>
+            <PlanIcon className={`w-7 h-7 ${plan.textClass}`} />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white capitalize">{isAdmin ? "Admin Vincere" : `Plano ${currentPlan}`}</h2>
@@ -91,7 +95,7 @@ export default function PlatformProducts() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="p-4 rounded-xl bg-white/5">
-            <Users className="w-5 h-5 text-platform-green mb-2" />
+            <Users className="w-5 h-5 text-violet-400 mb-2" />
             <p className="text-2xl font-bold text-white">{stats?.totalCustomers || 0}</p>
             <p className="text-xs text-[#888]">Total de Clientes</p>
           </div>
@@ -106,7 +110,7 @@ export default function PlatformProducts() {
             <p className="text-xs text-[#888]">Clientes Ativos</p>
           </div>
           <div className="p-4 rounded-xl bg-white/5">
-            <DollarSign className="w-5 h-5 text-platform-green mb-2" />
+            <DollarSign className="w-5 h-5 text-violet-400 mb-2" />
             <p className="text-2xl font-bold text-white">{formatCurrency(stats?.totalRevenue || 0)}</p>
             <p className="text-xs text-[#888]">Receita Total</p>
           </div>
@@ -116,25 +120,24 @@ export default function PlatformProducts() {
         <ul className="space-y-2">
           {plan.features.map((feat, i) => (
             <li key={i} className="flex items-center gap-2 text-sm text-[#ccc]">
-              <div className={`w-1.5 h-1.5 rounded-full bg-${plan.color}`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${plan.bgClass}`} />
               {feat}
             </li>
           ))}
         </ul>
       </motion.div>
 
-      {/* Upgrade cards */}
       {currentPlan !== 'enterprise' && (
         <motion.div
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
-          className="p-6 rounded-2xl bg-gradient-to-br from-platform-green/5 to-transparent border border-platform-green/10"
+          className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/5 to-transparent border border-purple-500/10"
         >
           <h3 className="text-lg font-bold text-white mb-2">🚀 Quer mais recursos?</h3>
           <p className="text-sm text-[#888] mb-4">
             Faça upgrade do seu plano para desbloquear funcionalidades avançadas e suporte prioritário.
           </p>
           <a href="/plataforma/pagamentos">
-            <button className="px-6 py-2.5 rounded-xl bg-platform-green hover:bg-platform-green/90 text-black font-semibold text-sm transition-colors">
+            <button className="px-6 py-2.5 rounded-xl bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold text-sm transition-colors">
               Ver planos disponíveis
             </button>
           </a>

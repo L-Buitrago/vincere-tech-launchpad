@@ -33,7 +33,7 @@ const fadeUp = {
 };
 
 const statusConfig: Record<string, { label: string; cls: string }> = {
-  "Cliente Ativo": { label: "Ativo", cls: "text-platform-green bg-platform-green/10" },
+  "Cliente Ativo": { label: "Ativo", cls: "text-violet-400 bg-violet-500/10" },
   "Lead": { label: "Lead", cls: "text-platform-orange bg-platform-orange/10" },
   "Negociação": { label: "Negociação", cls: "text-blue-400 bg-blue-400/10" },
   "Cancelado": { label: "Cancelado", cls: "text-[#888] bg-white/5" },
@@ -57,7 +57,6 @@ export default function PlatformDashboard() {
   const [showSuccess, setShowSuccess] = useState(false);
   const { orgId, isAdmin } = useOrganization();
 
-  // Detect post-payment return from Stripe
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
     if (sessionId) {
@@ -71,7 +70,6 @@ export default function PlatformDashboard() {
     }
   }, [searchParams, setSearchParams]);
 
-  // Fetch customers filtered by org (admins see all)
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['dashboard-customers', orgId, isAdmin],
     queryFn: async () => {
@@ -80,7 +78,6 @@ export default function PlatformDashboard() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      // Non-admin users only see their org's customers
       if (!isAdmin && orgId) {
         query = query.eq('org_id', orgId);
       }
@@ -91,7 +88,6 @@ export default function PlatformDashboard() {
     }
   });
 
-  // Compute real metrics
   const totalClientes = customers.filter(c => c.status === 'Cliente Ativo').length;
   const totalLeads = customers.filter(c => c.status === 'Lead').length;
   const totalNegociacao = customers.filter(c => c.status === 'Negociação').length;
@@ -100,23 +96,22 @@ export default function PlatformDashboard() {
   const metrics = [
     {
       label: "Clientes Ativos", value: totalClientes, change: 0,
-      icon: Users, color: "platform-green", prefix: ""
+      icon: Users, color: "violet", prefix: ""
     },
     {
       label: "Receita Total", value: formatCurrency(totalReceita), change: 0,
-      icon: DollarSign, color: "platform-green", prefix: ""
+      icon: DollarSign, color: "violet", prefix: ""
     },
     {
       label: "Leads Capturados", value: totalLeads, change: 0,
-      icon: UserPlus, color: "platform-orange", prefix: "", sub: "pela Vi e formulários"
+      icon: UserPlus, color: "orange", prefix: "", sub: "pela Vi e formulários"
     },
     {
       label: "Em Negociação", value: totalNegociacao, change: 0,
-      icon: Clock, color: "platform-blue", prefix: ""
+      icon: Clock, color: "blue", prefix: ""
     },
   ];
 
-  // Build chart data from customers by grouping by day
   const chartData = (() => {
     const byDay: Record<string, number> = {};
     customers.forEach(c => {
@@ -125,23 +120,30 @@ export default function PlatformDashboard() {
     });
     return Object.entries(byDay)
       .map(([date, value]) => ({ date, value }))
-      .slice(-11); // last 11 entries
+      .slice(-11);
   })();
   const totalChart = chartData.reduce((s, d) => s + d.value, 0);
 
-  // Recent customers for the table
   const recentCustomers = customers.slice(0, 8);
+
+  const getMetricColorClasses = (color: string) => {
+    const map: Record<string, { bg: string; text: string }> = {
+      violet: { bg: "bg-violet-500/10", text: "text-violet-400" },
+      orange: { bg: "bg-platform-orange/10", text: "text-platform-orange" },
+      blue: { bg: "bg-blue-400/10", text: "text-blue-400" },
+    };
+    return map[color] || map.violet;
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
-      {/* Payment Success Banner */}
       {showSuccess && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 rounded-2xl bg-platform-green/10 border border-platform-green/20 flex items-center gap-4"
+          className="mb-6 p-4 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center gap-4"
         >
-          <CheckCircle2 className="w-8 h-8 text-platform-green shrink-0" />
+          <CheckCircle2 className="w-8 h-8 text-violet-400 shrink-0" />
           <div className="flex-1">
             <h3 className="text-white font-semibold">Pagamento Confirmado! 🎉</h3>
             <p className="text-sm text-[#aaa]">Sua assinatura foi ativada com sucesso. Aproveite todos os recursos da plataforma Vincere!</p>
@@ -152,7 +154,6 @@ export default function PlatformDashboard() {
         </motion.div>
       )}
 
-      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
@@ -165,7 +166,7 @@ export default function PlatformDashboard() {
               onClick={() => setActivePeriod(p)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activePeriod === p
-                  ? "bg-white/10 text-white"
+                  ? "bg-purple-500/10 text-violet-400"
                   : "text-[#888] hover:text-white hover:bg-white/5"
               }`}
             >
@@ -194,42 +195,43 @@ export default function PlatformDashboard() {
         </div>
       </div>
 
-      {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {metrics.map((met, i) => (
-          <motion.div
-            key={met.label}
-            initial="hidden" animate="visible" variants={fadeUp} custom={i}
-            className="p-5 rounded-2xl bg-[#111] border border-white/5"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-[#888] font-medium">{met.label}</span>
-              <div className={`w-8 h-8 rounded-lg bg-${met.color}/10 flex items-center justify-center`}>
-                <met.icon className={`w-4 h-4 text-${met.color}`} />
+        {metrics.map((met, i) => {
+          const colors = getMetricColorClasses(met.color);
+          return (
+            <motion.div
+              key={met.label}
+              initial="hidden" animate="visible" variants={fadeUp} custom={i}
+              className="p-5 rounded-2xl bg-[#111] border border-white/5"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs text-[#888] font-medium">{met.label}</span>
+                <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center`}>
+                  <met.icon className={`w-4 h-4 ${colors.text}`} />
+                </div>
               </div>
-            </div>
-            <p className="text-2xl font-bold text-white mb-1">
-              {typeof met.value === "number" ? met.value.toLocaleString("pt-BR") : met.value}
-            </p>
-            <div className="flex items-center gap-2">
-              {met.change !== 0 ? (
-                <span className={`flex items-center gap-0.5 text-xs font-medium ${
-                  met.change > 0 ? "text-platform-green" : "text-platform-red"
-                }`}>
-                  {met.change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                  {met.change > 0 ? "+" : ""}{met.change}%
-                </span>
-              ) : (
-                <span className="text-xs text-[#888]">—</span>
-              )}
-              {met.sub && <span className="text-[10px] text-[#666]">{met.sub}</span>}
-              {!met.sub && <span className="text-[10px] text-[#666]">dados em tempo real</span>}
-            </div>
-          </motion.div>
-        ))}
+              <p className="text-2xl font-bold text-white mb-1">
+                {typeof met.value === "number" ? met.value.toLocaleString("pt-BR") : met.value}
+              </p>
+              <div className="flex items-center gap-2">
+                {met.change !== 0 ? (
+                  <span className={`flex items-center gap-0.5 text-xs font-medium ${
+                    met.change > 0 ? "text-violet-400" : "text-platform-red"
+                  }`}>
+                    {met.change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {met.change > 0 ? "+" : ""}{met.change}%
+                  </span>
+                ) : (
+                  <span className="text-xs text-[#888]">—</span>
+                )}
+                {met.sub && <span className="text-[10px] text-[#666]">{met.sub}</span>}
+                {!met.sub && <span className="text-[10px] text-[#666]">dados em tempo real</span>}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* Revenue Chart */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={4}
         className="p-6 rounded-2xl bg-[#111] border border-white/5 mb-8"
@@ -247,9 +249,9 @@ export default function PlatformDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="chartGreen" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00C37F" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#00C37F" stopOpacity={0} />
+                  <linearGradient id="chartPurple" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -275,9 +277,9 @@ export default function PlatformDashboard() {
                 <Area
                   type="monotone"
                   dataKey="value"
-                  stroke="#00C37F"
+                  stroke="#7C3AED"
                   strokeWidth={2}
-                  fill="url(#chartGreen)"
+                  fill="url(#chartPurple)"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -289,7 +291,6 @@ export default function PlatformDashboard() {
         </div>
       </motion.div>
 
-      {/* Recent Customers */}
       <motion.div
         initial="hidden" animate="visible" variants={fadeUp} custom={5}
         className="rounded-2xl bg-[#111] border border-white/5 overflow-hidden"

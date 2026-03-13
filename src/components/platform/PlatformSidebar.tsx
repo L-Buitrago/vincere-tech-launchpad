@@ -73,7 +73,7 @@ export default function PlatformSidebar() {
             onClick={() => setMobileOpen(false)}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group ${
               isActive(item.path)
-                ? "bg-white/10 text-white"
+                ? "bg-purple-500/10 text-violet-400"
                 : "text-[#888] hover:text-white hover:bg-white/5"
             }`}
           >
@@ -131,7 +131,7 @@ export default function PlatformSidebar() {
       {!collapsed && (
         <div className="p-4 mx-3 mb-3 rounded-lg bg-white/5 border border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-platform-green/20 text-platform-green flex items-center justify-center text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-purple-500/20 text-violet-400 flex items-center justify-center text-xs font-bold">
               {userInitials}
             </div>
             <div className="min-w-0">

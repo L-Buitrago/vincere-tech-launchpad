@@ -6,50 +6,48 @@
 
 @layer base {
   :root {
-    --background: 207 55% 11%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 96%;
 
-    --card: 207 50% 14%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 207 50% 14%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 96%;
 
-    --primary: 0 0% 75%;
-    --primary-foreground: 207 55% 11%;
+    --primary: 263 70% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 207 40% 18%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 90%;
 
-    --muted: 207 30% 20%;
-    --muted-foreground: 210 10% 60%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 50%;
 
-    --accent: 207 60% 25%;
+    --accent: 263 50% 20%;
     --accent-foreground: 0 0% 96%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 207 25% 22%;
-    --input: 207 25% 22%;
-    --ring: 0 0% 75%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 263 70% 58%;
 
     --radius: 0.75rem;
 
-    --silver: 0 0% 75%;
-    --silver-light: 0 0% 85%;
-    --navy: 207 55% 11%;
-    --navy-light: 207 40% 18%;
-    --navy-lighter: 207 30% 25%;
+    --violet: 263 70% 58%;
+    --violet-light: 263 70% 68%;
+    --violet-dark: 263 70% 48%;
 
-    --sidebar-background: 207 55% 11%;
+    --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 0 0% 75%;
-    --sidebar-primary-foreground: 207 55% 11%;
-    --sidebar-accent: 207 40% 18%;
+    --sidebar-primary: 263 70% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 207 25% 22%;
-    --sidebar-ring: 0 0% 75%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 263 70% 58%;
   }
 }
 
@@ -70,20 +68,20 @@
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(0 0% 85%), hsl(0 0% 65%));
+    background-image: linear-gradient(135deg, hsl(263 70% 68%), hsl(263 70% 48%));
   }
 
   .bg-grid-pattern {
     background-image:
-      linear-gradient(rgba(192, 192, 192, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(192, 192, 192, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 
   .bg-circuit {
     background-image:
-      radial-gradient(circle at 25% 25%, rgba(192, 192, 192, 0.05) 1px, transparent 1px),
-      radial-gradient(circle at 75% 75%, rgba(192, 192, 192, 0.04) 1px, transparent 1px);
+      radial-gradient(circle at 25% 25%, rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+      radial-gradient(circle at 75% 75%, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 }
