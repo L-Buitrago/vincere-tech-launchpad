@@ -21,11 +21,11 @@ const menuItems = [
   { label: "Mensagens", icon: MessageSquare, path: "/plataforma/suporte" },
   { label: "Upsell", icon: TrendingUp, path: "/plataforma/dashboard" },
   { label: "Funis", icon: GitBranch, path: "/plataforma/dashboard" },
+  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
 ];
 
 const bottomItems = [
   { label: "Configurações", icon: Settings, path: "/plataforma/configuracoes" },
-  { label: "Minhas Compras", icon: ShoppingBag, path: "/plataforma/compras" },
 ];
 
 export default function PlatformSidebar() {
@@ -96,8 +96,8 @@ export default function PlatformSidebar() {
             onClick={() => setMobileOpen(false)}
             className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all duration-300 group ${
               isActive("/plataforma/admin")
-                ? "bg-premium-purple/20 text-white"
-                : "text-premium-purple/60 hover:text-premium-purple hover:bg-premium-purple/5"
+                ? "bg-premium-green/20 text-[#7DE260]"
+                : "text-[#7DE260]/60 hover:text-[#7DE260] hover:bg-[#7DE260]/5"
             }`}
           >
             <Crown className="w-[20px] h-[20px] shrink-0" />

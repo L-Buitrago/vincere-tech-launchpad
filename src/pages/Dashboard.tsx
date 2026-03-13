@@ -29,11 +29,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, BarChart, Bar, 
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, BarChart, Bar,
   Cell, PieChart, Pie
 } from "recharts";
+import { useOrganization } from "@/hooks/useOrganization";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { motion } from "framer-motion";
 
 const statusLabels: Record<string, string> = {
   pending: "Pendente",
@@ -91,8 +98,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 const StatCard = ({ title, value, subtext, icon: Icon, variant = "ghost" }: any) => (
   <Card className={`overflow-hidden border-white/5 relative group transition-all duration-500 hover:translate-y-[-4px] ${
-    variant === "premium" 
-      ? "bg-[#1C1D3A]" 
+    variant === "premium"
+      ? "bg-[#1C1D3A]"
       : "bg-premium-card text-white"
   }`}>
     {variant === "premium" && (
@@ -123,6 +130,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, variant = "ghost" }: any)
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { org, isAdmin } = useOrganization();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [newQuoteOpen, setNewQuoteOpen] = useState(false);
@@ -130,7 +138,20 @@ const Dashboard = () => {
   const [description, setDescription] = useState("");
 
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuário";
+  const userAvatar = user?.user_metadata?.avatar_url;
   const initials = fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const planName = useMemo(() => {
+    if (isAdmin) return "Enterprise (Admin)";
+    if (!org?.plan) return "Starter";
+    const mapped: Record<string, string> = {
+      free: "Starter",
+      pro: "Pro",
+      enterprise: "Enterprise"
+    };
+    return mapped[org.plan.toLowerCase()] || org.plan;
+  }, [org, isAdmin]);
+
 
   const { data: quotes = [], isLoading: quotesLoading } = useQuery({
     queryKey: ["quotes"],
@@ -193,9 +214,9 @@ const Dashboard = () => {
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-premium-text-muted" />
-            <Input 
-              className="bg-[#15162D] border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple" 
-              placeholder="Pesquisar..." 
+            <Input
+              className="bg-[#15162D] border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-premium-purple"
+              placeholder="Pesquisar..."
             />
           </div>
 
@@ -205,11 +226,21 @@ const Dashboard = () => {
                <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0A0A]">2</span>
              </button>
 
-             <div className="flex items-center gap-3 pl-3 border-l border-white/10 ml-3">
-                <div className="w-10 h-10 rounded-xl bg-premium-purple/20 text-premium-purple flex items-center justify-center font-bold text-sm border border-premium-purple/20">
-                  {initials}
+             <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">
+                <div className="flex flex-col items-end">
+                   <span className="text-sm font-bold text-white leading-none">{fullName}</span>
+                   <Badge variant="outline" className="mt-1 h-5 text-[9px] uppercase tracking-widest font-bold border-premium-purple/30 bg-premium-purple/5 text-premium-purple">
+                     {planName}
+                   </Badge>
                 </div>
+                <Avatar className="w-10 h-10 rounded-xl border border-white/10">
+                  <AvatarImage src={userAvatar} className="object-cover" />
+                  <AvatarFallback className="bg-premium-purple/20 text-premium-purple font-bold text-xs">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
              </div>
+
           </div>
         </div>
       </header>
