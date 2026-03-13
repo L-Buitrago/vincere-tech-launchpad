@@ -69,6 +69,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "premium-purple": "#682EC7",
+        "premium-green": "#7DE260",
+        "premium-orange": "#FF9F0A",
+        "premium-dark": "#0A0A0A",
+        "premium-card": "#191A30",
+        "premium-card-light": "#282939",
+        "premium-text-muted": "#74769A",
       },
       borderRadius: {
         lg: "var(--radius)",
