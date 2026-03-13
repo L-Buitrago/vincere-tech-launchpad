@@ -29,38 +29,27 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 md:px-8 text-center max-w-5xl">
-        {/* Badges */}
+        {/* Single Top Badge */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeUp}
           custom={0}
-          className="flex items-center justify-center gap-3 mb-8 flex-wrap"
+          className="flex items-center justify-center mb-8"
         >
-          {["Software", "IA", "Automação"].map((label) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] backdrop-blur-md border border-white/10 text-xs font-medium text-white/70 tracking-wider uppercase"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-              {label}
-            </span>
-          ))}
+          <span className="px-5 py-1.5 rounded-full bg-white/[0.03] backdrop-blur-md border border-white/10 text-[10px] sm:text-xs font-medium text-white/50 tracking-[0.2em] uppercase">
+            SOLUÇÕES EM SOFTWARE & INTELIGÊNCIA ARTIFICIAL
+          </span>
         </motion.div>
 
-        {/* Headline */}
         <motion.h1
           initial="hidden"
           animate="visible"
           variants={fadeUp}
           custom={1}
-          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-bold leading-[1.05] tracking-tight mb-6"
+          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[85px] font-bold leading-[1.1] tracking-tight mb-8"
         >
-          <span className="text-white">Você cria. Entrega.</span>
-          <br />
-          <span className="bg-gradient-to-r from-violet-400 to-purple-500 bg-clip-text text-transparent">
-            Cresce sem limites.
-          </span>
+          <span className="text-white">Tecnologia potencializadora de performance.</span>
         </motion.h1>
 
         {/* Subtext */}
@@ -109,23 +98,6 @@ const HeroSection = () => {
           </a>
         </motion.div>
 
-        {/* Logo Marquee */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          custom={4}
-          className="mt-20 flex items-center justify-center gap-10 flex-wrap opacity-40"
-        >
-          {partnerLogos.map((name) => (
-            <span
-              key={name}
-              className="text-sm font-medium text-white/60 tracking-wide grayscale"
-            >
-              {name}
-            </span>
-          ))}
-        </motion.div>
       </div>
 
       {/* Bottom fade */}
