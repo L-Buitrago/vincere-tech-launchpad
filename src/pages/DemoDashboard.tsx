@@ -141,7 +141,6 @@ const DemoDashboard = () => {
           <div className="flex items-center gap-3">
              <button className="p-2.5 bg-white/5 border border-white/5 rounded-xl relative hover:bg-white/10 transition-colors">
                <Bell className="w-4 h-4 text-[#888]" />
-               <span className="absolute top-2 right-2 w-4 h-4 bg-[#FF4444] text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[#15162D] text-white">2</span>
              </button>
 
              <div className="flex items-center gap-4 pl-3 border-l border-white/10 ml-3">

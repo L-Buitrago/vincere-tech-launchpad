@@ -64,11 +64,6 @@ export default function PlatformSidebar() {
 
       {/* Main Menu */}
       <nav className="flex-1 px-3 space-y-1 mt-4 overflow-y-auto scrollbar-hide">
-        {!collapsed && (
-          <div className="px-3 mb-2">
-            <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Menu</span>
-          </div>
-        )}
         {menuItems.map((item) => (
           <Link
             key={item.label}
@@ -107,13 +102,7 @@ export default function PlatformSidebar() {
         )}
       </nav>
 
-      <div className="px-3 pb-6 space-y-4">
-        <div className="space-y-1 border-t border-sidebar-border pt-4">
-          {!collapsed && (
-            <div className="px-3 mb-2">
-              <span className="text-[10px] font-bold text-premium-text-muted uppercase tracking-[0.2em]">Geral</span>
-            </div>
-          )}
+        <div className="px-3 pb-6 flex flex-col gap-1 border-t border-white/5 pt-4">
           {bottomItems.map((item) => (
             <Link
               key={item.label}
@@ -133,28 +122,6 @@ export default function PlatformSidebar() {
             {!collapsed && <span>Sair</span>}
           </button>
         </div>
-
-        {!collapsed && (
-           <div className="mt-4 relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-premium-card to-[#0A0B1E] border border-white/5 group">
-             {/* Rocket Animation Background */}
-             <div className="absolute -right-4 -top-4 w-24 h-24 bg-premium-purple/10 rounded-full blur-2xl group-hover:bg-premium-purple/20 transition-all duration-500" />
-             
-             <div className="relative z-10 flex flex-col items-center text-center gap-3">
-               <div className="w-12 h-12 rounded-full bg-premium-purple/20 flex items-center justify-center">
-                 <Rocket className="w-6 h-6 text-premium-purple animate-pulse" />
-               </div>
-               <div>
-                 <h4 className="text-white font-bold text-sm">Seja Premium!</h4>
-                 <p className="text-[10px] text-premium-text-muted mt-1 leading-relaxed">
-                   Libere todos os recursos e impulsione seus resultados.
-                 </p>
-               </div>
-               <button className="w-full py-2 bg-premium-purple hover:bg-premium-purple/90 text-white text-[11px] font-bold rounded-lg transition-all duration-300 shadow-lg shadow-premium-purple/20">
-                 Upgrade Agora
-               </button>
-             </div>
-           </div>
-        )}
       </div>
     </div>
   );

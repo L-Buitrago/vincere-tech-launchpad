@@ -1,13 +1,97 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, User, Bell, Shield, CreditCard, Palette, Save } from "lucide-react";
+import { Settings, User, Bell, Shield, CreditCard, Palette, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOrganization } from "@/hooks/useOrganization";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function PlatformSettings() {
   const { user } = useAuth();
+  const { org, orgId } = useOrganization();
   const [activeTab, setActiveTab] = useState("perfil");
+  const [loading, setLoading] = useState(false);
+
+  // Profile State
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [companyName, setCompanyName] = useState("");
+
+  // Security State
+  const [newPassword, setNewPassword] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.user_metadata?.full_name || "");
+      // Fetch additional profile data
+      supabase
+        .from("profiles")
+        .select("phone")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.phone) setPhone(data.phone);
+        });
+    }
+    if (org) {
+      setCompanyName(org.name || "");
+    }
+  }, [user, org]);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      // 1. Update Auth Metadata
+      const { error: authError } = await supabase.auth.updateUser({
+        data: { full_name: fullName }
+      });
+      if (authError) throw authError;
+
+      // 2. Update Profiles table
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ full_name: fullName, phone: phone })
+        .eq("user_id", user.id);
+      if (profileError) throw profileError;
+
+      // 3. Update Organization
+      if (orgId) {
+        const { error: orgError } = await supabase
+          .from("organizations")
+          .update({ name: companyName })
+          .eq("id", orgId);
+        if (orgError) throw orgError;
+      }
+
+      toast.success("Perfil atualizado com sucesso!");
+    } catch (error: any) {
+      toast.error(`Erro ao salvar: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (!newPassword) {
+      toast.error("Por favor, digite a nova senha");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      if (error) throw error;
+      toast.success("Senha atualizada com sucesso!");
+      setNewPassword("");
+    } catch (error: any) {
+      toast.error(`Erro: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabs = [
     { id: "perfil", label: "Perfil", icon: User },
@@ -16,10 +100,6 @@ export default function PlatformSettings() {
     { id: "pagamento", label: "Pagamento", icon: CreditCard },
     { id: "aparencia", label: "Aparência", icon: Palette },
   ];
-
-  const handleSave = () => {
-    toast.success("Configurações salvas com sucesso!");
-  };
 
   return (
     <div className="p-6 lg:p-10 max-w-5xl">
@@ -54,7 +134,11 @@ export default function PlatformSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Nome completo</label>
-                    <input defaultValue={user?.user_metadata?.full_name || ""} className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
+                    <input 
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" 
+                    />
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Email</label>
@@ -62,15 +146,30 @@ export default function PlatformSettings() {
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Telefone</label>
-                    <input placeholder="(11) 99999-9999" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
+                    <input 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="(11) 99999-9999" 
+                      className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" 
+                    />
                   </div>
                   <div>
                     <label className="text-xs text-[#888] block mb-1.5">Empresa</label>
-                    <input placeholder="Nome da empresa" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
+                    <input 
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Nome da empresa" 
+                      className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" 
+                    />
                   </div>
                 </div>
-                <Button onClick={handleSave} className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2">
-                  <Save className="w-4 h-4" /> Salvar alterações
+                <Button 
+                  onClick={handleSaveProfile} 
+                  disabled={loading}
+                  className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Salvar alterações
                 </Button>
               </div>
             )}
@@ -94,15 +193,22 @@ export default function PlatformSettings() {
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Segurança</h2>
                 <div>
-                  <label className="text-xs text-[#888] block mb-1.5">Senha atual</label>
-                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
-                </div>
-                <div>
                   <label className="text-xs text-[#888] block mb-1.5">Nova senha</label>
-                  <input type="password" placeholder="••••••••" className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" />
+                  <input 
+                    type="password" 
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="••••••••" 
+                    className="w-full bg-[#0A0A0A] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/30" 
+                  />
                 </div>
-                <Button onClick={handleSave} className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2">
-                  <Save className="w-4 h-4" /> Atualizar senha
+                <Button 
+                  onClick={handleUpdatePassword} 
+                  disabled={loading}
+                  className="bg-platform-purple hover:bg-platform-purple/90 text-white font-semibold gap-2"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Atualizar senha
                 </Button>
               </div>
             )}
