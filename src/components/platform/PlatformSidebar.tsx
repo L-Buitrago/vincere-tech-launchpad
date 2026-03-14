@@ -122,7 +122,6 @@ export default function PlatformSidebar() {
             {!collapsed && <span>Sair</span>}
           </button>
         </div>
-      </div>
     </div>
   );
 
