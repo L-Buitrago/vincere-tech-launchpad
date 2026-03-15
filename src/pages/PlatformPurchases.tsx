@@ -5,8 +5,6 @@ import { formatCurrency } from "@/data/platformMockData";
 
 const mockPurchases = [
   { id: "PUR-001", name: "Plano Pro — Vincere", date: "2026-03-01", amount: 197, status: "ativo", type: "Assinatura" },
-  { id: "PUR-002", name: "Template Checkout Premium", date: "2026-02-15", amount: 47, status: "entregue", type: "Digital" },
-  { id: "PUR-003", name: "Curso: Vendas com IA", date: "2026-01-20", amount: 297, status: "entregue", type: "Curso" },
 ];
 
 const statusColors: Record<string, string> = {

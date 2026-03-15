@@ -13,11 +13,9 @@ serve(async (req) => {
   }
 
   try {
-    const { planName, priceAmount } = await req.json()
+    const { planName, priceAmount, paymentType = 'vincere_subscription', orgId } = await req.json()
 
     // Initialize Stripe using the secret key from Supabase Edge Secrets
-    // You MUST set this secret via Supabase CLI: 
-    // supabase secrets set STRIPE_SECRET_KEY=sk_test_...
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
@@ -26,23 +24,29 @@ serve(async (req) => {
     // Create Checkout Session for Embedded Checkout
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
-      payment_method_types: ['card'], // Add 'boleto', 'pix' if required and configured in Stripe dashboard
+      payment_method_types: ['card'],
+      metadata: {
+        payment_type: paymentType,
+        org_id: orgId || '',
+      },
       line_items: [
         {
           price_data: {
              currency: 'BRL',
              product_data: {
-               name: `Vincere Plataforma - Plano ${planName}`,
+               name: paymentType === 'vincere_subscription' 
+                ? `Vincere Plataforma - Plano ${planName}`
+                : `Mensalidade / Serviço`,
              },
-             unit_amount: priceAmount * 100, // Stripe uses cents 
-             recurring: {
+             unit_amount: Math.round(priceAmount * 100), // Ensure integer
+             recurring: paymentType === 'vincere_subscription' ? {
                 interval: 'month',
-             }
+             } : undefined
           },
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: paymentType === 'vincere_subscription' ? 'subscription' : 'payment',
       return_url: `${req.headers.get("origin") || 'https://vincere-tecnologia.lovable.app'}/plataforma/dashboard?session_id={CHECKOUT_SESSION_ID}`,
     })
 

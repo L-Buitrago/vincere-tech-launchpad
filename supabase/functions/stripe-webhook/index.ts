@@ -28,19 +28,26 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object
-      const amount = (session.amount_total || 0) / 100
-      const email = session.customer_details?.email
-      const name = session.customer_details?.name || 'Cliente Stripe'
-      const phone = session.customer_details?.phone || null
-      const stripeCustomerId = session.customer || null
+    const eventType = event.type
+    const dataObject = event.data.object as any
+    const metadata = dataObject.metadata || {}
+    const paymentType = metadata.payment_type || 'vincere_subscription'
+    const targetOrgId = metadata.org_id
 
-      if (email) {
-        // 1. Create or find the organization for this customer
-        let orgId: string | null = null
+    if (eventType === 'checkout.session.completed') {
+      const email = dataObject.customer_details?.email
+      const name = dataObject.customer_details?.name || 'Cliente'
+      const phone = dataObject.customer_details?.phone || null
+      const amount = (dataObject.amount_total || 0) / 100
+      const stripeCustomerId = dataObject.customer || null
+      const checkoutId = dataObject.id
 
-        // Check if org already exists for this email
+      if (!email) return new Response('Email missing', { status: 400 })
+
+      if (paymentType === 'vincere_subscription') {
+        // --- SCENARIO A: Vincere Platform Subscription ---
+        let finalOrgId: string | null = null
+
         const { data: existingOrg } = await supabase
           .from('organizations')
           .select('id')
@@ -48,9 +55,11 @@ serve(async (req) => {
           .maybeSingle()
 
         if (existingOrg) {
-          orgId = existingOrg.id
+          finalOrgId = existingOrg.id
+          await supabase.from('organizations')
+            .update({ status: 'active', stripe_customer_id: stripeCustomerId })
+            .eq('id', finalOrgId)
         } else {
-          // Create new organization
           const { data: newOrg, error: orgError } = await supabase
             .from('organizations')
             .insert({
@@ -63,60 +72,62 @@ serve(async (req) => {
             .select('id')
             .single()
 
-          if (orgError) {
-            console.error("Erro ao criar organização:", orgError)
-          } else {
-            orgId = newOrg.id
-          }
+          if (!orgError) finalOrgId = newOrg.id
         }
 
-        // 2. Link user to org (find user by email)
-        if (orgId) {
+        if (finalOrgId) {
           const { data: authUser } = await supabase.auth.admin.listUsers()
           const matchingUser = authUser?.users?.find(u => u.email === email)
-          
           if (matchingUser) {
             await supabase.from('org_members').upsert({
-              org_id: orgId,
+              org_id: finalOrgId,
               user_id: matchingUser.id,
               role: 'owner',
             }, { onConflict: 'org_id,user_id' })
           }
         }
+      } else if (paymentType === 'client_revenue' && targetOrgId) {
+        // --- SCENARIO B: Client (School) Revenue ---
+        // 1. Record transaction for the school
+        await supabase.from('transactions').insert({
+          client_name: name,
+          amount: amount,
+          status: 'aprovado',
+          gateway: 'stripe',
+          product: dataObject.line_items?.[0]?.description || 'Serviço/Mensalidade',
+          org_id: targetOrgId,
+          date: new Date().toISOString()
+        })
 
-        // 3. Upsert customer in CRM linked to the org
-        const { error } = await supabase.from('customers').upsert({
+        // 2. Add/Update the student in the school's customer list
+        await supabase.from('customers').upsert({
           email: email,
           name: name,
           phone: phone,
           total_spent: amount,
           status: 'Cliente Ativo',
-          last_order_date: new Date().toISOString(),
-          org_id: orgId,
-        }, { onConflict: 'email' })
+          org_id: targetOrgId,
+        }, { onConflict: 'email,org_id' })
+      }
 
-        if (error) {
-          console.error("Erro ao salvar cliente no CRM:", error)
-        }
-
-        // 4. Send welcome email
-        try {
-          const emailUrl = `${supabaseUrl}/functions/v1/send-welcome-email`
-          await fetch(emailUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseServiceKey}`,
-            },
-            body: JSON.stringify({
-              customerName: name,
-              customerEmail: email,
-              planName: 'Starter',
-            }),
-          })
-        } catch (emailErr) {
-          console.error("Welcome email error (non-blocking):", emailErr)
-        }
+      // Update recovery if exists
+      if (checkoutId) {
+        await supabase.from('recoveries')
+          .update({ status: 'recovered' })
+          .eq('checkout_id', checkoutId)
+      }
+    } else if (eventType === 'checkout.session.expired' || eventType === 'payment_intent.payment_failed') {
+      const email = dataObject.customer_details?.email
+      if (email) {
+        await supabase.from('recoveries').upsert({
+          customer_email: email,
+          customer_name: dataObject.customer_details?.name,
+          customer_phone: dataObject.customer_details?.phone,
+          amount: (dataObject.amount_total || 0) / 100,
+          checkout_id: dataObject.id,
+          org_id: targetOrgId, // Link to the specific school if available
+          status: 'pending'
+        }, { onConflict: 'checkout_id' })
       }
     }
 
