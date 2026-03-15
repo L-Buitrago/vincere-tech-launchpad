@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { Globe, Users, Orbit } from "lucide-react";
 
 const locations = [
-  { id: 1, x: "25%", y: "45%", name: "Estados Unidos", label: "USA" },
-  { id: 2, x: "32%", y: "75%", name: "Brasil", label: "BR", pulse: true },
-  { id: 3, x: "50%", y: "38%", name: "Europa", label: "EU" },
-  { id: 4, x: "55%", y: "55%", name: "Nigéria", label: "NG" },
-  { id: 5, x: "75%", y: "45%", name: "China", label: "CN" },
-  { id: 6, x: "85%", y: "75%", name: "Austrália", label: "AU" },
+  { id: 1, x: "18%", y: "40%", name: "Estados Unidos", label: "USA" },
+  { id: 2, x: "28%", y: "65%", name: "Brasil", label: "BR", pulse: true },
+  { id: 3, x: "52%", y: "25%", name: "Europa", label: "EU" },
+  { id: 4, x: "55%", y: "60%", name: "Nigéria", label: "NG" },
+  { id: 5, x: "78%", y: "35%", name: "China", label: "CN" },
+  { id: 6, x: "88%", y: "78%", name: "Austrália", label: "AU" },
 ];
 
 export function GlobalMap() {
@@ -51,23 +51,19 @@ export function GlobalMap() {
                   <circle cx="2" cy="2" r="1.5" fill="currentColor" />
                 </pattern>
                 <mask id="worldMask">
-                  <path 
-                    d="M174.4,124.7c-9.1-1.3-17.6-3.8-25.5-7.5c-7.9-3.7-14.8-8.5-20.7-14.4s-10.7-12.8-14.4-20.7c-3.7-7.9-6.2-16.4-7.5-25.5H89.4 c1.3,9.1,3.8,17.6,7.5,25.5c3.7,7.9,8.5,14.8,14.4,20.7s12.8,10.7,20.7,14.4c7.9,3.7,16.4,6.2,25.5,7.5V124.7z M367.5,145.4 c-42.3,0-81.5-16.1-111.3-45.2c-29.8-29.1-46.1-67.7-46.1-108.9h27.3c0,34.2,13.5,66.2,38.1,90.3c24.6,24.1,57.1,37.3,92.1,37.3 c35,0,67.5-13.3,92.1-37.3c24.6-24.1,38.1-56.1,38.1-90.3h27.3c0,41.2-16.3,79.8-46.1,108.9C449,129.3,409.8,145.4,367.5,145.4z" 
-                    fill="white"
-                  />
-                  {/* Simplified World Path */}
-                  <path 
-                    fill="white"
-                    d="M180,100 L250,90 L280,110 L320,105 L350,130 L380,110 L420,120 L450,110 L480,90 L550,80 L600,90 L650,100 L700,90 L750,110 L800,90 L850,110 L900,100 L950,90 L950,150 L900,180 L850,170 L800,200 L750,220 L700,210 L650,230 L600,220 L550,250 L500,240 L450,260 L400,240 L350,270 L300,250 L250,280 L200,260 L150,290 L100,270 L50,290 L20,250 L50,200 L100,180 L150,190 L180,150 Z"
-                  />
+                  {/* North America */}
+                  <path fill="white" d="M100,80 L180,60 L280,80 L250,150 L180,180 L80,160 Z" />
                   {/* South America */}
-                  <path fill="white" d="M250,280 L350,270 L340,350 L300,450 L270,450 L240,350 Z" />
-                  {/* Africa */}
-                  <path fill="white" d="M480,240 L600,220 L620,380 L550,450 L500,450 L480,350 Z" />
+                  <path fill="white" d="M250,220 L350,210 L330,280 L290,400 L260,400 L230,290 Z" />
+                  {/* Europe & Africa */}
+                  <path fill="white" d="M450,80 L550,60 L600,80 L580,150 L530,170 L480,150 Z" />
+                  <path fill="white" d="M480,180 L620,160 L640,320 L570,420 L500,420 L470,300 Z" />
+                  {/* Asia */}
+                  <path fill="white" d="M600,60 L850,50 L950,80 L920,250 L800,280 L650,250 L600,150 Z" />
                   {/* Australia */}
-                  <path fill="white" d="M800,350 L920,340 L930,420 L850,450 L800,430 Z" />
-                  {/* North America Extension */}
-                  <path fill="white" d="M50,100 L150,80 L250,100 L200,180 L100,200 L50,150 Z" />
+                  <path fill="white" d="M820,320 L940,310 L950,390 L870,420 L810,400 Z" />
+                  {/* Greenland/North */}
+                  <path fill="white" d="M350,30 L450,20 L480,50 L400,60 Z" />
                 </mask>
               </defs>
               <rect x="0" y="0" width="1000" height="500" fill="url(#dotPattern)" mask="url(#worldMask)" />
@@ -76,10 +72,10 @@ export function GlobalMap() {
 
           {/* Dimmest background grid for context */}
           <div 
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-[0.05]"
             style={{
-              backgroundImage: `radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0)`,
-              backgroundSize: '48px 48px'
+              backgroundImage: `radial-gradient(circle at 1.2px 1.2px, white 0.8px, transparent 0)`,
+              backgroundSize: '24px 24px'
             }}
           />
 
