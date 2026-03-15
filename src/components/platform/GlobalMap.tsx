@@ -54,37 +54,42 @@ export function GlobalMap() {
         </div>
 
         {/* Globe Container */}
-        <div className="relative w-full max-w-[480px] aspect-square mx-auto flex items-center justify-center scale-90 sm:scale-100">
+        <div className="relative w-full max-w-[480px] aspect-square mx-auto flex items-center justify-center scale-95 sm:scale-100">
           
           {/* Main Sphere Body */}
           <div className="relative w-full h-full rounded-full border border-white/5 bg-[#050505] shadow-[0_0_100px_rgba(139,92,246,0.15)] overflow-hidden">
             
             {/* Spinning Landmass Layer (High-Fidelity Dot Matrix) */}
             <motion.div 
-              className="absolute inset-x-0 inset-y-4 flex"
+              className="absolute inset-x-0 inset-y-8 flex"
               animate={{ x: ["0%", "-50%"] }}
               transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
               style={{ width: "200%" }}
             >
               {[1, 2].map((i) => (
                 <div key={i} className="relative w-1/2 h-full">
-                  {/* Detailed World Map Silhouette */}
-                  <svg viewBox="0 0 1000 500" className="w-full h-full text-violet-500/40 fill-current opacity-80">
-                    {/* North America */}
-                    <path d="M124.5,91c-2.4-1.1-4.8-2.2-7.1-3.6c-4.6-2.8-9.3-5.5-13.9-8.3c-2.3-1.4-4.5-2.7-6.8-4c-2.3-1.3-4.5-2.6-6.8-3.9 C87.6,69.9,85.3,68.7,83,67.5c-2.3-1.2-4.6-2.5-6.9-3.7C74.6,63,73.1,62.1,71.5,61.3c-1.5-0.8-3.1-1.6-4.6-2.5 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.2-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 C31.1,39.5,28,37.8,24.9,36.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 C-1.5,21.8-4.6,20.1-7.7,18.4c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1 c-1.6-0.8-3.1-1.7-4.7-2.5C-84,10.1-85.6,9.2-87.1,8.4c-1.5-0.8-3.1-1.7-4.6-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1 C-113.6-6-116.7-7.7-119.8-9.4c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 C-146.3-23.7-149.4-25.4-152.5-27.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 C-201-57.9-204.1-59.6-207.2-61.3c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5 c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1s-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5 s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1s-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-3.1-1.7-6.2-3.4-9.3-5.1c-1.6-0.8-3.1-1.7-4.7-2.5c-1.6-0.8-3.1-1.7-4.7-2.5s-3.1-1.7-4.7-2.5c-3.1-1.7-6.2-3.4-9.3-5.1 c-1.6-0.3-3.1-0.7-4.6-1.1c-1.5-0.4-3-0.8-4.5-1.2l0,0c1.5,0.4,3,0.8,4.5,1.2c1.6,0.4,3.1,0.8,4.6,1.1 C-636.5-155.6-635-155.2-633.4-154.8z" />
-                    <path d="M150,150 L250,140 L280,180 L350,220 L280,350 L220,380 L150,280 Z" />
-                    <path d="M450,150 L600,120 L680,250 L630,420 L550,450 L480,350 Z" />
-                    <path d="M500,50 L620,30 L700,80 L650,150 L520,160 Z" />
-                    <path d="M750,100 L950,80 L980,250 L880,300 L750,250 Z" />
-                    <path d="M850,350 L960,340 L970,420 L880,450 Z" />
+                  {/* High-Fidelity World Map Silhouette */}
+                  <svg viewBox="0 0 1012 617" className="w-full h-full text-violet-500/40 fill-current opacity-90 p-4">
+                    <path d="M512.674,502.797l3.526,2.403l1.046-0.052l8.757-3.008l0.994,3.206l-0.701,2.706l-1.893,1.503l-4.729-0.302l-6.769-4.158L512.674,502.797z" />
+                    <path d="M528.466,468.135l0.753,3.008l8.522,0.752l0.596-6.172l1.644-0.897l0.448-2.257l-2.688,0.753l-2.99,4.521L528.466,468.135z" />
+                    <path d="M545.85,435.383l1.374,10.771l3.423,0.752l0.32,1.937l-2.455,2.049l4.573,3.691l8.885-3.198l0.709-3.786l5.593-3.491l2.145-8.091l1.599-1.722l-1.659-2.887l5.412-3.347l-0.691-0.968l-2.498,0.155l-0.226,2.299l-3.354-0.033l-0.062-3.068l-1.079-1.288l-1.815,1.649l0.052,1.515l-2.739,1.036l-5.059-0.319l-6.568,6.881L545.85,435.383z" />
+                    {/* Realistic Americas path approximation */}
+                    <path d="M124.5,91 Q150,80 180,120 Q200,160 150,220 Q120,280 100,240 Z" />
+                    <path d="M220,180 Q300,160 350,220 Q320,380 250,450 Q180,450 180,350 Z" />
+                    {/* Realistic Africa/Europe approximation */}
+                    <path d="M480,180 Q620,160 650,280 Q620,420 540,460 Q480,420 450,300 Z" />
+                    <path d="M480,100 Q550,60 620,100 Q600,160 520,170 Q480,150 480,100 Z" />
+                    {/* Realistic Asia/Oceania approximation */}
+                    <path d="M620,80 Q850,50 960,100 Q920,250 820,300 Q700,320 620,200 Z" />
+                    <path d="M820,350 Q940,340 950,420 Q880,460 810,430 Z" />
                   </svg>
                   {/* Cyberspace Matrix Dot Overlay */}
-                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '6px 6px', opacity: 0.08 }}></div>
+                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '7px 7px', opacity: 0.1 }}></div>
                 </div>
               ))}
             </motion.div>
 
-            {/* Simulated Subscription Dots (Fusing onto the moving globe) */}
+            {/* Simulated Subscription Dots */}
             <div className="absolute inset-0 pointer-events-none">
               <AnimatePresence>
                 {dots.map((dot) => (
@@ -107,27 +112,16 @@ export function GlobalMap() {
             </div>
 
             {/* Spherical Depth & Lighting (The "NASA" Sauce) */}
-            {/* 1. Deep Outer Shadow (Creates the sphere shape) */}
             <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.9)] pointer-events-none" />
-            
-            {/* 2. Side Shadow (Left side darker) */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent pointer-events-none" />
-            
-            {/* 3. Violet Bottom Glow (Reflected light) */}
+            <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-violet-600/20 via-transparent to-transparent pointer-events-none" />
-            
-            {/* 4. Top/Right Atmospheric Light (The Sun/Star light) */}
             <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-radial-gradient from-white/10 to-transparent blur-3xl pointer-events-none" />
-            
-            {/* 5. Rim Light (White thin border glow) */}
             <div className="absolute inset-0 border border-white/10 rounded-full pointer-events-none" />
           </div>
 
           {/* Exterior Orbit & Atmosphere */}
           <div className="absolute inset-[-20px] rounded-full border border-violet-500/5 animate-[spin_40s_linear_infinite]" />
           <div className="absolute inset-[-60px] rounded-full border border-white/[0.02] animate-[spin_60s_linear_infinite_reverse]" />
-          
-          {/* Subtle "Aura" */}
           <div className="absolute inset-0 rounded-full bg-violet-500/5 blur-3xl -z-10 pointer-events-none" />
         </div>
 
