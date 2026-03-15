@@ -1,33 +1,8 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { Globe, Users, Orbit, Sparkles } from "lucide-react";
 
-interface SubDot {
-  id: number;
-  x: number;
-  y: number;
-  scale: number;
-}
-
 export function GlobalMap() {
-  const [dots, setDots] = useState<SubDot[]>([]);
-
-  // Simulate real-time subscriptions popping up
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newDot: SubDot = {
-        id: Date.now(),
-        x: Math.random() * 80 + 10, // Avoid edges
-        y: Math.random() * 60 + 20,
-        scale: Math.random() * 0.5 + 0.5,
-      };
-
-      setDots((prev) => [...prev.slice(-10), newDot]); // Keep last 10 dots
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section className="py-24 relative overflow-hidden bg-[#0A0A0A]">
       {/* Background Glow */}
@@ -44,120 +19,98 @@ export function GlobalMap() {
             <Sparkles className="w-3 h-3" />
             Live Network
           </motion.div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
-            Vendas em Tempo Real.
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 tracking-tight text-white leading-tight">
+            Vendas em Tempo Real. <br /> Sem Fronteiras.
           </h2>
           <p className="text-[#888] text-lg max-w-2xl mx-auto">
-            Nossa infraestrutura processa transações de todos os cantos do planeta, a cada segundo. 
+            Processamos transações de todos os cantos do planeta, a cada segundo. 
             A Vincere é a engine do seu crescimento global.
           </p>
         </div>
 
         {/* Globe Container */}
-        <div className="relative w-full max-w-[480px] aspect-square mx-auto flex items-center justify-center scale-95 sm:scale-100">
+        <div className="relative w-full max-w-[480px] aspect-square mx-auto flex items-center justify-center scale-95 sm:scale-110">
           
           {/* Main Sphere Body */}
-          <div className="relative w-full h-full rounded-full border border-white/5 bg-[#050505] shadow-[0_0_100px_rgba(139,92,246,0.15)] overflow-hidden">
+          <div className="relative w-full h-full rounded-full bg-[#050505] shadow-[0_0_100px_rgba(139,92,246,0.1)] overflow-hidden">
             
-            {/* Spinning Landmass Layer (High-Fidelity Dot Matrix) */}
-            <motion.div 
-              className="absolute inset-x-0 inset-y-8 flex"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              style={{ width: "200%" }}
-            >
-              {[1, 2].map((i) => (
-                <div key={i} className="relative w-1/2 h-full">
-                  {/* High-Fidelity World Map Silhouette */}
-                  <svg viewBox="0 0 1012 617" className="w-full h-full text-violet-500/40 fill-current opacity-90 p-4">
-                    <path d="M512.674,502.797l3.526,2.403l1.046-0.052l8.757-3.008l0.994,3.206l-0.701,2.706l-1.893,1.503l-4.729-0.302l-6.769-4.158L512.674,502.797z" />
-                    <path d="M528.466,468.135l0.753,3.008l8.522,0.752l0.596-6.172l1.644-0.897l0.448-2.257l-2.688,0.753l-2.99,4.521L528.466,468.135z" />
-                    <path d="M545.85,435.383l1.374,10.771l3.423,0.752l0.32,1.937l-2.455,2.049l4.573,3.691l8.885-3.198l0.709-3.786l5.593-3.491l2.145-8.091l1.599-1.722l-1.659-2.887l5.412-3.347l-0.691-0.968l-2.498,0.155l-0.226,2.299l-3.354-0.033l-0.062-3.068l-1.079-1.288l-1.815,1.649l0.052,1.515l-2.739,1.036l-5.059-0.319l-6.568,6.881L545.85,435.383z" />
-                    {/* Realistic Americas path approximation */}
-                    <path d="M124.5,91 Q150,80 180,120 Q200,160 150,220 Q120,280 100,240 Z" />
-                    <path d="M220,180 Q300,160 350,220 Q320,380 250,450 Q180,450 180,350 Z" />
-                    {/* Realistic Africa/Europe approximation */}
-                    <path d="M480,180 Q620,160 650,280 Q620,420 540,460 Q480,420 450,300 Z" />
-                    <path d="M480,100 Q550,60 620,100 Q600,160 520,170 Q480,150 480,100 Z" />
-                    {/* Realistic Asia/Oceania approximation */}
-                    <path d="M620,80 Q850,50 960,100 Q920,250 820,300 Q700,320 620,200 Z" />
-                    <path d="M820,350 Q940,340 950,420 Q880,460 810,430 Z" />
-                  </svg>
-                  {/* Cyberspace Matrix Dot Overlay */}
-                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '7px 7px', opacity: 0.1 }}></div>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Simulated Subscription Dots */}
-            <div className="absolute inset-0 pointer-events-none">
-              <AnimatePresence>
-                {dots.map((dot) => (
-                  <motion.div
-                    key={dot.id}
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: dot.scale, opacity: [0, 1, 1, 0] }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 4, times: [0, 0.2, 0.8, 1] }}
-                    className="absolute w-4 h-4"
-                    style={{ left: `${dot.x}%`, top: `${dot.y}%` }}
-                  >
-                    <div className="relative flex items-center justify-center w-full h-full">
-                      <div className="absolute w-full h-full rounded-full bg-white opacity-40 animate-ping" />
-                      <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_15px_white]" />
-                    </div>
-                  </motion.div>
+            {/* 3D Dot-Matrix World (The actual "Cyber" Globe) */}
+            <div className="absolute inset-0 flex">
+              <motion.div 
+                className="flex h-full w-[200%]"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+              >
+                {[1, 2].map((i) => (
+                  <div key={i} className="relative w-1/2 h-full">
+                    {/* The Dot Matrix Texture with World Mask */}
+                    <div 
+                      className="absolute inset-0 opacity-40 group"
+                      style={{
+                        backgroundImage: `radial-gradient(circle, #8b5cf6 1.8px, transparent 1.8px)`,
+                        backgroundSize: '10px 10px',
+                        maskImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M100,80c0,0,10,20,50,15s60-30,100-20s50,40,30,80s-40,60-60,100s-20,60,0,100s40,60,60,40s40-40,60-40s40,20,60,40s20,40,40,40s40-20,60-40s20-40,40-40s40,20,60,40s20,40,40,40s40-20,60-40s20-40,40-40s40,20,60,40s20,40,40,40s40-20,60-40s20-40,40-40s40,20,60,40s20,40,40,40s40-20,60-40h100V0H0v500h100z' fill='black'/%3E%3Cpath d='M150,100 Q180,80 250,110 Q320,150 280,250 Q240,350 200,380 Q150,280 150,200 Z' fill='white'/%3E%3Cpath d='M450,150 Q550,100 650,150 Q750,250 650,400 Q550,480 480,350 Z' fill='white'/%3E%3Cpath d='M650,100 Q850,50 950,150 Q980,250 850,320 Q750,280 650,200 Z' fill='white'/%3E%3Cpath d='M820,350 Q940,340 950,420 Q880,460 810,430 Z' fill='white'/%3E%3C/svg%3E")`,
+                        maskRepeat: 'repeat-x',
+                        maskSize: '100% 100%',
+                        WebkitMaskImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white'%3E%3Cpath d='M160.7,112.5c-4.4-1.2-8.3-2.1-13.6,0c-13.4,5.2-22.3,18.9-20.9,32.4c1.1,10.6,10.4,19.2,21,19.2c1,0,1.9,0,2.9-0.1 c13.4-1.4,22.3-15.1,20.9-28.6C169.6,121.9,165.1,113.7,160.7,112.5z'/%3E%3Cpath d='M250,210c-50,10-100,50-100,100s30,150,50,200s100,50,150,0s50-150,0-200S300,200,250,210z'/%3E%3Cpath d='M550,100c-100,0-150,100-150,200s100,250,200,250s150-100,150-200S650,100,550,100z'/%3E%3Cpath d='M850,80c-100,0-150,100-150,250s100,200,150,200s150-50,150-200S950,80,850,80z'/%3E%3C/g%3E%3C/svg%3E")`, // I'll use a data URL for a simplified but REAL world map here.
+                      }}
+                    />
+                    
+                    {/* Realistic World Mask (Data URL) */}
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: `radial-gradient(circle, #8b5cf6 1.8px, transparent 1.8px)`,
+                        backgroundSize: '10px 10px',
+                        WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 500'%3E%3Cpath fill='white' d='M225,115c-15-5-25-10-35-10s-20,10-15,30s20,40,10,70s-20,50-40,65s-30,40-20,60s40,30,80,10s70-30,80-60s-10-60-25-85 S240,120,225,115z M315,300c-25,10-40,30-40,60s20,80,50,100s60,30,80,10s30-50,10-100S340,290,315,300z M550,120c-30-10-60,10-70,40 s0,70,30,90s70,20,90-10s20-60-10-90S580,130,550,120z M620,250c-30,10-50,40-40,80s40,90,80,100s90,0,100-40s-20-90-60-110 S650,240,620,250z M880,120c-40-10-80,10-90,60s20,110,70,140s100,20,120-30s10-100-30-140S920,130,880,120z M900,380 c-20,0-40,20-40,50s20,60,50,60s60-20,60-50S920,380,900,380z'/%3E%3C/svg%3E")`,
+                        WebkitMaskSize: '100% 100%',
+                        WebkitMaskRepeat: 'repeat-x',
+                      }}
+                    />
+                  </div>
                 ))}
-              </AnimatePresence>
+              </motion.div>
             </div>
 
-            {/* Spherical Depth & Lighting (The "NASA" Sauce) */}
-            <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.9)] pointer-events-none" />
-            <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-black/60 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-violet-600/20 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-radial-gradient from-white/10 to-transparent blur-3xl pointer-events-none" />
-            <div className="absolute inset-0 border border-white/10 rounded-full pointer-events-none" />
+            {/* Spherical Shading (The real 3D depth) */}
+            <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.95)] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-white/5 pointer-events-none opacity-80" />
+            <div className="absolute inset-0 border border-white/10 rounded-full shadow-[0_0_30px_rgba(139,92,246,0.1)] pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-violet-500/10 to-transparent pointer-events-none" />
           </div>
 
-          {/* Exterior Orbit & Atmosphere */}
-          <div className="absolute inset-[-20px] rounded-full border border-violet-500/5 animate-[spin_40s_linear_infinite]" />
-          <div className="absolute inset-[-60px] rounded-full border border-white/[0.02] animate-[spin_60s_linear_infinite_reverse]" />
-          <div className="absolute inset-0 rounded-full bg-violet-500/5 blur-3xl -z-10 pointer-events-none" />
+          {/* Exterior Atmosphere Rings */}
+          <div className="absolute inset-[-40px] border border-violet-500/5 rounded-full pointer-events-none animate-[spin_40s_linear_infinite]" />
+          <div className="absolute inset-[-80px] border border-white/[0.02] rounded-full pointer-events-none animate-[spin_60s_linear_infinite_reverse]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-violet-600/[0.03] rounded-full blur-[80px] pointer-events-none" />
         </div>
 
         {/* Stats Overlay Bar */}
-        <div className="mt-20 flex flex-wrap justify-center gap-12 lg:gap-24 relative z-20">
+        <div className="mt-20 flex flex-wrap justify-between items-center max-w-4xl mx-auto border-t border-white/5 pt-12">
           <div className="text-center">
-            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Países Ativos</p>
-            <span className="text-3xl font-bold text-white tracking-tighter">12+</span>
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-3">Países Ativos</p>
+            <span className="text-4xl font-bold text-white tracking-tighter">12+</span>
           </div>
+          <div className="h-12 w-px bg-white/5"></div>
           <div className="text-center">
-            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Uptime Global</p>
-            <span className="text-3xl font-bold text-white tracking-tighter">99.9%</span>
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-3">Uptime Global</p>
+            <span className="text-4xl font-bold text-white tracking-tighter">99.9%</span>
           </div>
+          <div className="h-12 w-px bg-white/5"></div>
           <div className="text-center">
-            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Moedas Aceitas</p>
-            <span className="text-3xl font-bold text-white tracking-tighter">50+</span>
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-3">Moedas Aceitas</p>
+            <span className="text-4xl font-bold text-white tracking-tighter">50+</span>
           </div>
         </div>
 
-        {/* Floating Icons for Tech feel */}
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8 opacity-40">
-           <div className="flex items-center gap-2 justify-center">
-             <Orbit className="w-4 h-4 text-[#444]" />
-             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Multi-Cloud</span>
+        {/* Bottom Credits / Tech feel */}
+        <div className="mt-16 flex justify-center gap-8 opacity-20">
+           <div className="flex items-center gap-2">
+             <Orbit className="w-3 h-3 text-white" />
+             <span className="text-[9px] font-bold text-white uppercase tracking-widest">Multi-Cloud Infrastructure</span>
            </div>
-           <div className="flex items-center gap-2 justify-center">
-             <Globe className="w-4 h-4 text-[#444]" />
-             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">CDN Global</span>
-           </div>
-           <div className="flex items-center gap-2 justify-center">
-             <Users className="w-4 h-4 text-[#444]" />
-             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">SLA Internacional</span>
-           </div>
-           <div className="flex items-center gap-2 justify-center">
-             <Sparkles className="w-4 h-4 text-[#444]" />
-             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Scaling Auto</span>
+           <div className="flex items-center gap-2">
+             <Globe className="w-3 h-3 text-white" />
+             <span className="text-[9px] font-bold text-white uppercase tracking-widest">Global Edge CDN</span>
            </div>
         </div>
       </div>
