@@ -16,7 +16,7 @@ export default function PlatformProposal() {
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
-      content: "Olá! 👋 Sou o assistente da **Vincere**. Estou aqui para entender suas necessidades e encontrar o plano ideal para o seu negócio.\n\nPosso te ajudar com:\n- **Checkout e vendas online**\n- **Área de membros**\n- **Automações de WhatsApp**\n- **Gestão de clientes e pagamentos**\n\nMe conte um pouco sobre o seu negócio e o que você precisa!",
+      content: "Oi! 👋 Sou a **Vi**, a inteligência artificial da Vincere! Tô aqui pra te ajudar a escalar seu negócio. 🚀\n\nPosso tirar suas dúvidas sobre:\n- **Checkout e Vendas Online**\n- **Área de Membros**\n- **Automações de WhatsApp**\n- **Gestão de Pagamentos**\n\nComo posso te ajudar hoje?",
     },
   ]);
   const [input, setInput] = useState("");
