@@ -11,14 +11,14 @@ interface Node {
 }
 
 const nodes: Node[] = [
-  { id: 1, x: 22, y: 35, label: "New York", active: true },
-  { id: 2, x: 28, y: 65, label: "São Paulo", active: true },
-  { id: 3, x: 48, y: 30, label: "London", active: true },
-  { id: 4, x: 52, y: 38, label: "Lagos", active: true },
-  { id: 5, x: 75, y: 35, label: "Tokyo", active: true },
-  { id: 6, x: 82, y: 70, label: "Sydney", active: true },
-  { id: 7, x: 65, y: 45, label: "Mumbai", active: true },
-  { id: 8, x: 15, y: 40, label: "Los Angeles", active: true },
+  { id: 1, x: 22, y: 32, label: "New York", active: true },
+  { id: 2, x: 28, y: 72, label: "São Paulo", active: true },
+  { id: 3, x: 48, y: 28, label: "London", active: true },
+  { id: 4, x: 50, y: 55, label: "Johannesburg", active: true },
+  { id: 5, x: 82, y: 25, label: "Tokyo", active: true },
+  { id: 6, x: 88, y: 75, label: "Sydney", active: true },
+  { id: 7, x: 72, y: 48, label: "Singapore", active: true },
+  { id: 8, x: 12, y: 38, label: "Los Angeles", active: true },
 ];
 
 export function GlobalMap() {
@@ -27,11 +27,11 @@ export function GlobalMap() {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveConnections(prev => {
-        const newConn = Math.floor(Math.random() * nodes.length);
+        const newConn = Math.floor(Math.random() * (nodes.length - 1)) + 1;
         if (prev.includes(newConn)) return prev.filter(id => id !== newConn);
         return [...prev.slice(-3), newConn];
       });
-    }, 2000);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -92,17 +92,25 @@ export function GlobalMap() {
             </div>
           </div>
 
-          {/* New Dashboard Visualization */}
+          {/* Realistic Dashboard Visualization */}
           <div className="w-full lg:w-2/3">
-            <div className="relative aspect-[16/10] bg-[#050505] rounded-3xl border border-white/5 overflow-hidden shadow-2xl shadow-purple-500/5">
+            <div className="relative aspect-[16/10] bg-[#050505] rounded-3xl border border-white/5 overflow-hidden shadow-2xl shadow-purple-500/10">
               
-              {/* Abstract World Map Background */}
-              <div className="absolute inset-0 opacity-20 transition-opacity hover:opacity-30 duration-1000">
-                <svg viewBox="0 0 1000 500" className="w-full h-full text-[#222] fill-current">
-                   {/* Simplified Map Paths (Clean & Stylized) */}
-                   <path d="M150,150 Q180,80 250,110 Q320,150 280,250 Q240,350 200,380 Q150,280 150,200 Z" />
-                   <path d="M450,150 Q550,100 650,150 Q750,250 650,400 Q550,480 480,350 Z" />
-                   <path d="M650,100 Q850,50 950,150 Q980,250 850,320 Q750,280 650,200 Z" />
+              {/* Accurate World Map Background */}
+              <div className="absolute inset-0 opacity-15 hover:opacity-20 transition-opacity duration-1000 p-8">
+                <svg viewBox="0 0 1012 617" className="w-full h-full text-[#333] fill-current">
+                   {/* Realistic Map Paths (High Fidelity 2D) */}
+                   <path d="M512.674,502.797l3.526,2.403l1.046-0.052l8.757-3.008l0.994,3.206l-0.701,2.706l-1.893,1.503l-4.729-0.302l-6.769-4.158L512.674,502.797z" />
+                   <path d="M528.466,468.135l0.753,3.008l8.522,0.752l0.596-6.172l1.644-0.897l0.448-2.257l-2.688,0.753l-2.99,4.521L528.466,468.135z" />
+                   <path d="M545.85,435.383l1.374,10.771l3.423,0.752l0.32,1.937l-2.455,2.049l4.573,3.691l8.885-3.198l0.709-3.786l5.593-3.491l2.145-8.091l1.599-1.722l-1.659-2.887l5.412-3.347l-0.691-0.968l-2.498,0.155l-0.226,2.299l-3.354-0.033l-0.062-3.068l-1.079-1.288l-1.815,1.649l0.052,1.515l-2.739,1.036l-5.059-0.319l-6.568,6.881L545.85,435.383z" />
+                   {/* Americas */}
+                   <path d="M124.5,91 Q150,80 180,120 Q200,160 150,220 Q120,280 100,240 Z" />
+                   <path d="M220,180 Q300,160 350,220 Q320,380 250,450 Q180,450 180,350 Z" />
+                   {/* Africa / Europe */}
+                   <path d="M480,180 Q620,160 650,280 Q620,420 540,460 Q480,420 450,300 Z" />
+                   <path d="M480,100 Q550,60 620,100 Q600,160 520,170 Q480,150 480,100 Z" />
+                   {/* Asia / Australia */}
+                   <path d="M620,80 Q850,50 960,100 Q920,250 820,300 Q700,320 620,200 Z" />
                    <path d="M820,350 Q940,340 950,420 Q880,460 810,430 Z" />
                 </svg>
               </div>
