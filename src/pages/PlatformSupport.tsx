@@ -239,7 +239,7 @@ export default function PlatformSupport() {
         </div>
       )}
 
-      {view === 'guide' && !isAdmin ? (
+      {view === 'guide' ? (
         <div className="flex-1 overflow-y-auto p-8 bg-[#0a0a0a]">
           <div className="max-w-4xl mx-auto space-y-12">
             <div className="text-center space-y-4">
