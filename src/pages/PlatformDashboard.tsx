@@ -62,6 +62,7 @@ export default function PlatformDashboard() {
   const [showSuccess, setShowSuccess] = useState(false);
   const { orgId, isAdmin, org } = useOrganization();
   const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuário";
   const initials = fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -90,7 +91,7 @@ export default function PlatformDashboard() {
     }
   }, [searchParams, setSearchParams]);
 
-  const { data: customers = [], isLoading } = useQuery({
+  const { data: allCustomers = [], isLoading } = useQuery({
     queryKey: ['dashboard-customers', orgId, isAdmin],
     queryFn: async () => {
       let query = supabase
@@ -107,6 +108,16 @@ export default function PlatformDashboard() {
       return data as any[] as Customer[];
     }
   });
+
+  const customers = useMemo(() => {
+    if (!searchQuery.trim()) return allCustomers;
+    const query = searchQuery.toLowerCase();
+    return allCustomers.filter(c => 
+      c.name.toLowerCase().includes(query) || 
+      c.email.toLowerCase().includes(query) || 
+      c.status.toLowerCase().includes(query)
+    );
+  }, [allCustomers, searchQuery]);
 
   const totalClientes = customers.filter(c => c.status === 'Cliente Ativo').length;
   const totalLeads = customers.filter(c => c.status === 'Lead').length;
@@ -186,6 +197,8 @@ export default function PlatformDashboard() {
             <Input
               className="bg-white/5 border-white/5 pl-10 w-64 text-sm rounded-xl focus-visible:ring-violet-500 text-white"
               placeholder="Pesquisar..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization } from "@/hooks/useOrganization";
 import { supabase } from "@/integrations/supabase/client";
-import { Send, User, Headset, Paperclip } from "lucide-react";
+import { Send, User, Headset, Paperclip, Users, DollarSign, UserPlus, TrendingUp, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -33,6 +33,7 @@ export default function PlatformSupport() {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState<'guide' | 'chat'>(isAdmin ? 'chat' : 'guide');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -228,7 +229,78 @@ export default function PlatformSupport() {
         </div>
       )}
 
-      {activeConversation ? (
+      {view === 'guide' && !isAdmin ? (
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0a0a0a]">
+          <div className="max-w-4xl mx-auto space-y-12">
+            <div className="text-center space-y-4">
+              <h1 className="text-3xl font-bold text-white font-display">Guia do Dashboard</h1>
+              <p className="text-[#888]">Entenda como as métricas da Vincere Tech impulsionam seu negócio.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-[#111] border border-white/5 space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
+                  <Users className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Clientes Ativos</h3>
+                <p className="text-sm text-[#888] leading-relaxed">
+                  Mostra o número total de clientes que possuem uma assinatura ou contrato ativo. 
+                  É a base recorrente do seu negócio hoje.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#111] border border-white/5 space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Receita Total</h3>
+                <p className="text-sm text-[#888] leading-relaxed">
+                  O valor bruto acumulado de todas as transações bem-sucedidas. 
+                  Monitorar isso ajuda a entender o crescimento financeiro ao longo do tempo.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#111] border border-white/5 space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-platform-orange/10 flex items-center justify-center text-platform-orange">
+                  <UserPlus className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Leads Capturados</h3>
+                <p className="text-sm text-[#888] leading-relaxed">
+                  Contatos interessados capturados automaticamente pela Vi (nossa IA) ou por formulários. 
+                  São suas oportunidades futuras de vendas.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#111] border border-white/5 space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center text-blue-400">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">CRM e Negociação</h3>
+                <p className="text-sm text-[#888] leading-relaxed">
+                  Acompanhe em que estágio cada cliente está. Desde o primeiro contato até o fechamento. 
+                  Tudo organizado para você não perder nenhuma venda.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-violet-600/20 to-transparent border border-violet-500/20 text-center space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-white">Ainda tem dúvidas?</h3>
+                <p className="text-[#888] text-sm max-w-md mx-auto">
+                  Nosso time de suporte está pronto para ajudar você com qualquer configuração ou dúvida técnica.
+                </p>
+              </div>
+              <Button 
+                onClick={() => setView('chat')}
+                className="bg-platform-purple hover:bg-platform-purple/90 text-white px-8 h-12 rounded-xl font-semibold transition-all hover:scale-105"
+              >
+                <MessageSquare className="w-5 h-5 mr-2" />
+                Solicitar ajuda agora
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : activeConversation ? (
         <div className="flex-1 flex flex-col bg-[#0a0a0a]">
           <div className="h-16 border-b border-white/5 flex items-center px-6 bg-[#111]">
             <div className="flex items-center gap-3">
