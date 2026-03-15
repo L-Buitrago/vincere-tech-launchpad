@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSearchParams } from "react-router-dom";
 import { useOrganization } from "@/hooks/useOrganization";
 import { supabase } from "@/integrations/supabase/client";
 import { Send, User, Headset, Paperclip, Users, DollarSign, UserPlus, TrendingUp, MessageSquare } from "lucide-react";
@@ -33,7 +34,16 @@ export default function PlatformSupport() {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState<'guide' | 'chat'>(isAdmin ? 'chat' : 'guide');
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode');
+  const [view, setView] = useState<'guide' | 'chat'>(
+    isAdmin ? 'chat' : (mode === 'chat' ? 'chat' : 'guide')
+  );
+
+  useEffect(() => {
+    if (mode === 'chat') setView('chat');
+    else if (mode === 'guide') setView('guide');
+  }, [mode]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
