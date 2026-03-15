@@ -5,6 +5,7 @@ import {
   Link2, BarChart3, Check, ArrowRight, Star, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GlobalMap } from "@/components/platform/GlobalMap";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -138,6 +139,9 @@ export default function PlatformLanding() {
           </div>
         </div>
       </section>
+
+      {/* Global Map */}
+      <GlobalMap />
 
       {/* Testimonials */}
       <section id="depoimentos" className="py-24 sm:py-32 border-t border-white/5">
