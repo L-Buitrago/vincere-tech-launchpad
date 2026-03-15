@@ -39,19 +39,49 @@ export function GlobalMap() {
         {/* Map Container */}
         <div className="relative aspect-[16/9] w-full max-w-5xl mx-auto rounded-3xl border border-white/5 bg-[#0D0D0D]/50 backdrop-blur-sm overflow-hidden group">
           
-          {/* Dot Grid Background */}
+          {/* Main Dot Grid (The landmass effect) */}
+          <div className="absolute inset-0">
+            <svg 
+              className="w-full h-full opacity-30 text-white" 
+              viewBox="0 0 1000 500" 
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <pattern id="dotPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="1.5" fill="currentColor" />
+                </pattern>
+                <mask id="worldMask">
+                  <path 
+                    d="M174.4,124.7c-9.1-1.3-17.6-3.8-25.5-7.5c-7.9-3.7-14.8-8.5-20.7-14.4s-10.7-12.8-14.4-20.7c-3.7-7.9-6.2-16.4-7.5-25.5H89.4 c1.3,9.1,3.8,17.6,7.5,25.5c3.7,7.9,8.5,14.8,14.4,20.7s12.8,10.7,20.7,14.4c7.9,3.7,16.4,6.2,25.5,7.5V124.7z M367.5,145.4 c-42.3,0-81.5-16.1-111.3-45.2c-29.8-29.1-46.1-67.7-46.1-108.9h27.3c0,34.2,13.5,66.2,38.1,90.3c24.6,24.1,57.1,37.3,92.1,37.3 c35,0,67.5-13.3,92.1-37.3c24.6-24.1,38.1-56.1,38.1-90.3h27.3c0,41.2-16.3,79.8-46.1,108.9C449,129.3,409.8,145.4,367.5,145.4z" 
+                    fill="white"
+                  />
+                  {/* Simplified World Path */}
+                  <path 
+                    fill="white"
+                    d="M180,100 L250,90 L280,110 L320,105 L350,130 L380,110 L420,120 L450,110 L480,90 L550,80 L600,90 L650,100 L700,90 L750,110 L800,90 L850,110 L900,100 L950,90 L950,150 L900,180 L850,170 L800,200 L750,220 L700,210 L650,230 L600,220 L550,250 L500,240 L450,260 L400,240 L350,270 L300,250 L250,280 L200,260 L150,290 L100,270 L50,290 L20,250 L50,200 L100,180 L150,190 L180,150 Z"
+                  />
+                  {/* South America */}
+                  <path fill="white" d="M250,280 L350,270 L340,350 L300,450 L270,450 L240,350 Z" />
+                  {/* Africa */}
+                  <path fill="white" d="M480,240 L600,220 L620,380 L550,450 L500,450 L480,350 Z" />
+                  {/* Australia */}
+                  <path fill="white" d="M800,350 L920,340 L930,420 L850,450 L800,430 Z" />
+                  {/* North America Extension */}
+                  <path fill="white" d="M50,100 L150,80 L250,100 L200,180 L100,200 L50,150 Z" />
+                </mask>
+              </defs>
+              <rect x="0" y="0" width="1000" height="500" fill="url(#dotPattern)" mask="url(#worldMask)" />
+            </svg>
+          </div>
+
+          {/* Dimmest background grid for context */}
           <div 
-            className="absolute inset-0 opacity-[0.15]"
+            className="absolute inset-0 opacity-[0.03]"
             style={{
               backgroundImage: `radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0)`,
-              backgroundSize: '24px 24px'
+              backgroundSize: '48px 48px'
             }}
           />
-
-          {/* World Map SVG (Simplified path or just the overlay) */}
-          <svg className="absolute inset-0 w-full h-full text-white/5" viewBox="0 0 1000 500" fill="currentColor">
-            {/* World Map Mask/Path would go here. For a "premium" feel, we use the points as the map */}
-          </svg>
 
           {/* Location Markers */}
           {locations.map((loc) => (
@@ -85,8 +115,8 @@ export function GlobalMap() {
 
                 {/* Tooltip / Label */}
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="bg-[#1a1a1a] border border-white/10 px-2 py-1 rounded-md whitespace-nowrap">
-                    <span className="text-[10px] font-bold text-white uppercase">{loc.label}</span>
+                  <div className="bg-[#1a1a1a] border border-white/10 px-2 py-1 rounded-md whitespace-nowrap shadow-2xl">
+                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">{loc.name}</span>
                   </div>
                 </div>
               </div>
@@ -98,23 +128,23 @@ export function GlobalMap() {
             <div className="flex gap-8">
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-[#555] uppercase tracking-widest">Países Ativos</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-white">12+</span>
+                <div className="flex items-center gap-2 text-white">
+                  <span className="text-2xl font-bold tracking-tighter">12+</span>
                 </div>
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-[#555] uppercase tracking-widest">Uptime Global</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-white">99.9%</span>
+                <div className="flex items-center gap-2 text-white">
+                  <span className="text-2xl font-bold tracking-tighter">99.9%</span>
                 </div>
               </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
-              <Users className="w-4 h-4 text-violet-400" />
+            <div className="hidden sm:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+              <Users className="w-5 h-5 text-violet-400" />
               <div className="text-left">
-                <p className="text-[10px] font-bold text-white leading-none">Venda em qualquer moeda</p>
-                <p className="text-[9px] text-[#666]">USD, EUR, BRL, GBP e mais</p>
+                <p className="text-xs font-bold text-white leading-none mb-1">Pagamentos Internacionais</p>
+                <p className="text-[10px] text-[#666]">USD, EUR, BRL, GBP e 50+ moedas</p>
               </div>
             </div>
           </div>
@@ -122,21 +152,21 @@ export function GlobalMap() {
 
         {/* Floating Icons for Tech feel */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
-           <div className="flex items-center gap-3 justify-center">
-             <Orbit className="w-5 h-5 text-[#444]" />
-             <span className="text-xs font-medium text-[#444]">Multi-Cloud</span>
+           <div className="flex items-center gap-2 justify-center">
+             <Orbit className="w-4 h-4 text-[#444]" />
+             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Multi-Cloud</span>
            </div>
-           <div className="flex items-center gap-3 justify-center">
-             <Globe className="w-5 h-5 text-[#444]" />
-             <span className="text-xs font-medium text-[#444]">CDN Global</span>
+           <div className="flex items-center gap-2 justify-center">
+             <Globe className="w-4 h-4 text-[#444]" />
+             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">CDN Global</span>
            </div>
-           <div className="flex items-center gap-3 justify-center">
-             <Users className="w-5 h-5 text-[#444]" />
-             <span className="text-xs font-medium text-[#444]">SLA Internacional</span>
+           <div className="flex items-center gap-2 justify-center">
+             <Users className="w-4 h-4 text-[#444]" />
+             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">SLA Internacional</span>
            </div>
-           <div className="flex items-center gap-3 justify-center">
-             <Zap className="w-5 h-5 text-[#444]" />
-             <span className="text-xs font-medium text-[#444]">Sub-100ms Latency</span>
+           <div className="flex items-center gap-2 justify-center">
+             <Zap className="w-4 h-4 text-[#444]" />
+             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Latency &lt; 100ms</span>
            </div>
         </div>
       </div>
