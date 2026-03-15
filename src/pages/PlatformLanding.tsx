@@ -107,33 +107,48 @@ export default function PlatformLanding() {
       </section>
 
       {/* Features */}
-      <section id="funcionalidades" className="py-24 sm:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="funcionalidades" className="py-24 sm:py-32 relative">
+        {/* Subtle background particles/rays */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={fadeUp} custom={0}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Tudo que você precisa para vender online</h2>
-            <p className="text-[#888] text-lg max-w-xl mx-auto">
-              Uma plataforma completa para criar, vender e entregar seus produtos digitais.
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight">
+              Tudo que você precisa para <br />
+              <span className="text-[#888]">vender globalmente.</span>
+            </h2>
+            <p className="text-[#666] text-lg max-w-2xl mx-auto leading-relaxed">
+              Uma suite completa de ferramentas projetadas para escala, performance e conversão em qualquer lugar do mundo.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp} custom={i}
-                whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3 } }}
-                className="group p-6 rounded-2xl bg-[#111] border border-white/5 hover:border-purple-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/[0.03] cursor-pointer"
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className="relative group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-violet-500/20 transition-all duration-500 hover:shadow-2xl hover:shadow-violet-500/[0.05] overflow-hidden"
               >
-                <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-4 ${f.color} group-hover:scale-110 transition-transform`}>
-                  <f.icon className="w-5 h-5" />
+                {/* Hover Glow */}
+                <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-br from-violet-500/0 via-transparent to-transparent group-hover:from-violet-500/5 transition-all duration-500" />
+                
+                <div className={`relative z-10 w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 ${f.color} group-hover:scale-110 group-hover:bg-violet-500/10 transition-all duration-500`}>
+                  <f.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-white">{f.title}</h3>
-                <p className="text-sm text-[#888] leading-relaxed">{f.desc}</p>
+                
+                <h3 className="relative z-10 text-xl font-bold mb-3 text-white tracking-tight">{f.title}</h3>
+                <p className="relative z-10 text-[#666] leading-relaxed text-sm group-hover:text-[#888] transition-colors">
+                  {f.desc}
+                </p>
+
+                {/* Decorative corner accent */}
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-transparent to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity blur-2xl" />
               </motion.div>
             ))}
           </div>
