@@ -11,14 +11,14 @@ const team = [
   },
   {
     name: "Luis",
-    role: "Co-fundador & Desenvolvedor",
+    role: "Fundador & Desenvolvedor",
     initials: "L",
     description:
       "Responsável pela visão de negócios e estratégia. Conecta tecnologia a resultados concretos, garantindo que cada solução gere valor real.",
   },
   {
     name: "Ryan",
-    role: "Co-fundador & Especialista em Soluções",
+    role: "Fundador & Especialista em Soluções",
     initials: "R",
     description:
       "Especialista em entender necessidades e projetar soluções sob medida. Garante que cada projeto entregue exatamente o que o cliente precisa.",
