@@ -51,19 +51,45 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: signupEmail,
-      password: signupPassword,
-      options: {
-        data: { full_name: signupName },
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Conta criada!", description: "Verifique seu email para confirmar o cadastro." });
+
+    try {
+      // Check for leaked password
+      const { data: pwnedData, error: pwnedError } = await supabase.functions.invoke('check-pwned-password', {
+        body: { password: signupPassword }
+      });
+
+      if (pwnedError) {
+        console.error("Error checking password:", pwnedError);
+        // We continue if the check fails to not block users due to API issues, 
+        // but in a production environment you might want to handle this differently.
+      } else if (pwnedData?.isPwned) {
+        setLoading(false);
+        toast({ 
+          title: "Senha insegura", 
+          description: "Esta senha foi encontrada em vazamentos de dados conhecidos. Por favor, escolha uma senha mais forte e única.", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email: signupEmail,
+        password: signupPassword,
+        options: {
+          data: { full_name: signupName },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Conta criada!", description: "Verifique seu email para confirmar o cadastro." });
+      }
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
