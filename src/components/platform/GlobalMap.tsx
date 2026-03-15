@@ -1,16 +1,33 @@
-import { motion } from "framer-motion";
-import { Globe, Users, Orbit } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Globe, Users, Orbit, Sparkles } from "lucide-react";
 
-const locations = [
-  { id: 1, x: "18%", y: "40%", name: "Estados Unidos", label: "USA" },
-  { id: 2, x: "28%", y: "65%", name: "Brasil", label: "BR", pulse: true },
-  { id: 3, x: "52%", y: "25%", name: "Europa", label: "EU" },
-  { id: 4, x: "55%", y: "60%", name: "Nigéria", label: "NG" },
-  { id: 5, x: "78%", y: "35%", name: "China", label: "CN" },
-  { id: 6, x: "88%", y: "78%", name: "Austrália", label: "AU" },
-];
+interface SubDot {
+  id: number;
+  x: number;
+  y: number;
+  scale: number;
+}
 
 export function GlobalMap() {
+  const [dots, setDots] = useState<SubDot[]>([]);
+
+  // Simulate real-time subscriptions popping up
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDot: SubDot = {
+        id: Date.now(),
+        x: Math.random() * 80 + 10, // Avoid edges
+        y: Math.random() * 60 + 20,
+        scale: Math.random() * 0.5 + 0.5,
+      };
+
+      setDots((prev) => [...prev.slice(-10), newDot]); // Keep last 10 dots
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="py-24 relative overflow-hidden bg-[#0A0A0A]">
       {/* Background Glow */}
@@ -24,130 +41,101 @@ export function GlobalMap() {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-violet-400 text-[10px] font-bold uppercase tracking-widest mb-4"
           >
-            <Globe className="w-3 h-3" />
-            Escalabilidade Global
+            <Sparkles className="w-3 h-3" />
+            Live Network
           </motion.div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
-            A Vincere não tem fronteiras.
+            Vendas em Tempo Real.
           </h2>
           <p className="text-[#888] text-lg max-w-2xl mx-auto">
-            Processamos vendas e automatizamos operações para centenas de negócios em todo o mundo. 
-            Sua empresa pronta para o mercado internacional.
+            Nossa infraestrutura processa transações de todos os cantos do planeta, a cada segundo. 
+            A Vincere é a engine do seu crescimento global.
           </p>
         </div>
 
-        {/* Map Container */}
-        <div className="relative aspect-[16/9] w-full max-w-5xl mx-auto rounded-3xl border border-white/5 bg-[#0D0D0D]/50 backdrop-blur-sm overflow-hidden group">
+        {/* Globe Container */}
+        <div className="relative w-full max-w-[500px] aspect-square mx-auto flex items-center justify-center">
           
-          {/* Main Dot Grid (The landmass effect) */}
-          <div className="absolute inset-0">
-            <svg 
-              className="w-full h-full opacity-30 text-white" 
-              viewBox="0 0 1000 500" 
-              preserveAspectRatio="xMidYMid slice"
+          {/* Main Sphere Body */}
+          <div className="relative w-full h-full rounded-full border border-white/5 bg-[#0D0D0D] shadow-[0_0_80px_rgba(139,92,246,0.1)] overflow-hidden">
+            
+            {/* Spinning Landmass Layer */}
+            <motion.div 
+              className="absolute inset-0 flex"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              style={{ width: "200%" }}
             >
-              <defs>
-                <pattern id="dotPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="1.5" fill="currentColor" />
-                </pattern>
-                <mask id="worldMask">
-                  {/* North America */}
-                  <path fill="white" d="M100,80 L180,60 L280,80 L250,150 L180,180 L80,160 Z" />
-                  {/* South America */}
-                  <path fill="white" d="M250,220 L350,210 L330,280 L290,400 L260,400 L230,290 Z" />
-                  {/* Europe & Africa */}
-                  <path fill="white" d="M450,80 L550,60 L600,80 L580,150 L530,170 L480,150 Z" />
-                  <path fill="white" d="M480,180 L620,160 L640,320 L570,420 L500,420 L470,300 Z" />
-                  {/* Asia */}
-                  <path fill="white" d="M600,60 L850,50 L950,80 L920,250 L800,280 L650,250 L600,150 Z" />
-                  {/* Australia */}
-                  <path fill="white" d="M820,320 L940,310 L950,390 L870,420 L810,400 Z" />
-                  {/* Greenland/North */}
-                  <path fill="white" d="M350,30 L450,20 L480,50 L400,60 Z" />
-                </mask>
-              </defs>
-              <rect x="0" y="0" width="1000" height="500" fill="url(#dotPattern)" mask="url(#worldMask)" />
-            </svg>
+              {[1, 2].map((i) => (
+                <div key={i} className="relative w-1/2 h-full opacity-40">
+                  <svg viewBox="0 0 1000 500" className="w-full h-full fill-white/60">
+                    <path d="M100,100 L180,80 L280,100 L250,180 L180,210 L80,190 Z" />
+                    <path d="M250,260 L350,250 L330,340 L290,450 L260,450 L230,350 Z" />
+                    <path d="M450,110 L550,90 L600,110 L580,180 L530,210 L480,180 Z" />
+                    <path d="M480,220 L620,200 L640,380 L570,480 L500,480 L470,350 Z" />
+                    <path d="M600,90 L850,80 L950,110 L920,290 L800,320 L650,290 L600,180 Z" />
+                    <path d="M820,380 L940,370 L950,450 L870,480 L810,460 Z" />
+                  </svg>
+                  {/* Dot texture overlay inside landmass */}
+                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, white 0.5px, transparent 0.5px)', backgroundSize: '12px 12px', opacity: 0.15 }}></div>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Simulated Subscription Dots */}
+            <div className="absolute inset-0 pointer-events-none">
+              <AnimatePresence>
+                {dots.map((dot) => (
+                  <motion.div
+                    key={dot.id}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: dot.scale, opacity: [0, 1, 1, 0] }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 4, times: [0, 0.2, 0.8, 1] }}
+                    className="absolute w-4 h-4"
+                    style={{ left: `${dot.x}%`, top: `${dot.y}%` }}
+                  >
+                    <div className="relative flex items-center justify-center w-full h-full">
+                      <div className="absolute w-full h-full rounded-full bg-white opacity-20 animate-ping" />
+                      <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_10px_white]" />
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Spherical Depth Overlays */}
+            {/* Dark shadow at the edge to give curvature */}
+            <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.8)] pointer-events-none" />
+            {/* Subtle violet inner glow */}
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-violet-500/10 to-transparent pointer-events-none" />
+            {/* Atmospheric light at the top */}
+            <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
           </div>
 
-          {/* Dimmest background grid for context */}
-          <div 
-            className="absolute inset-0 opacity-[0.05]"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1.2px 1.2px, white 0.8px, transparent 0)`,
-              backgroundSize: '24px 24px'
-            }}
-          />
+          {/* Orbit rings for tech feel */}
+          <div className="absolute inset-[-40px] border border-white/5 rounded-full pointer-events-none animate-[spin_20s_linear_infinite]" />
+          <div className="absolute inset-[-80px] border border-white/[0.02] rounded-full pointer-events-none animate-[spin_35s_linear_infinite_reverse]" />
+        </div>
 
-          {/* Location Markers */}
-          {locations.map((loc) => (
-            <div
-              key={loc.id}
-              className="absolute"
-              style={{ left: loc.x, top: loc.y }}
-            >
-              <div className="relative">
-                {/* Pulse Effect */}
-                <motion.div
-                  animate={{
-                    scale: [1, 2, 1],
-                    opacity: [0.5, 0, 0.5],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className={`absolute -inset-4 rounded-full ${loc.pulse ? 'bg-violet-500/40' : 'bg-white/20'}`}
-                />
-                
-                {/* Dot */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  className={`w-2.5 h-2.5 rounded-full relative z-10 ${loc.pulse ? 'bg-violet-400 shadow-[0_0_15px_rgba(167,139,250,0.6)]' : 'bg-white/40'}`}
-                />
-
-                {/* Tooltip / Label */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="bg-[#1a1a1a] border border-white/10 px-2 py-1 rounded-md whitespace-nowrap shadow-2xl">
-                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">{loc.name}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* Stats Overlay */}
-          <div className="absolute bottom-6 left-6 right-6 flex flex-wrap justify-between items-end gap-6 z-20">
-            <div className="flex gap-8">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-[#555] uppercase tracking-widest">Países Ativos</p>
-                <div className="flex items-center gap-2 text-white">
-                  <span className="text-2xl font-bold tracking-tighter">12+</span>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-[#555] uppercase tracking-widest">Uptime Global</p>
-                <div className="flex items-center gap-2 text-white">
-                  <span className="text-2xl font-bold tracking-tighter">99.9%</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden sm:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-              <Users className="w-5 h-5 text-violet-400" />
-              <div className="text-left">
-                <p className="text-xs font-bold text-white leading-none mb-1">Pagamentos Internacionais</p>
-                <p className="text-[10px] text-[#666]">USD, EUR, BRL, GBP e 50+ moedas</p>
-              </div>
-            </div>
+        {/* Stats Overlay Bar */}
+        <div className="mt-20 flex flex-wrap justify-center gap-12 lg:gap-24 relative z-20">
+          <div className="text-center">
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Países Ativos</p>
+            <span className="text-3xl font-bold text-white tracking-tighter">12+</span>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Uptime Global</p>
+            <span className="text-3xl font-bold text-white tracking-tighter">99.9%</span>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] font-bold text-[#444] uppercase tracking-[0.2em] mb-2">Moedas Aceitas</p>
+            <span className="text-3xl font-bold text-white tracking-tighter">50+</span>
           </div>
         </div>
 
         {/* Floating Icons for Tech feel */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
+        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8 opacity-40">
            <div className="flex items-center gap-2 justify-center">
              <Orbit className="w-4 h-4 text-[#444]" />
              <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Multi-Cloud</span>
@@ -161,17 +149,11 @@ export function GlobalMap() {
              <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">SLA Internacional</span>
            </div>
            <div className="flex items-center gap-2 justify-center">
-             <Zap className="w-4 h-4 text-[#444]" />
-             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Latency &lt; 100ms</span>
+             <Sparkles className="w-4 h-4 text-[#444]" />
+             <span className="text-[11px] font-bold text-[#444] uppercase tracking-widest">Scaling Auto</span>
            </div>
         </div>
       </div>
     </section>
   );
 }
-
-const Zap = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-  </svg>
-);
